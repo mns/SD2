@@ -138,6 +138,10 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
     std::list<uint32> m_lAddsEntryList;
     uint64 m_auiAddGUIDs[MAX_ACTIVE_ADDS];
 
+    uint32 m_uiDrainPowerTimer;
+    uint32 m_uiSoulDrainsTimer;
+    uint32 m_uiSpellRemainingTimer;
+
     void Reset()
     {
         InitializeAdds();
@@ -146,6 +150,10 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
             return;
 
         m_pInstance->SetData(TYPE_MALACRASS, NOT_STARTED);
+
+        m_uiDrainPowerTimer = 30000;
+        m_uiSoulDrainsTimer = 30000;
+        m_uiSpellRemainingTimer = 0;
     }
 
     void JustReachedHome()
@@ -262,6 +270,45 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
+
+        if (m_uiDrainPowerTimer < uiDiff)
+        {
+            if (m_creature->GetHealthPercent() < 80.0f)
+            {
+                DoScriptText(SAY_DRAIN_POWER, m_creature);
+                m_creature->CastSpell(m_creature, SPELL_DRAIN_POWER, true);
+                m_uiDrainPowerTimer = 30000;
+            }
+        }else m_uiDrainPowerTimer -= uiDiff;
+
+        if (m_uiSoulDrainsTimer < uiDiff)
+        {
+            Unit* pTarget = NULL;
+            pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
+            if (!pTarget)
+            {
+                EnterEvadeMode();
+                return;
+            }
+            m_uiSoulDrainsTimer = 30000;
+        }else m_uiSoulDrainsTimer -= uiDiff;
+
+        if (m_uiSpellRemainingTimer < uiDiff) //Prevent spamming spells
+        {
+            if (m_uiSoulDrainsTimer == 30000) // Cast Spirit Bolts between Soul Drains .
+            {
+                DoScriptText(SAY_SPIRIT_BOLTS, m_creature);
+                m_creature->CastSpell(m_creature, SPELL_SPIRIT_BOLTS, false);
+                m_uiSpellRemainingTimer = 10000;
+            }else
+            {
+                    // cast selected class spells
+            }
+
+        }else m_uiSpellRemainingTimer -= uiDiff;
+
+
+
 
         DoMeleeAttackIfReady();
     }
