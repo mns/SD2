@@ -109,6 +109,13 @@ const float ADD_POS_Y       = 921.279f;
 const float ADD_POS_Z       = 33.889f;
 const float ADD_ORIENT      = 1.527f;
 
+enum Phases
+{
+    PHASE_SIPHON_SOUL       = 1,
+    PHASE_SOUL_DRAINS       = 2,
+    PHASE_SPIRIT_BOLTS      = 3,
+};
+
 struct SpawnGroup
 {
     uint32 m_uiCreatureEntry;
@@ -139,21 +146,24 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
     uint64 m_auiAddGUIDs[MAX_ACTIVE_ADDS];
 
     uint32 m_uiDrainPowerTimer;
-    uint32 m_uiSoulDrainsTimer;
+    uint32 m_uiSpiritBoltsTimer;
+    Phases m_uiPhase;
     uint32 m_uiSpellRemainingTimer;
 
     void Reset()
     {
         InitializeAdds();
 
+        m_uiDrainPowerTimer     = 30000;
+        m_uiSpiritBoltsTimer    = 30000;
+        m_uiPhase               = PHASE_SIPHON_SOUL;
+        m_uiSpellRemainingTimer = 0;
+
         if (!m_pInstance)
             return;
 
         m_pInstance->SetData(TYPE_MALACRASS, NOT_STARTED);
 
-        m_uiDrainPowerTimer = 30000;
-        m_uiSoulDrainsTimer = 30000;
-        m_uiSpellRemainingTimer = 0;
     }
 
     void JustReachedHome()
@@ -281,31 +291,42 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
             }
         }else m_uiDrainPowerTimer -= uiDiff;
 
-        if (m_uiSoulDrainsTimer < uiDiff)
+        if (m_uiSpiritBoltsTimer < uiDiff)
         {
-            Unit* pTarget = NULL;
-            pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
-            if (!pTarget)
-            {
-                EnterEvadeMode();
-                return;
-            }
-            m_uiSoulDrainsTimer = 30000;
-        }else m_uiSoulDrainsTimer -= uiDiff;
+            m_uiPhase = PHASE_SPIRIT_BOLTS;
+            m_uiSpellRemainingTimer = 0;
+            m_uiSpiritBoltsTimer = 40000;
+        }else m_uiSpiritBoltsTimer -= uiDiff;
 
-        if (m_uiSpellRemainingTimer < uiDiff) //Prevent spamming spells
+        if (m_uiSpellRemainingTimer > uiDiff) //Prevent spamming spells
         {
-            if (m_uiSoulDrainsTimer == 30000) // Cast Spirit Bolts between Soul Drains .
+            m_uiSpellRemainingTimer -= uiDiff;
+            return;
+        }
+
+        switch(m_uiPhase)
+        {
+            case PHASE_SIPHON_SOUL:
             {
+                DoScriptText(SAY_SOUL_SIPHON, m_creature);
+                Unit* pTarget = NULL;
+                pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
+                if (!pTarget) {EnterEvadeMode();return;}
+                m_creature->CastSpell(pTarget, SPELL_SIPHON_SOUL, true);
+                m_uiPhase = PHASE_SOUL_DRAINS;
+            }
+
+            case PHASE_SOUL_DRAINS:
+
+            break;
+            case PHASE_SPIRIT_BOLTS:
                 DoScriptText(SAY_SPIRIT_BOLTS, m_creature);
                 m_creature->CastSpell(m_creature, SPELL_SPIRIT_BOLTS, false);
                 m_uiSpellRemainingTimer = 10000;
-            }else
-            {
-                    // cast selected class spells
-            }
+                m_uiPhase = PHASE_SIPHON_SOUL;
+            break;
+        }
 
-        }else m_uiSpellRemainingTimer -= uiDiff;
 
 
 
