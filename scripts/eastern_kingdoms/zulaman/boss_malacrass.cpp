@@ -287,8 +287,8 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
             {
                 DoScriptText(SAY_DRAIN_POWER, m_creature);
                 m_creature->CastSpell(m_creature, SPELL_DRAIN_POWER, true);
-                m_uiDrainPowerTimer = 30000;
             }
+            m_uiDrainPowerTimer = 30000;
         }else m_uiDrainPowerTimer -= uiDiff;
 
         if (m_uiSpiritBoltsTimer < uiDiff)
