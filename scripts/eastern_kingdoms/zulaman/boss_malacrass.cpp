@@ -111,10 +111,106 @@ const float ADD_ORIENT      = 1.527f;
 
 enum Phases
 {
-    PHASE_SIPHON_SOUL       = 1,
-    PHASE_SOUL_DRAINS       = 2,
-    PHASE_SPIRIT_BOLTS      = 3,
+    PHASE_SIPHON_SOUL,
+    PHASE_SOUL_DRAINS,
+    PHASE_SPIRIT_BOLTS,
 };
+
+enum SpellTarget
+{
+    SPELL_HEAL_ALLY,
+    SPELL_HEAL_SELF,
+    SPELL_BUFF_SELF,
+    SPELL_BUFF_ALLY,
+    SPELL_BUFF_VICTIM,
+    SPELL_BUFF_ENEMY,
+    SPELL_TRAP_SELF,
+    SPELL_TOTEM_SELF,
+    SPELL_DAMAGE_VICTIM,
+    SPELL_DAMAGE_ENEMY,
+    SPELL_CONTROL_ENEMY,
+};
+
+struct SoulDrainsFields
+{
+    uint32      spell;
+    SpellTarget target;
+    uint32      cooldown;
+    uint32      cooldownTemp;
+};
+
+static SoulDrainsFields SoulDrainsStructure[][6] =
+{
+    // 0 None
+    {},
+    // 1 Warrior
+    {
+    {SPELL_WR_SPELL_REFLECT, SPELL_BUFF_SELF, 10},
+    {SPELL_WR_WHIRLWIND, SPELL_BUFF_SELF, 10},
+    {SPELL_WR_MORTAL_STRIKE, SPELL_BUFF_VICTIM, 5}
+    },
+    // 2 Paladin
+    {
+    {SPELL_PA_CONSECRATION, SPELL_BUFF_SELF , 30},
+    {SPELL_PA_HOLY_LIGHT, SPELL_HEAL_ALLY, 10},
+    {SPELL_PA_AVENGING_WRATH, SPELL_BUFF_SELF, 90}
+    },
+    // 3 Hunter
+    {
+    {SPELL_HU_EXPLOSIVE_TRAP, SPELL_TRAP_SELF, 0},
+    {SPELL_HU_FREEZING_TRAP, SPELL_TRAP_SELF, 30},
+    {SPELL_HU_SNAKE_TRAP, SPELL_TRAP_SELF , 30}
+    },
+    // 4 Rogue
+    {
+    {SPELL_RO_WOUND_POISON, SPELL_BUFF_VICTIM, 0},
+    {SPELL_RO_SLICE_DICE, SPELL_BUFF_SELF, 20},
+    {SPELL_RO_BLIND, SPELL_BUFF_VICTIM, 180}
+    },
+    // 5 Priest
+    {
+    {SPELL_PR_PAIN_SUPP, SPELL_HEAL_SELF, 180},
+    {SPELL_PR_HEAL, SPELL_HEAL_ALLY, 0},
+    {SPELL_PR_MIND_BLAST, SPELL_DAMAGE_ENEMY, 8},
+    {SPELL_PR_SW_DEATH, SPELL_DAMAGE_ENEMY, 10},
+    {SPELL_PR_MIND_CONTROL, SPELL_CONTROL_ENEMY, 0},
+    {SPELL_PR_PSYCHIC_SCREAM, SPELL_BUFF_SELF, 30}
+    },
+    // 6 Death Knight
+    {
+    {SPELL_DK_DEATH_AND_DECAY, SPELL_BUFF_ENEMY, 30},
+    {SPELL_DK_PLAGUE_STRIKE, SPELL_BUFF_ENEMY ,0},
+    {SPELL_DK_MARK_OF_BLOOD, SPELL_DAMAGE_ENEMY, 0}
+    },
+    // 7 Shaman
+    {
+    {SPELL_SH_FIRE_NOVA, SPELL_TOTEM_SELF, 15},
+    {SPELL_SH_HEALING_WAVE, SPELL_HEAL_ALLY, 0},
+    {SPELL_SH_CHAIN_LIGHT, SPELL_DAMAGE_ENEMY, 3}
+    },
+    // 8 Mage
+    {
+    {SPELL_MG_FIREBALL, SPELL_DAMAGE_ENEMY, 0},
+    {SPELL_MG_FROSTBOLT, SPELL_DAMAGE_ENEMY, 0},
+    {SPELL_MG_FROST_NOVA, SPELL_BUFF_SELF, 25},
+    {SPELL_MG_ICE_LANCE, SPELL_DAMAGE_ENEMY, 0}
+    },
+    // 9 Warlock
+    {
+    {SPELL_WL_CURSE_OF_DOOM, SPELL_BUFF_ENEMY, 0},
+    {SPELL_WL_RAIN_OF_FIRE, SPELL_DAMAGE_ENEMY, 0},
+    {SPELL_WL_UNSTABLE_AFFL, SPELL_BUFF_ENEMY, 0}
+    },
+    // 10 None
+    {},
+    // 11 Druid
+    {
+    {SPELL_DR_LIFEBLOOM, SPELL_HEAL_SELF, 0},
+    {SPELL_DR_THORNS, SPELL_BUFF_ALLY, 45},
+    {SPELL_DR_MOONFIRE, SPELL_BUFF_ENEMY, 0}
+    }
+};
+
 
 struct SpawnGroup
 {
@@ -148,7 +244,9 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
     uint32 m_uiDrainPowerTimer;
     uint32 m_uiSpiritBoltsTimer;
     Phases m_uiPhase;
-    uint32 m_uiSpellRemainingTimer;
+    uint32 m_uiDelayTimer;
+    uint8  m_uiSoulDrainsClass;
+    uint8  m_uiRandomSpell;
 
     void Reset()
     {
@@ -157,7 +255,7 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
         m_uiDrainPowerTimer     = 30000;
         m_uiSpiritBoltsTimer    = 30000;
         m_uiPhase               = PHASE_SIPHON_SOUL;
-        m_uiSpellRemainingTimer = 0;
+        m_uiDelayTimer = 0;
 
         if (!m_pInstance)
             return;
@@ -294,15 +392,21 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
         if (m_uiSpiritBoltsTimer < uiDiff)
         {
             m_uiPhase = PHASE_SPIRIT_BOLTS;
-            m_uiSpellRemainingTimer = 0;
-            m_uiSpiritBoltsTimer = 40000;
+            m_uiDelayTimer = 0;
+            m_uiSpiritBoltsTimer = 40000; //30Sec between + 10Sec casting time
         }else m_uiSpiritBoltsTimer -= uiDiff;
 
-        if (m_uiSpellRemainingTimer > uiDiff) //Prevent spamming spells
+        DoMeleeAttackIfReady();
+
+        if (m_uiDelayTimer > uiDiff) //Prevent spamming spells
         {
-            m_uiSpellRemainingTimer -= uiDiff;
+            m_uiDelayTimer -= uiDiff;
             return;
         }
+
+        //wait if already casting
+        if (m_creature->IsNonMeleeSpellCasted(false))
+            return;
 
         switch(m_uiPhase)
         {
@@ -311,27 +415,119 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
                 DoScriptText(SAY_SOUL_SIPHON, m_creature);
                 Unit* pTarget = NULL;
                 pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
-                if (!pTarget) {EnterEvadeMode();return;}
+                if (!pTarget || pTarget->GetTypeId() != TYPEID_PLAYER) {EnterEvadeMode();return;}
+                m_uiSoulDrainsClass = pTarget->getClass();
                 m_creature->CastSpell(pTarget, SPELL_SIPHON_SOUL, true);
                 m_uiPhase = PHASE_SOUL_DRAINS;
             }
 
             case PHASE_SOUL_DRAINS:
+            {
+                switch(m_uiSoulDrainsClass)
+                {
+                    case 8:    // Mage
+                    {
+                        m_uiRandomSpell = urand(0,3);
+                    }
+                    break;
+                    case 5:    // Priest
+                    {
+                        m_uiRandomSpell = urand(0,5);
+                    }
+                    break;
+                    default:    // Other classes
+                    {
+                        m_uiRandomSpell = urand(0,2);
+                    }
+                }
+                Unit* pTarget = NULL;
+                if (SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].cooldownTemp > time(NULL))
+                    break;
+                switch(SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].target)
+                {
+                    case SPELL_HEAL_ALLY:
+                        pTarget = DoSelectLowestHpFriendly(MaxRangeForSpell(SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].spell), 50000);
+                    break;
+                    case SPELL_BUFF_ALLY:
+                    {
+                        std::list<Creature*> lTempList = DoFindFriendlyMissingBuff(MaxRangeForSpell(SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].spell), SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].spell);
+                        if (!lTempList.empty())
+                            pTarget = *(lTempList.begin());
+                    }
+                    break;
+                    case SPELL_HEAL_SELF:
+                    case SPELL_BUFF_SELF:
+                    case SPELL_TRAP_SELF:
+                    case SPELL_TOTEM_SELF:
+                        switch(SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].spell)
+                        {
+                            case SPELL_WR_WHIRLWIND:
+                            case SPELL_PA_CONSECRATION:
+                                if (m_creature->getVictim() && m_creature->GetDistance(m_creature->getVictim()) > 5)
+                                    return;
+                            break;
+                            case SPELL_HU_EXPLOSIVE_TRAP:
+                            case SPELL_HU_FREEZING_TRAP:
+                            case SPELL_HU_SNAKE_TRAP:
+                                //attempt find go summoned from spell (casted by m_creature)
+                                GameObject* pGo = m_creature->GetGameObject(SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].spell); // TODO : Not work ! maybe core Bug
 
+                                //if we have a pGo, we need to wait (only one trap at a time)
+                                if (pGo)
+                                    return;
+                        }
+                        pTarget = m_creature;
+                    break;
+                    case SPELL_BUFF_VICTIM:
+                    case SPELL_DAMAGE_VICTIM:
+                        pTarget = m_creature->getVictim();
+                    break;
+                    case SPELL_BUFF_ENEMY:
+                    case SPELL_DAMAGE_ENEMY:
+                    case SPELL_CONTROL_ENEMY:
+                    {
+                        pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
+                    }
+                    break;
+                }
+                if (pTarget && DoCastSpellIfCan(pTarget, SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].spell) == CAST_OK)
+                {
+                    SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].cooldownTemp = SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].cooldown + time(NULL); // Cooldown
+                    m_uiDelayTimer = 1500; // 1.5sec GCD
+                }
+                else
+                    m_uiDelayTimer = 0; // 0sec GCD
+                
+            }
             break;
             case PHASE_SPIRIT_BOLTS:
                 DoScriptText(SAY_SPIRIT_BOLTS, m_creature);
                 m_creature->CastSpell(m_creature, SPELL_SPIRIT_BOLTS, false);
-                m_uiSpellRemainingTimer = 10000;
+                m_uiDelayTimer = 10000;
                 m_uiPhase = PHASE_SIPHON_SOUL;
             break;
         }
 
 
+    }
 
+    float MaxRangeForSpell(uint32 uiSpellId)
+    {
+        SpellEntry const* pSpell = GetSpellStore()->LookupEntry(uiSpellId);
 
+        //if spell not valid
+        if (!pSpell)
+            return 0.0f;
 
-        DoMeleeAttackIfReady();
+        //spell known, so lookup using rangeIndex
+        SpellRangeEntry const* pSpellRange = GetSpellRangeStore()->LookupEntry(pSpell->rangeIndex);
+
+        //not valid, so return
+        if (!pSpellRange)
+            return 0.0f;
+        //error_log("SD2: Spell: %u Range: %f", uiSpellId, pSpellRange->maxRange);
+
+        return pSpellRange->maxRange;
     }
 };
 
