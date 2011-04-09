@@ -116,25 +116,9 @@ enum Phases
     PHASE_SPIRIT_BOLTS,
 };
 
-enum SpellTarget
-{
-    SPELL_HEAL_ALLY,
-    SPELL_HEAL_SELF,
-    SPELL_BUFF_SELF,
-    SPELL_BUFF_ALLY,
-    SPELL_BUFF_VICTIM,
-    SPELL_BUFF_ENEMY,
-    SPELL_TRAP_SELF,
-    SPELL_TOTEM_SELF,
-    SPELL_DAMAGE_VICTIM,
-    SPELL_DAMAGE_ENEMY,
-    SPELL_CONTROL_ENEMY,
-};
-
 struct SoulDrainsFields
 {
     uint32      spell;
-    SpellTarget target;
     uint32      cooldown;
     uint32      cooldownTemp;
 };
@@ -145,69 +129,69 @@ static SoulDrainsFields SoulDrainsStructure[][6] =
     {},
     // 1 Warrior
     {
-    {SPELL_WR_SPELL_REFLECT, SPELL_BUFF_SELF, 10},
-    {SPELL_WR_WHIRLWIND, SPELL_BUFF_SELF, 10},
-    {SPELL_WR_MORTAL_STRIKE, SPELL_BUFF_VICTIM, 5}
+    {SPELL_WR_SPELL_REFLECT, 10},
+    {SPELL_WR_WHIRLWIND, 10},
+    {SPELL_WR_MORTAL_STRIKE, 5}
     },
     // 2 Paladin
     {
-    {SPELL_PA_CONSECRATION, SPELL_BUFF_SELF , 30},
-    {SPELL_PA_HOLY_LIGHT, SPELL_HEAL_ALLY, 10},
-    {SPELL_PA_AVENGING_WRATH, SPELL_BUFF_SELF, 90}
+    {SPELL_PA_CONSECRATION, 30},
+    {SPELL_PA_HOLY_LIGHT, 10},
+    {SPELL_PA_AVENGING_WRATH, 30}
     },
     // 3 Hunter
     {
-    {SPELL_HU_EXPLOSIVE_TRAP, SPELL_TRAP_SELF, 0},
-    {SPELL_HU_FREEZING_TRAP, SPELL_TRAP_SELF, 30},
-    {SPELL_HU_SNAKE_TRAP, SPELL_TRAP_SELF , 30}
+    {SPELL_HU_EXPLOSIVE_TRAP, 0},
+    {SPELL_HU_FREEZING_TRAP, 0},
+    {SPELL_HU_SNAKE_TRAP, 30}
     },
     // 4 Rogue
     {
-    {SPELL_RO_WOUND_POISON, SPELL_BUFF_VICTIM, 0},
-    {SPELL_RO_SLICE_DICE, SPELL_BUFF_SELF, 20},
-    {SPELL_RO_BLIND, SPELL_BUFF_VICTIM, 180}
+    {SPELL_RO_WOUND_POISON, 10},
+    {SPELL_RO_SLICE_DICE, 20},
+    {SPELL_RO_BLIND, 8}
     },
     // 5 Priest
     {
-    {SPELL_PR_PAIN_SUPP, SPELL_HEAL_SELF, 180},
-    {SPELL_PR_HEAL, SPELL_HEAL_ALLY, 0},
-    {SPELL_PR_MIND_BLAST, SPELL_DAMAGE_ENEMY, 8},
-    {SPELL_PR_SW_DEATH, SPELL_DAMAGE_ENEMY, 10},
-    {SPELL_PR_MIND_CONTROL, SPELL_CONTROL_ENEMY, 0},
-    {SPELL_PR_PSYCHIC_SCREAM, SPELL_BUFF_SELF, 30}
+    {SPELL_PR_PAIN_SUPP, 30},
+    {SPELL_PR_HEAL, 10},
+    {SPELL_PR_MIND_BLAST, 8},
+    {SPELL_PR_SW_DEATH, 10},
+    {SPELL_PR_MIND_CONTROL, 30},
+    {SPELL_PR_PSYCHIC_SCREAM, 30}
     },
     // 6 Death Knight
     {
-    {SPELL_DK_DEATH_AND_DECAY, SPELL_BUFF_ENEMY, 30},
-    {SPELL_DK_PLAGUE_STRIKE, SPELL_BUFF_ENEMY ,0},
-    {SPELL_DK_MARK_OF_BLOOD, SPELL_DAMAGE_ENEMY, 0}
+    {SPELL_DK_DEATH_AND_DECAY, 10},
+    {SPELL_DK_PLAGUE_STRIKE, 10},
+    {SPELL_DK_MARK_OF_BLOOD, 15}
     },
     // 7 Shaman
     {
-    {SPELL_SH_FIRE_NOVA, SPELL_TOTEM_SELF, 15},
-    {SPELL_SH_HEALING_WAVE, SPELL_HEAL_ALLY, 0},
-    {SPELL_SH_CHAIN_LIGHT, SPELL_DAMAGE_ENEMY, 3}
+    {SPELL_SH_FIRE_NOVA, 15},
+    {SPELL_SH_HEALING_WAVE, 10},
+    {SPELL_SH_CHAIN_LIGHT, 5}
     },
     // 8 Mage
     {
-    {SPELL_MG_FIREBALL, SPELL_DAMAGE_ENEMY, 0},
-    {SPELL_MG_FROSTBOLT, SPELL_DAMAGE_ENEMY, 0},
-    {SPELL_MG_FROST_NOVA, SPELL_BUFF_SELF, 25},
-    {SPELL_MG_ICE_LANCE, SPELL_DAMAGE_ENEMY, 0}
+    {SPELL_MG_FIREBALL, 5},
+    {SPELL_MG_FROSTBOLT, 10},
+    {SPELL_MG_FROST_NOVA, 15},
+    {SPELL_MG_ICE_LANCE, 5}
     },
     // 9 Warlock
     {
-    {SPELL_WL_CURSE_OF_DOOM, SPELL_BUFF_ENEMY, 0},
-    {SPELL_WL_RAIN_OF_FIRE, SPELL_DAMAGE_ENEMY, 0},
-    {SPELL_WL_UNSTABLE_AFFL, SPELL_BUFF_ENEMY, 0}
+    {SPELL_WL_CURSE_OF_DOOM, 10},
+    {SPELL_WL_RAIN_OF_FIRE, 10},
+    {SPELL_WL_UNSTABLE_AFFL, 15}
     },
     // 10 None
     {},
     // 11 Druid
     {
-    {SPELL_DR_LIFEBLOOM, SPELL_HEAL_SELF, 0},
-    {SPELL_DR_THORNS, SPELL_BUFF_ALLY, 45},
-    {SPELL_DR_MOONFIRE, SPELL_BUFF_ENEMY, 0}
+    {SPELL_DR_LIFEBLOOM, 20},
+    {SPELL_DR_THORNS, 30},
+    {SPELL_DR_MOONFIRE, 10}
     }
 };
 
@@ -443,51 +427,74 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
                 Unit* pTarget = NULL;
                 if (SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].cooldownTemp > time(NULL))
                     break;
-                switch(SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].target)
+                switch(SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].spell)
                 {
-                    case SPELL_HEAL_ALLY:
+                    case SPELL_PA_HOLY_LIGHT:
+                    case SPELL_PR_HEAL:
+                    case SPELL_SH_HEALING_WAVE:
                         pTarget = DoSelectLowestHpFriendly(MaxRangeForSpell(SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].spell), 50000);
                     break;
-                    case SPELL_BUFF_ALLY:
+                    case SPELL_DR_LIFEBLOOM:
+                        if (m_creature->GetHealth() < m_creature->GetMaxHealth() - 50000)
+                             pTarget = m_creature;
+                    break;
+                    case SPELL_DR_THORNS:
                     {
                         std::list<Creature*> lTempList = DoFindFriendlyMissingBuff(MaxRangeForSpell(SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].spell), SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].spell);
                         if (!lTempList.empty())
                             pTarget = *(lTempList.begin());
                     }
                     break;
-                    case SPELL_HEAL_SELF:
-                    case SPELL_BUFF_SELF:
-                    case SPELL_TRAP_SELF:
-                    case SPELL_TOTEM_SELF:
-                        switch(SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].spell)
-                        {
-                            case SPELL_WR_WHIRLWIND:
-                            case SPELL_PA_CONSECRATION:
-                                if (m_creature->getVictim() && m_creature->GetDistance(m_creature->getVictim()) > 5)
-                                    return;
-                            break;
-                            case SPELL_HU_EXPLOSIVE_TRAP:
-                            case SPELL_HU_FREEZING_TRAP:
-                            case SPELL_HU_SNAKE_TRAP:
-                                //attempt find go summoned from spell (casted by m_creature)
-                                GameObject* pGo = m_creature->GetGameObject(SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].spell); // TODO : Not work ! maybe core Bug
-
-                                //if we have a pGo, we need to wait (only one trap at a time)
-                                if (pGo)
-                                    return;
-                        }
+                    case SPELL_PR_PAIN_SUPP:
                         pTarget = m_creature;
                     break;
-                    case SPELL_BUFF_VICTIM:
-                    case SPELL_DAMAGE_VICTIM:
-                        pTarget = m_creature->getVictim();
+                    case SPELL_WR_SPELL_REFLECT:
+                        pTarget = m_creature;
                     break;
-                    case SPELL_BUFF_ENEMY:
-                    case SPELL_DAMAGE_ENEMY:
-                    case SPELL_CONTROL_ENEMY:
-                    {
+                    case SPELL_PA_CONSECRATION:
+                    case SPELL_PA_AVENGING_WRATH:
+                    case SPELL_WR_WHIRLWIND:
+                    case SPELL_PR_PSYCHIC_SCREAM:
+                    case SPELL_SH_FIRE_NOVA:
+                    case SPELL_RO_SLICE_DICE:
+                        if (m_creature->getVictim() && m_creature->GetDistance(m_creature->getVictim()) < 5)
+                            pTarget = m_creature;
+                    break;
+                    case SPELL_HU_EXPLOSIVE_TRAP:
+                    case SPELL_HU_FREEZING_TRAP:
+                    case SPELL_HU_SNAKE_TRAP:
+                        if (m_creature->getVictim() && m_creature->GetDistance(m_creature->getVictim()) < 5)
+                        {
+                            //attempt find go summoned from spell (casted by m_creature)
+                            GameObject* pGo = m_creature->GetGameObject(SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].spell); // TODO : Not work ! maybe core Bug
+
+                            //if we have a pGo, we need to wait (only one trap at a time)
+                            if (!pGo)
+                                pTarget = m_creature;
+                        }
+                    break;
+                    case SPELL_DK_MARK_OF_BLOOD:
+                    case SPELL_WR_MORTAL_STRIKE:
+                    case SPELL_RO_WOUND_POISON:
+                        if (m_creature->getVictim() && m_creature->GetDistance(m_creature->getVictim()) < 5)
+                            pTarget = m_creature->getVictim();
+                    break;
+                    case SPELL_WL_CURSE_OF_DOOM:
+                    case SPELL_RO_BLIND:
+                    case SPELL_DK_DEATH_AND_DECAY:
+                    case SPELL_DK_PLAGUE_STRIKE:
+                    case SPELL_WL_UNSTABLE_AFFL:
+                    case SPELL_DR_MOONFIRE:
+                    case SPELL_PR_MIND_BLAST:
+                    case SPELL_PR_SW_DEATH:
+                    case SPELL_SH_CHAIN_LIGHT:
+                    case SPELL_MG_FIREBALL:
+                    case SPELL_MG_FROST_NOVA:
+                    case SPELL_MG_FROSTBOLT:
+                    case SPELL_MG_ICE_LANCE:
+                    case SPELL_WL_RAIN_OF_FIRE:
+                    case SPELL_PR_MIND_CONTROL:
                         pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
-                    }
                     break;
                 }
                 if (pTarget && DoCastSpellIfCan(pTarget, SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].spell) == CAST_OK)
@@ -507,8 +514,6 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
                 m_uiPhase = PHASE_SIPHON_SOUL;
             break;
         }
-
-
     }
 
     float MaxRangeForSpell(uint32 uiSpellId)
@@ -525,7 +530,6 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
         //not valid, so return
         if (!pSpellRange)
             return 0.0f;
-        //error_log("SD2: Spell: %u Range: %f", uiSpellId, pSpellRange->maxRange);
 
         return pSpellRange->maxRange;
     }
