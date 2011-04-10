@@ -102,14 +102,15 @@ struct TransformFields
 {
     int32  say;
     uint32 spell;
+    float  orientation;
 };
 
 static TransformFields Transform[4] =
 {
-    {SAY_BEAR_TRANSFORM, SPELL_SHAPE_OF_THE_BEAR},
-    {SAY_EAGLE_TRANSFORM, SPELL_SHAPE_OF_THE_EAGLE},
-    {SAY_LYNX_TRANSFORM, SPELL_SHAPE_OF_THE_LYNX},
-    {SAY_DRAGONHAWK_TRANSFORM, SPELL_SHAPE_OF_THE_DRAGONHAWK}
+    {SAY_BEAR_TRANSFORM, SPELL_SHAPE_OF_THE_BEAR, 6.090518f},
+    {SAY_EAGLE_TRANSFORM, SPELL_SHAPE_OF_THE_EAGLE, 2.901801f},
+    {SAY_LYNX_TRANSFORM, SPELL_SHAPE_OF_THE_LYNX, 0.790649f},
+    {SAY_DRAGONHAWK_TRANSFORM, SPELL_SHAPE_OF_THE_DRAGONHAWK, 2.66137f}
 };
 
 struct SpiritInfoFields
@@ -137,12 +138,15 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
     ScriptedInstance* m_pInstance;
 
     uint64 m_auiAddGUIDs[4];
-
-    uint8 m_uiPhase;
+    uint8  m_uiPhase;
+    uint32 m_uiWhirlwindTimer;
+    uint32 m_uiGrievousThrowTimer;
 
     void Reset()
     {
         m_uiPhase = PHASE_TROLL;
+        m_uiWhirlwindTimer = 20000;
+        m_uiGrievousThrowTimer = 25000;
         InitializeAdds();
     }
 
@@ -174,9 +178,35 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        ChangePhaseIfNeed();
-    
+        //wait if already casting
+        if (!m_creature->IsNonMeleeSpellCasted(false))
+             ChangePhaseIfNeed();
 
+        switch(m_uiPhase)
+        {
+            case PHASE_TROLL:
+                if (m_uiWhirlwindTimer <= diff)
+                    {
+                        DoCast(m_creature, SPELL_WHIRLWIND);
+                        m_uiWhirlwindTimer = 10000;
+                    } else m_uiWhirlwindTimer -= diff;
+                if (m_uiGrievousThrowTimer <= diff)
+                {
+                    if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
+                        DoCast(pTarget, SPELL_GRIEVOUS_THROW, false);
+                    m_uiGrievousThrowTimer = 10000;
+                } else m_uiGrievousThrowTimer -= diff;
+            break;
+            case PHASE_BEAR:
+            break;
+            case PHASE_EAGLE:
+            break;
+            case PHASE_LYNX:
+            break;
+            case PHASE_DRAGONHAWK:
+            break;
+        }
+    
 
 
 
@@ -198,10 +228,14 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
         if (Creature* pAdd = m_creature->GetMap()->GetCreature(m_auiAddGUIDs[m_uiPhase-1]))
             pAdd->SetStandState(UNIT_STAND_STATE_DEAD);
 
-        if (Creature* pAdd = m_creature->GetMap()->GetCreature(m_auiAddGUIDs[m_uiPhase]))
-            pAdd->CastSpell(m_creature, SPELL_SIPHON_SOUL, false);
+        if (m_uiPhase != PHASE_TROLL)
+            m_creature->RemoveAurasDueToSpell(Transform[m_uiPhase - 1].spell);
 
-        m_creature->NearTeleportTo(CENTER_X, CENTER_Y, CENTER_Z, m_creature->GetOrientation());
+        m_creature->NearTeleportTo(CENTER_X, CENTER_Y, CENTER_Z, Transform[m_uiPhase].orientation);
+
+        if (Creature* pAdd = m_creature->GetMap()->GetCreature(m_auiAddGUIDs[m_uiPhase]))
+            m_creature->CastSpell(pAdd, SPELL_SIPHON_SOUL, true);
+
         DoScriptText(Transform[m_uiPhase].say, m_creature);
         m_creature->CastSpell(m_creature, Transform[m_uiPhase].spell, false);
         DoResetThreat();
