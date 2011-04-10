@@ -84,6 +84,11 @@ enum
     WEAPON_ID                       = 33975
 };
 
+//coords for going for changing form
+const float CENTER_X = 120.148811f;
+const float CENTER_Y = 703.713684f;
+const float CENTER_Z = 45.111477f;
+
 enum Phases
 {
     PHASE_TROLL,
@@ -107,10 +112,19 @@ static TransformFields Transform[4] =
     {SAY_DRAGONHAWK_TRANSFORM, SPELL_SHAPE_OF_THE_DRAGONHAWK}
 };
 
-//coords for going for changing form
-const float CENTER_X = 120.148811f;
-const float CENTER_Y = 703.713684f;
-const float CENTER_Z = 45.111477f;
+struct SpiritInfoFields
+{
+    uint32 entry;
+    float  x, y, z, orient;
+};
+
+static SpiritInfoFields SpiritInfo[4] =
+{
+    {23878, 147.87f, 706.51f, 45.11f, 3.04f}, //Amani Bear Spirit
+    {23880, 88.950f, 705.49f, 45.11f, 6.11f}, //Amani Eagle Spirit
+    {23877, 137.23f, 725.98f, 45.11f, 3.71f}, //Amani Lynx Spirit
+    {23879, 104.29f, 726.43f, 45.11f, 5.43f}  //Amani Dragonhawk Spirit
+};
 
 struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
 {
@@ -122,11 +136,14 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
 
+    uint64 m_auiAddGUIDs[4];
+
     uint8 m_uiPhase;
 
     void Reset()
     {
         m_uiPhase = PHASE_TROLL;
+        InitializeAdds();
     }
 
     void Aggro(Unit* pWho)
@@ -145,6 +162,9 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
 
         if (!m_pInstance)
             return;
+
+        if (Creature* pAdd = m_creature->GetMap()->GetCreature(m_auiAddGUIDs[3]))
+            pAdd->SetStandState(UNIT_STAND_STATE_DEAD);
 
         m_pInstance->SetData(TYPE_ZULJIN, DONE);
     }
@@ -175,6 +195,12 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
         if (m_creature->GetHealthPercent() > (4 - m_uiPhase) * 20.0f)
             return;
 
+        if (Creature* pAdd = m_creature->GetMap()->GetCreature(m_auiAddGUIDs[m_uiPhase-1]))
+            pAdd->SetStandState(UNIT_STAND_STATE_DEAD);
+
+        if (Creature* pAdd = m_creature->GetMap()->GetCreature(m_auiAddGUIDs[m_uiPhase]))
+            pAdd->CastSpell(m_creature, SPELL_SIPHON_SOUL, false);
+
         m_creature->NearTeleportTo(CENTER_X, CENTER_Y, CENTER_Z, m_creature->GetOrientation());
         DoScriptText(Transform[m_uiPhase].say, m_creature);
         m_creature->CastSpell(m_creature, Transform[m_uiPhase].spell, false);
@@ -183,6 +209,31 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
         if (!pTarget) {EnterEvadeMode();return;}
         AttackStart(pTarget);
         m_uiPhase++;
+    }
+
+    void InitializeAdds()
+    {
+        //not if m_creature are dead, so avoid
+        if (!m_creature->isAlive())
+            return;
+
+        //summon or revive mobs from the list
+        for(uint8 i = 0; i < 4; ++i)
+        {
+            Creature* pAdd = NULL;
+            if (pAdd = m_creature->GetMap()->GetCreature(m_auiAddGUIDs[i]))
+            {
+                // revive
+                if (pAdd->getStandState() == UNIT_STAND_STATE_DEAD)
+                    pAdd->SetStandState(UNIT_STAND_STATE_STAND);
+                continue;
+            }
+            if (pAdd = m_creature->SummonCreature(SpiritInfo[i].entry, SpiritInfo[i].x, SpiritInfo[i].y, SpiritInfo[i].z, SpiritInfo[i].orient, TEMPSUMMON_CORPSE_DESPAWN, 0))
+            {
+                m_auiAddGUIDs[i] = pAdd->GetGUID();
+                pAdd->CastSpell(pAdd, SPELL_SPIRIT_AURA, true);
+            }
+        }
     }
 };
 
