@@ -81,13 +81,30 @@ enum
 
     SPELL_BERSERK                   = 45078,
 
-    WEAPON_ID                       = 33975,
+    WEAPON_ID                       = 33975
+};
 
-    PHASE_BEAR                      = 0,
-    PHASE_EAGLE                     = 1,
-    PHASE_LYNX                      = 2,
-    PHASE_DRAGONHAWK                = 3,
-    PHASE_TROLL                     = 4
+enum Phases
+{
+    PHASE_TROLL,
+    PHASE_BEAR,
+    PHASE_EAGLE,
+    PHASE_LYNX,
+    PHASE_DRAGONHAWK
+};
+
+struct TransformFields
+{
+    int32  say;
+    uint32 spell;
+};
+
+static TransformFields Transform[4] =
+{
+    {SAY_BEAR_TRANSFORM, SPELL_SHAPE_OF_THE_BEAR},
+    {SAY_EAGLE_TRANSFORM, SPELL_SHAPE_OF_THE_EAGLE},
+    {SAY_LYNX_TRANSFORM, SPELL_SHAPE_OF_THE_LYNX},
+    {SAY_DRAGONHAWK_TRANSFORM, SPELL_SHAPE_OF_THE_DRAGONHAWK}
 };
 
 //coords for going for changing form
@@ -105,8 +122,11 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
 
+    uint8 m_uiPhase;
+
     void Reset()
     {
+        m_uiPhase = PHASE_TROLL;
     }
 
     void Aggro(Unit* pWho)
@@ -134,7 +154,35 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
+        ChangePhaseIfNeed();
+    
+
+
+
+
+
+
+
+
         DoMeleeAttackIfReady();
+    }
+
+    void ChangePhaseIfNeed()
+    {
+        if (m_uiPhase == PHASE_DRAGONHAWK)
+            return;
+
+        if (m_creature->GetHealthPercent() > (4 - m_uiPhase) * 20.0f)
+            return;
+
+        m_creature->NearTeleportTo(CENTER_X, CENTER_Y, CENTER_Z, m_creature->GetOrientation());
+        DoScriptText(Transform[m_uiPhase].say, m_creature);
+        m_creature->CastSpell(m_creature, Transform[m_uiPhase].spell, false);
+        DoResetThreat();
+        Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
+        if (!pTarget) {EnterEvadeMode();return;}
+        AttackStart(pTarget);
+        m_uiPhase++;
     }
 };
 
