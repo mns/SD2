@@ -16,8 +16,8 @@
 
 /* ScriptData
 SDName: Boss_Malacrass
-SD%Complete: 10
-SDComment: Contain adds and adds selection
+SD%Complete: 90
+SDComment: Cooldowns need check
 SDCategory: Zul'Aman
 EndScriptData */
 
@@ -556,6 +556,13 @@ struct MANGOS_DLL_DECL boss_malacrass_addAI : public ScriptedAI
     void Aggro(Unit* pWho)
     {
         m_creature->SetInCombatWithZone();
+
+        if (!m_pInstance)
+            return;
+
+        if (Creature* pMalacrass = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_MALACRASS)))
+            if (!pMalacrass->getVictim())
+                pMalacrass->AI()->AttackStart(pWho);
     }
 
     void MoveInLineOfSight(Unit* pWho)
