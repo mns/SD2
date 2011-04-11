@@ -141,12 +141,14 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
     uint8  m_uiPhase;
     uint32 m_uiWhirlwindTimer;
     uint32 m_uiGrievousThrowTimer;
+    uint32 m_uiCreepingParalysisTimer;
 
     void Reset()
     {
         m_uiPhase = PHASE_TROLL;
         m_uiWhirlwindTimer = 20000;
         m_uiGrievousThrowTimer = 25000;
+        m_uiCreepingParalysisTimer = 5000;
         InitializeAdds();
     }
 
@@ -186,18 +188,37 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
         {
             case PHASE_TROLL:
                 if (m_uiWhirlwindTimer <= diff)
-                    {
-                        DoCast(m_creature, SPELL_WHIRLWIND);
-                        m_uiWhirlwindTimer = 10000;
-                    } else m_uiWhirlwindTimer -= diff;
+                {
+                    DoCast(m_creature, SPELL_WHIRLWIND);
+                    m_uiWhirlwindTimer = 10000;
+                }else m_uiWhirlwindTimer -= diff;
+
                 if (m_uiGrievousThrowTimer <= diff)
                 {
                     if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
                         DoCast(pTarget, SPELL_GRIEVOUS_THROW, false);
                     m_uiGrievousThrowTimer = 10000;
-                } else m_uiGrievousThrowTimer -= diff;
+                }else m_uiGrievousThrowTimer -= diff;
             break;
             case PHASE_BEAR:
+            {
+                if (m_uiCreepingParalysisTimer <= diff)
+                {
+                    DoCast(m_creature, SPELL_CREEPING_PARALYSIS);
+                    m_uiCreepingParalysisTimer = 10000;
+                }else m_uiCreepingParalysisTimer -= diff;
+
+                if (!m_creature->getVictim())
+                    break;
+
+                uint32 TargetHealthTemp = m_creature->getVictim()->GetHealth();
+
+                if (!DoMeleeAttackIfReady())
+                    break;
+
+                if (m_creature->getVictim()->GetHealth() == TargetHealthTemp)
+                    DoCast(m_creature->getVictim(), SPELL_OVERPOWER, false);
+            }
             break;
             case PHASE_EAGLE:
             break;
@@ -213,8 +234,8 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
 
 
 
-
-        DoMeleeAttackIfReady();
+        if (m_uiPhase != PHASE_BEAR)
+            DoMeleeAttackIfReady();
     }
 
     void ChangePhaseIfNeed()
