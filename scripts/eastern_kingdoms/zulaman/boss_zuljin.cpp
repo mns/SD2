@@ -138,18 +138,22 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
     ScriptedInstance* m_pInstance;
 
     uint64 m_auiAddGUIDs[4];
+
     uint8  m_uiPhase;
     uint32 m_uiWhirlwindTimer;
     uint32 m_uiGrievousThrowTimer;
     uint32 m_uiCreepingParalysisTimer;
+    std::list<uint64> m_uiFeatherVortexGUIDs;
 
     void Reset()
     {
-        m_uiPhase = PHASE_TROLL;
-        m_uiWhirlwindTimer = 20000;
-        m_uiGrievousThrowTimer = 25000;
-        m_uiCreepingParalysisTimer = 5000;
         InitializeAdds();
+        DespawnFeatherVortexs();
+
+        m_uiPhase = PHASE_TROLL;
+        m_uiWhirlwindTimer = urand(10000,20000);
+        m_uiGrievousThrowTimer = 5000;
+        m_uiCreepingParalysisTimer = 5000;
     }
 
     void Aggro(Unit* pWho)
@@ -175,6 +179,12 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
         m_pInstance->SetData(TYPE_ZULJIN, DONE);
     }
 
+    void JustSummoned(Creature* pSummoned)
+    {
+        if (pSummoned->GetEntry() == CREATURE_FEATHER_VORTEX)
+            m_uiFeatherVortexGUIDs.push_back(pSummoned->GetGUID());
+    }
+
     void UpdateAI(const uint32 diff)
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -190,7 +200,7 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
                 if (m_uiWhirlwindTimer <= diff)
                 {
                     DoCast(m_creature, SPELL_WHIRLWIND);
-                    m_uiWhirlwindTimer = 10000;
+                    m_uiWhirlwindTimer = 10000 + urand(0,20000);
                 }else m_uiWhirlwindTimer -= diff;
 
                 if (m_uiGrievousThrowTimer <= diff)
@@ -199,13 +209,15 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
                         DoCast(pTarget, SPELL_GRIEVOUS_THROW, false);
                     m_uiGrievousThrowTimer = 10000;
                 }else m_uiGrievousThrowTimer -= diff;
+
+                DoMeleeAttackIfReady();
             break;
             case PHASE_BEAR:
             {
                 if (m_uiCreepingParalysisTimer <= diff)
                 {
                     DoCast(m_creature, SPELL_CREEPING_PARALYSIS);
-                    m_uiCreepingParalysisTimer = 10000;
+                    m_uiCreepingParalysisTimer = 20000;
                 }else m_uiCreepingParalysisTimer -= diff;
 
                 if (!m_creature->getVictim())
@@ -220,11 +232,11 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
                     DoCast(m_creature->getVictim(), SPELL_OVERPOWER, false);
             }
             break;
-            case PHASE_EAGLE:
-            break;
             case PHASE_LYNX:
+                DoMeleeAttackIfReady();
             break;
             case PHASE_DRAGONHAWK:
+                DoMeleeAttackIfReady();
             break;
         }
     
@@ -234,8 +246,6 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
 
 
 
-        if (m_uiPhase != PHASE_BEAR)
-            DoMeleeAttackIfReady();
     }
 
     void ChangePhaseIfNeed()
@@ -252,6 +262,7 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
         if (m_uiPhase != PHASE_TROLL)
             m_creature->RemoveAurasDueToSpell(Transform[m_uiPhase - 1].spell);
 
+        m_creature->GetMotionMaster()->Clear();
         m_creature->NearTeleportTo(CENTER_X, CENTER_Y, CENTER_Z, Transform[m_uiPhase].orientation);
 
         if (Creature* pAdd = m_creature->GetMap()->GetCreature(m_auiAddGUIDs[m_uiPhase]))
@@ -260,10 +271,24 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
         DoScriptText(Transform[m_uiPhase].say, m_creature);
         m_creature->CastSpell(m_creature, Transform[m_uiPhase].spell, false);
         DoResetThreat();
-        Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
-        if (!pTarget) {EnterEvadeMode();return;}
-        AttackStart(pTarget);
         m_uiPhase++;
+        if (m_uiPhase != PHASE_EAGLE)
+        {
+            Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
+            if (!pTarget) {EnterEvadeMode();return;}
+            m_creature->GetMotionMaster()->MoveChase(pTarget);
+            AttackStart(pTarget);
+        }
+        if (m_uiPhase == PHASE_EAGLE)
+        {
+            m_creature->CastSpell(m_creature, SPELL_ENERGY_STORM, true);
+            m_creature->CastSpell(m_creature, SPELL_SUMMON_CYCLONE, true);
+        }
+        if (m_uiPhase == PHASE_LYNX)
+        {
+            m_creature->RemoveAurasDueToSpell(SPELL_ENERGY_STORM);
+            DespawnFeatherVortexs();
+        }
     }
 
     void InitializeAdds()
@@ -290,11 +315,75 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
             }
         }
     }
+
+    void DespawnFeatherVortexs()
+    {
+        for(std::list<uint64>::iterator itr = m_uiFeatherVortexGUIDs.begin(); itr != m_uiFeatherVortexGUIDs.end(); ++itr)
+        {
+            if (Creature* pFeatherVortex = m_creature->GetMap()->GetCreature((*itr)))
+                pFeatherVortex->ForcedDespawn();
+        }
+        m_uiFeatherVortexGUIDs.clear();
+    }
 };
 
 CreatureAI* GetAI_boss_zuljin(Creature* pCreature)
 {
     return new boss_zuljinAI(pCreature);
+}
+
+struct MANGOS_DLL_DECL mob_zuljin_vortexAI : public ScriptedAI
+{
+    mob_zuljin_vortexAI(Creature* pCreature) : ScriptedAI(pCreature) { Reset();    }
+
+    void Reset()
+    {
+        m_creature->CastSpell(m_creature, SPELL_CYCLONE_PASSIVE, true);
+        m_creature->CastSpell(m_creature, SPELL_CYCLONE_VISUAL, true);
+    }
+
+    void MoveInLineOfSight(Unit* pWho)
+    {
+        if (pWho->GetTypeId() != TYPEID_PLAYER)
+            return;
+        if (m_creature->GetDistance(pWho)<=4)
+            AttackStart(pWho);
+    }
+
+    void SpellHit(Unit *caster, const SpellEntry *spell)
+    {
+        if (caster->GetTypeId() != TYPEID_PLAYER)
+            return;
+        if (spell->Id == SPELL_ZAP_INFORM)
+        {
+            AttackStart(caster);
+            m_creature->CastSpell(caster, SPELL_ZAP_DAMAGE, true);
+        }
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() != POINT_MOTION_TYPE)
+            m_creature->GetMotionMaster()->MovePoint(0, urand(100, 140), urand(696, 730), CENTER_Z);
+    }
+
+    void AttackStart(Unit* pWho)
+    {
+        if (!pWho)
+            return;
+
+        if (m_creature->Attack(pWho, false))
+        {
+            m_creature->AddThreat(pWho);
+            m_creature->SetInCombatWith(pWho);
+            pWho->SetInCombatWith(m_creature);
+        }
+    }
+};
+
+CreatureAI* GetAI_mob_zuljin_vortex(Creature* pCreature)
+{
+    return new mob_zuljin_vortexAI(pCreature);
 }
 
 void AddSC_boss_zuljin()
@@ -303,5 +392,10 @@ void AddSC_boss_zuljin()
     newscript = new Script;
     newscript->Name = "boss_zuljin";
     newscript->GetAI = &GetAI_boss_zuljin;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_zuljin_vortex";
+    newscript->GetAI = &GetAI_mob_zuljin_vortex;
     newscript->RegisterSelf();
 }
