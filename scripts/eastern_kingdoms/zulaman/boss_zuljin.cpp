@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: Boss_Zuljin
-SD%Complete: 0
+SD%Complete: 95
 SDComment:
 SDCategory: Zul'Aman
 EndScriptData */
@@ -120,10 +120,10 @@ struct SpiritInfoFields
 
 static SpiritInfoFields SpiritInfo[4] =
 {
-    {23878, 147.87f, 706.51f, 45.11f, 3.04f}, //Amani Bear Spirit
-    {23880, 88.950f, 705.49f, 45.11f, 6.11f}, //Amani Eagle Spirit
-    {23877, 137.23f, 725.98f, 45.11f, 3.71f}, //Amani Lynx Spirit
-    {23879, 104.29f, 726.43f, 45.11f, 5.43f}  //Amani Dragonhawk Spirit
+    {23878, 137.23f, 725.98f, 45.11f, 3.71f}, //Amani Bear Spirit
+    {23880, 104.29f, 726.43f, 45.11f, 5.43f}, //Amani Eagle Spirit
+    {23877, 147.87f, 706.51f, 45.11f, 3.04f}, //Amani Lynx Spirit
+    {23879, 88.950f, 705.49f, 45.11f, 6.11f}  //Amani Dragonhawk Spirit
 };
 
 struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
