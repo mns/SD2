@@ -81,13 +81,23 @@ enum
 
     SPELL_BERSERK                   = 45078,
 
-    WEAPON_ID                       = 33975
+    WEAPON_ID                       = 33975,
+
+    NPC_AMANISHI_LOOKOUT            = 24175,
+    MAX_GUARDS                      = 10
 };
 
 //coords for going for changing form
 const float CENTER_X = 120.148811f;
 const float CENTER_Y = 703.713684f;
 const float CENTER_Z = 45.111477f;
+
+//Guards starting positions in left hand of Boss
+const float GUARD_POS_X       = 102.0f;
+const float GUARD_POS_Y       = 695.0f;
+const float GUARD_POS_Z       = 45.1115f;
+const float GUARD_ORIENT      = 1.580600f;
+const float GUARD_SPACE       = 4.0f;
 
 enum Phases
 {
@@ -136,7 +146,8 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
 
-    uint64 m_auiAddGUIDs[4];
+    uint64 m_auiSpiritGUIDs[4];
+    uint64 m_auiGuardGUIDs[MAX_GUARDS];
     std::list<uint64> m_uiFeatherVortexGUIDs;
     std::list<uint64> m_uiColumnOfFireGUIDs;
 
@@ -164,7 +175,7 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
 
     void Reset()
     {
-        InitializeAdds();
+        InitializeSpirits();
         DespawnFeatherVortexs();
         DespawnColumnOfFires();
 
@@ -187,6 +198,7 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
     void Aggro(Unit* pWho)
     {
         DoScriptText(SAY_AGGRO, m_creature);
+        InitializeGuards(pWho);
     }
 
     void KilledUnit(Unit* pVictim)
@@ -203,8 +215,8 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
         if (!m_pInstance)
             return;
 
-        if (Creature* pAdd = m_creature->GetMap()->GetCreature(m_auiAddGUIDs[3]))
-            pAdd->SetStandState(UNIT_STAND_STATE_DEAD);
+        if (Creature* pSpirit = m_creature->GetMap()->GetCreature(m_auiSpiritGUIDs[3]))
+            pSpirit->SetStandState(UNIT_STAND_STATE_DEAD);
 
         m_pInstance->SetData(TYPE_ZULJIN, DONE);
     }
@@ -245,10 +257,10 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
                     }
                 break;
                 case 1:
-                    if (Creature* pAdd = m_creature->GetMap()->GetCreature(m_auiAddGUIDs[m_uiPhase-1]))
+                    if (Creature* pSpirit = m_creature->GetMap()->GetCreature(m_auiSpiritGUIDs[m_uiPhase-1]))
                     {
-                        m_creature->SetInFront(pAdd);
-                        m_creature->CastSpell(pAdd, SPELL_SIPHON_SOUL, true);
+                        m_creature->SetInFront(pSpirit);
+                        m_creature->CastSpell(pSpirit, SPELL_SIPHON_SOUL, true);
                     }
                     DoScriptText(Transform[m_uiPhase-1].say, m_creature);
                     m_uiTransformTimer = 2000;
@@ -449,8 +461,8 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
         m_uiTransformParts = 0;
         m_uiTransformTimer = 0;
 
-        if (Creature* pAdd = m_creature->GetMap()->GetCreature(m_auiAddGUIDs[m_uiPhase-1]))
-            pAdd->SetStandState(UNIT_STAND_STATE_DEAD);
+        if (Creature* pSpirit = m_creature->GetMap()->GetCreature(m_auiSpiritGUIDs[m_uiPhase-1]))
+            pSpirit->SetStandState(UNIT_STAND_STATE_DEAD);
 
         if (m_uiPhase != PHASE_TROLL)
             m_creature->RemoveAurasDueToSpell(Transform[m_uiPhase - 1].spell);
@@ -467,7 +479,7 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
         }
     }
 
-    void InitializeAdds()
+    void InitializeSpirits()
     {
         //not if m_creature are dead, so avoid
         if (!m_creature->isAlive())
@@ -476,18 +488,49 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
         //summon or revive mobs from the list
         for(uint8 i = 0; i < 4; ++i)
         {
-            Creature* pAdd = NULL;
-            if (pAdd = m_creature->GetMap()->GetCreature(m_auiAddGUIDs[i]))
+            Creature* pSpirit = NULL;
+            if (pSpirit = m_creature->GetMap()->GetCreature(m_auiSpiritGUIDs[i]))
             {
                 // revive
-                if (pAdd->getStandState() == UNIT_STAND_STATE_DEAD)
-                    pAdd->SetStandState(UNIT_STAND_STATE_STAND);
+                if (pSpirit->getStandState() == UNIT_STAND_STATE_DEAD)
+                    pSpirit->SetStandState(UNIT_STAND_STATE_STAND);
                 continue;
             }
-            if (pAdd = m_creature->SummonCreature(SpiritInfo[i].entry, SpiritInfo[i].x, SpiritInfo[i].y, SpiritInfo[i].z, SpiritInfo[i].orient, TEMPSUMMON_CORPSE_DESPAWN, 0))
+            if (pSpirit = m_creature->SummonCreature(SpiritInfo[i].entry, SpiritInfo[i].x, SpiritInfo[i].y, SpiritInfo[i].z, SpiritInfo[i].orient, TEMPSUMMON_DEAD_DESPAWN, 0))
             {
-                m_auiAddGUIDs[i] = pAdd->GetGUID();
-                pAdd->CastSpell(pAdd, SPELL_SPIRIT_AURA, true);
+                m_auiSpiritGUIDs[i] = pSpirit->GetGUID();
+                pSpirit->CastSpell(pSpirit, SPELL_SPIRIT_AURA, true);
+            }
+        }
+    }
+
+    void InitializeGuards(Unit* pWho)
+    {
+        //not if m_creature are dead, so avoid
+        if (!m_creature->isAlive())
+            return;
+
+        //summon guards
+        for(uint8 i = 0; i < MAX_GUARDS; ++i)
+        {
+            Creature* pGuard = NULL;
+            if (m_auiGuardGUIDs[i])
+            {
+                if (pGuard = m_creature->GetMap()->GetCreature(m_auiGuardGUIDs[i]))
+                {
+                    if (pGuard->isAlive())
+                    {
+                        if (pWho)
+                            pGuard->AddThreat(pWho);
+                        continue;
+                    }
+                }
+                if (pGuard = m_creature->SummonCreature(NPC_AMANISHI_LOOKOUT, GUARD_POS_X+(GUARD_SPACE*i), GUARD_POS_Y, GUARD_POS_Z, GUARD_ORIENT, TEMPSUMMON_CORPSE_DESPAWN, 5000))
+                {
+                    m_auiGuardGUIDs[i] = pGuard->GetGUID();
+                    if (pWho)
+                        pGuard->AddThreat(pWho);
+                }
             }
         }
     }
