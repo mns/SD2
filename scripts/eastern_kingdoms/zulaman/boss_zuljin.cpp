@@ -57,7 +57,7 @@ enum
 
     // Lynx Form
     SPELL_CLAW_RAGE_HASTE           = 42583,
-    SPELL_CLAW_RAGE_TRIGGER         = 43149,
+    SPELL_CLAW_RAGE_TRIGGER         = 43149,                // TODO: Need core fix for direct use (this so cast 43150 too self!)
     SPELL_CLAW_RAGE_DAMAGE          = 43150,
     SPELL_LYNX_RUSH_HASTE           = 43152,
     SPELL_LYNX_RUSH_DAMAGE          = 43153,
@@ -138,12 +138,23 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
     ScriptedInstance* m_pInstance;
 
     uint64 m_auiAddGUIDs[4];
+    std::list<uint64> m_uiFeatherVortexGUIDs;
 
     uint8  m_uiPhase;
     uint32 m_uiWhirlwindTimer;
     uint32 m_uiGrievousThrowTimer;
     uint32 m_uiCreepingParalysisTimer;
-    std::list<uint64> m_uiFeatherVortexGUIDs;
+    uint32 m_uiClawRageTimer;
+    uint32 m_uiClawRageIntervalTimer;
+    uint8  m_uiClawRageCounter;
+    bool   m_uiClawRageFinished;
+    uint64 m_uiClawRageVictimGUID;
+    uint32 m_uiLynxRushTimer;
+    bool   m_uiLynxRushFinished;
+    uint32 m_uiLynxRushIntervalTimer;
+    uint8  m_uiLynxRushCounter;
+    uint64 m_uiLynxRushVictimGUID;
+
 
     void Reset()
     {
@@ -154,6 +165,12 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
         m_uiWhirlwindTimer = urand(10000,20000);
         m_uiGrievousThrowTimer = 5000;
         m_uiCreepingParalysisTimer = 5000;
+        m_uiClawRageTimer = urand(10000, 15000);
+        m_uiLynxRushTimer = 40000; //max timer
+        m_uiLynxRushVictimGUID = 0;
+        m_uiClawRageFinished = true;
+        m_uiLynxRushFinished = true;
+
     }
 
     void Aggro(Unit* pWho)
@@ -233,7 +250,101 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
             }
             break;
             case PHASE_LYNX:
-                DoMeleeAttackIfReady();
+                if (m_uiClawRageTimer <= diff)
+                {
+                    Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1);
+                    if (!pTarget)
+                        pTarget = m_creature->getVictim(); // for solo fight !
+                    if (!pTarget) {EnterEvadeMode();return;}
+                    m_uiClawRageVictimGUID = pTarget->GetGUID();
+                    m_creature->getThreatManager().addThreat(pTarget, 500000.0f);  // for nice graphical orientation and less scripting
+                    if (pTarget != m_creature->getVictim())
+                    {
+                        m_creature->GetMotionMaster()->MoveChase(pTarget);
+                        m_creature->CastSpell(pTarget, SPELL_CLAW_RAGE_HASTE, true);
+                    }
+                    m_uiClawRageIntervalTimer = 1000; // 1sec wait before starting cast SPELL_CLAW_RAGE_DAMAGE
+                    m_uiClawRageCounter = 0;
+                    m_uiClawRageFinished = false;
+                    m_uiClawRageTimer = 40000; //max timer
+                    m_uiLynxRushTimer = urand(10000, 20000);
+                }else m_uiClawRageTimer -= diff;
+
+                if (!m_uiClawRageFinished)
+                {
+                    if (m_uiClawRageIntervalTimer <= diff)
+                    {
+                        if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CLAW_RAGE_DAMAGE) == CAST_OK)
+                            m_uiClawRageCounter++;
+                        m_uiClawRageIntervalTimer = 500;
+                    }else m_uiClawRageIntervalTimer -= diff;
+
+                    if (m_uiClawRageCounter > 11)
+                    {
+                        if (m_creature->getVictim()->GetGUID() == m_uiClawRageVictimGUID) //Do not subtract threat if random target is dead.
+                            m_creature->getThreatManager().addThreat(m_creature->getVictim(), -500000.0f);
+                        if (m_creature->HasAura(SPELL_CLAW_RAGE_HASTE))
+                            m_creature->RemoveAurasDueToSpell(SPELL_CLAW_RAGE_HASTE); // This aura prevent melee attacking !
+                        m_uiClawRageFinished = true;
+                    }
+                }
+
+                if (m_uiLynxRushTimer <= diff)
+                {
+                    m_uiLynxRushIntervalTimer = 0;
+                    m_uiLynxRushCounter = 0;
+                    m_uiLynxRushFinished = false;
+                    m_uiLynxRushTimer = 40000; //max timer
+                    m_uiClawRageTimer = urand(10000, 20000);
+                }else m_uiLynxRushTimer -= diff;
+
+                if (!m_uiLynxRushFinished && m_creature->CanReachWithMeleeAttack(m_creature->getVictim()))
+                {
+                    if (m_uiLynxRushIntervalTimer <= diff)
+                    {
+                        Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
+                        if (!pTarget) {EnterEvadeMode();return;}
+                        if (CanCast(pTarget, GetSpellStore()->LookupEntry(SPELL_LYNX_RUSH_DAMAGE), true))
+                        {
+                            if (m_uiLynxRushVictimGUID)
+                            {
+                                Unit* PriorTarget = m_creature->GetMap()->GetPlayer(m_uiLynxRushVictimGUID);
+                                if (PriorTarget && PriorTarget->isAlive())
+                                    m_creature->getThreatManager().addThreat(PriorTarget, -500000.0f); // Undo high threat
+                                m_uiLynxRushVictimGUID = 0;
+                            }
+
+                            Unit* pVictim = m_creature->getVictim();
+                            if (pTarget != pVictim)
+                            {
+                                m_uiLynxRushVictimGUID = pTarget->GetGUID();
+                                m_creature->getThreatManager().addThreat(pTarget, 500000.0f);  // for nice graphical orientation and less scripting
+                                m_creature->AI()->AttackStart(pTarget);
+                            }
+
+                            m_creature->CastSpell(pTarget, SPELL_LYNX_RUSH_DAMAGE, true);
+                            m_uiLynxRushCounter++;
+
+                            if (m_uiLynxRushCounter > 8)
+                            {
+                                if (m_uiLynxRushVictimGUID)
+                                {
+                                    Unit* PriorTarget = m_creature->GetMap()->GetPlayer(m_uiLynxRushVictimGUID);
+                                    if (PriorTarget && PriorTarget->isAlive())
+                                        m_creature->getThreatManager().addThreat(PriorTarget, -500000.0f); // Undo high threat
+                                    m_uiLynxRushVictimGUID = 0;
+                                }
+                                m_uiLynxRushFinished = true;
+                            }
+
+                            m_uiLynxRushIntervalTimer = 500;
+                        }
+                    }else m_uiLynxRushIntervalTimer -= diff;
+    
+                }
+
+                if (m_uiClawRageFinished && m_uiLynxRushFinished)
+                    DoMeleeAttackIfReady();
             break;
             case PHASE_DRAGONHAWK:
                 DoMeleeAttackIfReady();
