@@ -138,6 +138,7 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
 
     uint64 m_auiAddGUIDs[4];
     std::list<uint64> m_uiFeatherVortexGUIDs;
+    std::list<uint64> m_uiColumnOfFireGUIDs;
 
     uint8  m_uiPhase;
     bool   m_uiTransforming;
@@ -156,12 +157,16 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
     uint32 m_uiLynxRushIntervalTimer;
     uint8  m_uiLynxRushCounter;
     uint64 m_uiLynxRushVictimGUID;
+    uint32 m_uiFilameWhirlTimer;
+    uint32 m_uiFilameBreathTimer;
+    uint32 m_uiSummonPillarTimer;
 
 
     void Reset()
     {
         InitializeAdds();
         DespawnFeatherVortexs();
+        DespawnColumnOfFires();
 
         m_uiPhase = PHASE_TROLL;
         m_uiTransforming = false;
@@ -173,6 +178,9 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
         m_uiLynxRushVictimGUID = 0;
         m_uiClawRageFinished = true;
         m_uiLynxRushFinished = true;
+        m_uiFilameWhirlTimer = urand(15000, 20000);
+        m_uiFilameBreathTimer = m_uiFilameWhirlTimer+5000;
+        m_uiSummonPillarTimer = 15000;
 
     }
 
@@ -188,6 +196,8 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
 
     void JustDied(Unit* pKiller)
     {
+        DespawnColumnOfFires();
+
         DoScriptText(SAY_DEATH, m_creature);
 
         if (!m_pInstance)
@@ -203,6 +213,9 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
     {
         if (pSummoned->GetEntry() == CREATURE_FEATHER_VORTEX)
             m_uiFeatherVortexGUIDs.push_back(pSummoned->GetGUID());
+
+        if (pSummoned->GetEntry() == CREATURE_COLUMN_OF_FIRE)
+            m_uiColumnOfFireGUIDs.push_back(pSummoned->GetGUID());
     }
 
     void UpdateAI(const uint32 diff)
@@ -395,23 +408,33 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
                             m_uiLynxRushIntervalTimer = 500;
                         }
                     }else m_uiLynxRushIntervalTimer -= diff;
-    
                 }
 
                 if (m_uiClawRageFinished && m_uiLynxRushFinished)
                     DoMeleeAttackIfReady();
             break;
             case PHASE_DRAGONHAWK:
+                if (m_uiFilameWhirlTimer <= diff)
+                {
+                    m_creature->CastSpell(m_creature, SPELL_FLAME_WHIRL, false);
+                    m_uiFilameWhirlTimer = urand(15000, 20000);
+                }else m_uiFilameWhirlTimer -= diff;
+
+                if (m_uiFilameBreathTimer <= diff)
+                {
+                    m_creature->CastSpell(m_creature->getVictim(), SPELL_FLAME_BREATH, true);
+                    m_uiFilameBreathTimer = urand(2000, 10000);
+                }else m_uiFilameBreathTimer -= diff;
+
+                if (m_uiSummonPillarTimer <= diff)
+                {
+                    m_creature->CastSpell(m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0), SPELL_SUMMON_PILLAR, true);
+                    m_uiSummonPillarTimer = 10000;
+                }else m_uiSummonPillarTimer -= diff;
+
                 DoMeleeAttackIfReady();
             break;
         }
-    
-
-
-
-
-
-
     }
 
     void ChangePhaseIfNeed()
@@ -478,6 +501,16 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
         }
         m_uiFeatherVortexGUIDs.clear();
     }
+
+    void DespawnColumnOfFires()
+    {
+        for(std::list<uint64>::iterator itr = m_uiColumnOfFireGUIDs.begin(); itr != m_uiColumnOfFireGUIDs.end(); ++itr)
+        {
+            if (Creature* pColumnOfFire = m_creature->GetMap()->GetCreature((*itr)))
+                pColumnOfFire->ForcedDespawn();
+        }
+        m_uiColumnOfFireGUIDs.clear();
+    }
 };
 
 CreatureAI* GetAI_boss_zuljin(Creature* pCreature)
@@ -487,7 +520,7 @@ CreatureAI* GetAI_boss_zuljin(Creature* pCreature)
 
 struct MANGOS_DLL_DECL mob_zuljin_vortexAI : public ScriptedAI
 {
-    mob_zuljin_vortexAI(Creature* pCreature) : ScriptedAI(pCreature) { Reset();    }
+    mob_zuljin_vortexAI(Creature* pCreature) : ScriptedAI(pCreature) { Reset(); }
 
     void Reset()
     {
@@ -499,7 +532,7 @@ struct MANGOS_DLL_DECL mob_zuljin_vortexAI : public ScriptedAI
     {
         if (pWho->GetTypeId() != TYPEID_PLAYER)
             return;
-        if (m_creature->GetDistance(pWho)<=4)
+        if (m_creature->GetDistance(pWho)<=4.0f)
             AttackStart(pWho);
     }
 
@@ -539,6 +572,44 @@ CreatureAI* GetAI_mob_zuljin_vortex(Creature* pCreature)
     return new mob_zuljin_vortexAI(pCreature);
 }
 
+struct MANGOS_DLL_DECL mob_zuljin_column_of_fireAI : public ScriptedAI
+{
+    mob_zuljin_column_of_fireAI(Creature* pCreature) : ScriptedAI(pCreature) { Reset(); }
+
+    void Reset()
+    {
+        m_creature->CastSpell(m_creature, SPELL_PILLAR_TRIGGER, true);
+    }
+
+    void MoveInLineOfSight(Unit* pWho)
+    {
+        if (pWho->GetTypeId() != TYPEID_PLAYER && pWho->GetOwner() && pWho->GetOwner()->GetTypeId() != TYPEID_PLAYER)
+            return;
+        if (m_creature->GetDistance(pWho)<=4.0f)
+            AttackStart(pWho);
+    }
+
+    void UpdateAI(const uint32 uiDiff){}
+
+    void AttackStart(Unit* pWho)
+    {
+        if (!pWho)
+            return;
+
+        if (m_creature->Attack(pWho, false))
+        {
+            m_creature->AddThreat(pWho);
+            m_creature->SetInCombatWith(pWho);
+            pWho->SetInCombatWith(m_creature);
+        }
+    }
+};
+
+CreatureAI* GetAI_mob_zuljin_column_of_fire(Creature* pCreature)
+{
+    return new mob_zuljin_column_of_fireAI(pCreature);
+}
+
 void AddSC_boss_zuljin()
 {
     Script *newscript;
@@ -550,5 +621,10 @@ void AddSC_boss_zuljin()
     newscript = new Script;
     newscript->Name = "mob_zuljin_vortex";
     newscript->GetAI = &GetAI_mob_zuljin_vortex;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_zuljin_column_of_fire";
+    newscript->GetAI = &GetAI_mob_zuljin_column_of_fire;
     newscript->RegisterSelf();
 }
