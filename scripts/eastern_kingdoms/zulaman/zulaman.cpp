@@ -221,6 +221,8 @@ bool GOUse_go_strange_gong(Player* pPlayer, GameObject* pGo)
     if (!pInstance)
         return false;
 
+    pInstance->SetData(TYPE_EVENT_RUN, SPECIAL);
+
     if (pInstance->GetData(TYPE_EVENT_RUN) == SPECIAL)
     {
         if (Creature* pCreature = pGo->GetMap()->GetCreature(pInstance->GetData64(NPC_HARRISON)))
@@ -232,10 +234,8 @@ bool GOUse_go_strange_gong(Player* pPlayer, GameObject* pGo)
             error_log("SD2: Instance Zulaman: go_strange_gong failed");
 
         pGo->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
-        return false;
     }
 
-    pInstance->SetData(TYPE_EVENT_RUN, SPECIAL);
     return false;
 }
 
