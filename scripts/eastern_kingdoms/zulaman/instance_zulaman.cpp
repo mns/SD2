@@ -195,8 +195,34 @@ struct MANGOS_DLL_DECL instance_zulaman : public ScriptedInstance
                     // Kill remaining Event NPCs
                     for (uint8 i = 0; i < MAX_CHESTS; i++)
                         if (!m_auiChestPosition[i])         // not yet rescued, so too late
+                        {
+                            Creature* pCorpse = NULL;
                             if (Creature* pCreature = instance->GetCreature(m_auiEventChestNpcGUIDs[i]))
+                            {
+                                //Summon corpse of creature
+                                switch(pCreature->GetEntry())
+                                {
+                                    case NPC_TANZAR:
+                                        pCorpse = pCreature->SummonCreature(NPC_TANZAR_CORPSE, 0.0f, 0.0f, 0.0f, 0.0f,TEMPSUMMON_CORPSE_DESPAWN, 0);
+                                        break;
+                                    case NPC_KRAZ:
+                                        pCorpse = pCreature->SummonCreature(NPC_KRAZ_CORPSE, 0.0f, 0.0f, 0.0f, 0.0f,TEMPSUMMON_CORPSE_DESPAWN, 0);
+                                        break;
+                                    case NPC_ASHLI:
+                                        pCorpse = pCreature->SummonCreature(NPC_ASHIL_CORPSE, 0.0f, 0.0f, 0.0f, 0.0f,TEMPSUMMON_CORPSE_DESPAWN, 0);
+                                        break;
+                                    case NPC_HARKOR:
+                                        pCorpse = pCreature->SummonCreature(NPC_HARKOR_CORPSE, 0.0f, 0.0f, 0.0f, 0.0f,TEMPSUMMON_CORPSE_DESPAWN, 0);
+                                        break;
+                                }
                                 pCreature->ForcedDespawn();
+                                if (pCorpse)
+                                {
+                                    pCorpse->CastSpell(pCorpse, 42726,true); //Fire in corpse
+                                    pCorpse->SetStandState(UNIT_STAND_STATE_DEAD);
+                                }
+                            }
+                        }
                 }
                 if (uiData == DONE)
                 {
