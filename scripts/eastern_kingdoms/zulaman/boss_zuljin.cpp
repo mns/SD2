@@ -260,7 +260,9 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
                     if (Creature* pSpirit = m_creature->GetMap()->GetCreature(m_auiSpiritGUIDs[m_uiPhase-1]))
                     {
                         m_creature->SetInFront(pSpirit);
+                        pSpirit->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE); // For can cast siphon soul
                         m_creature->CastSpell(pSpirit, SPELL_SIPHON_SOUL, true);
+                        pSpirit->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     }
                     DoScriptText(Transform[m_uiPhase-1].say, m_creature);
                     m_uiTransformTimer = 2000;
@@ -500,6 +502,7 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
             {
                 m_auiSpiritGUIDs[i] = pSpirit->GetGUID();
                 pSpirit->CastSpell(pSpirit, SPELL_SPIRIT_AURA, true);
+                pSpirit->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             }
         }
     }
@@ -569,6 +572,7 @@ struct MANGOS_DLL_DECL mob_zuljin_vortexAI : public ScriptedAI
     {
         m_creature->CastSpell(m_creature, SPELL_CYCLONE_PASSIVE, true);
         m_creature->CastSpell(m_creature, SPELL_CYCLONE_VISUAL, true);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
     void MoveInLineOfSight(Unit* pWho)
@@ -622,6 +626,7 @@ struct MANGOS_DLL_DECL mob_zuljin_column_of_fireAI : public ScriptedAI
     void Reset()
     {
         m_creature->CastSpell(m_creature, SPELL_PILLAR_TRIGGER, true);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
     void MoveInLineOfSight(Unit* pWho)
