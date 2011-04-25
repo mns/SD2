@@ -37,7 +37,7 @@ enum
 {
     SPELL_REMOVE_AMANI_CURSE = 43732,
     SPELL_PUSH_MOJO          = 43923,
-    ENTRY_FOREST_FROG        = 24396
+    NPC_FOREST_FROG          = 24396
 };
 
 struct MANGOS_DLL_DECL npc_forest_frogAI : public ScriptedAI
@@ -93,7 +93,7 @@ struct MANGOS_DLL_DECL npc_forest_frogAI : public ScriptedAI
 
     void SpellHit(Unit *caster, const SpellEntry *spell)
     {
-        if (spell->Id == SPELL_REMOVE_AMANI_CURSE && caster->GetTypeId() == TYPEID_PLAYER && m_creature->GetEntry() == ENTRY_FOREST_FROG)
+        if (spell->Id == SPELL_REMOVE_AMANI_CURSE && caster->GetTypeId() == TYPEID_PLAYER && m_creature->GetEntry() == NPC_FOREST_FROG)
         {
             //increase or decrease chance of mojo?
             if (!urand(0, 49))
@@ -143,8 +143,8 @@ struct MANGOS_DLL_DECL npc_harrison_jones_zaAI : public npc_escortAI
             case 1:
                 DoScriptText(SAY_AT_GONG, m_creature);
 
-                if (GameObject* pEntranceDoor = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_STRANGE_GONG)))
-                    pEntranceDoor->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
+                if (GameObject* pStrangeGong = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_STRANGE_GONG)))
+                    pStrangeGong->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
 
                 //Start bang gong for 2min
                 m_creature->CastSpell(m_creature, SPELL_BANGING_THE_GONG, false);
