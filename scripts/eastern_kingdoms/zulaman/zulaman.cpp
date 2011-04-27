@@ -210,6 +210,71 @@ CreatureAI* GetAI_npc_harrison_jones_za(Creature* pCreature)
 }
 
 /*######
+## npc_tanzar_za
+######*/
+
+struct MANGOS_DLL_DECL npc_tanzar_zaAI : public npc_escortAI
+{
+    npc_tanzar_zaAI(Creature* pCreature) : npc_escortAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        Reset();
+    }
+
+    bool m_uiEventStarted;
+
+    ScriptedInstance* m_pInstance;
+
+    void WaypointReached(uint32 uiPointId)
+    {
+        if (!m_pInstance)
+            return;
+
+        switch(uiPointId)
+        {
+            case 2:
+                m_creature->HandleEmote(EMOTE_STATE_USESTANDING);
+                break;
+            case 3:
+                // TODO: Tanzar say ...
+                if (GameObject* pTanzarsTrunk = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_TANZARS_TRUNK)))
+                    pTanzarsTrunk->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
+                m_creature->HandleEmote(EMOTE_ONESHOT_NONE);
+                m_creature->SetSpeedRate(MOVE_RUN, 2.0f);
+                SetRun(true);
+                break;
+        }
+    }
+
+    void Reset() 
+    {
+        m_uiEventStarted = false;
+    }
+
+    void UpdateEscortAI(uint32 uiDiff)
+    {
+        if (!m_pInstance)
+            return;
+
+        if (!m_uiEventStarted && m_pInstance->GetData(TYPE_NALORAKK) == DONE)
+        {
+            if (m_pInstance->GetData(TYPE_EVENT_RUN) == IN_PROGRESS)
+            {
+                if (GameObject* pGo = m_creature->GetMap()->GetGameObject(m_pInstance->GetData64(GO_TANZARS_CAGE)))
+                    pGo->SetGoState(GO_STATE_ACTIVE);
+                Start();
+            }
+            m_uiEventStarted = true;
+        }
+    }
+};
+
+CreatureAI* GetAI_npc_tanzar_za(Creature* pCreature)
+{
+    return new npc_tanzar_zaAI(pCreature);
+}
+
+/*######
 ## go_strange_gong
 ######*/
 
@@ -253,6 +318,11 @@ void AddSC_zulaman()
     newscript->GetAI = &GetAI_npc_harrison_jones_za;
     newscript->pGossipHello =  &GossipHello_npc_harrison_jones_za;
     newscript->pGossipSelect = &GossipSelect_npc_harrison_jones_za;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_tanzar_za";
+    newscript->GetAI = &GetAI_npc_tanzar_za;
     newscript->RegisterSelf();
 
     newscript = new Script;

@@ -161,6 +161,11 @@ struct MANGOS_DLL_DECL instance_zulaman : public ScriptedInstance
             case GO_KRAZS_PACKAGE:   m_auiChestGUIDs[1] = pGo->GetGUID(); break;
             case GO_ASHLIS_BAG:      m_auiChestGUIDs[2] = pGo->GetGUID(); break;
             case GO_HARKORS_SATCHEL: m_auiChestGUIDs[3] = pGo->GetGUID(); break;
+
+            case GO_TANZARS_CAGE: m_auiEventChestNpcCageGUIDs[0] = pGo->GetGUID(); break;
+            case GO_KRAZS_CAGE:   m_auiEventChestNpcCageGUIDs[1] = pGo->GetGUID(); break;
+            case GO_ASHLIS_CAGE:  m_auiEventChestNpcCageGUIDs[2] = pGo->GetGUID(); break;
+            case GO_HARKORS_CAGE: m_auiEventChestNpcCageGUIDs[3] = pGo->GetGUID(); break;
         }
     }
 
@@ -192,6 +197,7 @@ struct MANGOS_DLL_DECL instance_zulaman : public ScriptedInstance
                 {
                     DoTimeRunSay(RUN_FAIL);
                     DoUpdateWorldState(WORLD_STATE_ID, 0);
+                    m_auiEncounter[0] = uiData;
                     // Kill remaining Event NPCs
                     for (uint8 i = 0; i < MAX_CHESTS; i++)
                         if (!m_auiChestPosition[i])         // not yet rescued, so too late
@@ -453,6 +459,24 @@ struct MANGOS_DLL_DECL instance_zulaman : public ScriptedInstance
                 return m_uiMassiveGateGUID;
             case GO_HEXLORD_ENTRANCE:
                 return m_uiMalacrassEntranceGUID;
+
+            case GO_TANZARS_TRUNK:
+                return m_auiChestGUIDs[0];
+            case GO_KRAZS_PACKAGE:
+                return m_auiChestGUIDs[1];
+            case GO_ASHLIS_BAG:
+                return m_auiChestGUIDs[2];
+            case GO_HARKORS_SATCHEL:
+                return m_auiChestGUIDs[3];
+
+            case GO_TANZARS_CAGE:
+                return m_auiEventChestNpcCageGUIDs[0];
+            case GO_KRAZS_CAGE:
+                return m_auiEventChestNpcCageGUIDs[1];
+            case GO_ASHLIS_CAGE:
+                return m_auiEventChestNpcCageGUIDs[2];
+            case GO_HARKORS_CAGE:
+                return m_auiEventChestNpcCageGUIDs[3];
         }
         return 0;
     }
