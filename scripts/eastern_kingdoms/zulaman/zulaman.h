@@ -71,10 +71,10 @@ enum InstanceZA
     NPC_ASHLI               = 24001,                        // at lynx
     NPC_HARKOR              = 23999,                        // at eagle
     // unused (handled by DB (SpawnSpecial :P)
-    NPC_TANZAR_CORPSE       = 24442,
-    NPC_KRAZ_CORPSE         = 24444,
-    NPC_ASHIL_CORPSE        = 24441,
-    NPC_HARKOR_CORPSE       = 24443,
+    NPC_TANZARS_CORPSE      = 24442,
+    NPC_KRAZS_CORPSE        = 24444,
+    NPC_ASHLIS_CORPSE       = 24441,
+    NPC_HARKORS_CORPSE      = 24443,
 
     GO_STRANGE_GONG         = 187359,
     GO_MASSIVE_GATE         = 186728,
