@@ -1262,6 +1262,10 @@ UPDATE creature_template SET ScriptName='npc_timothy_daniels' WHERE entry=18019;
 /* ZUL'AMAN */
 UPDATE instance_template SET ScriptName='instance_zulaman' WHERE map=568;
 UPDATE creature_template SET ScriptName='npc_harrison_jones_za' WHERE entry=24358;
+UPDATE creature_template SET ScriptName='npc_tanzar_za' WHERE entry=23790;
+UPDATE creature_template SET ScriptName='npc_harkor_za' WHERE entry=23999;
+UPDATE creature_template SET ScriptName='npc_kraz_za' WHERE entry=24024;
+UPDATE creature_template SET ScriptName='npc_ashli_za' WHERE entry=24001;
 UPDATE gameobject_template SET ScriptName='go_strange_gong' WHERE entry=187359;
 UPDATE creature_template SET ScriptName='boss_akilzon' WHERE entry=23574;
 UPDATE creature_template SET ScriptName='mob_soaring_eagle' WHERE entry=24858;

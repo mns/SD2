@@ -275,6 +275,205 @@ CreatureAI* GetAI_npc_tanzar_za(Creature* pCreature)
 }
 
 /*######
+## npc_kraz_za
+######*/
+
+struct MANGOS_DLL_DECL npc_kraz_zaAI : public npc_escortAI
+{
+    npc_kraz_zaAI(Creature* pCreature) : npc_escortAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        Reset();
+    }
+
+    bool m_uiEventStarted;
+
+    ScriptedInstance* m_pInstance;
+
+    void WaypointReached(uint32 uiPointId)
+    {
+        if (!m_pInstance)
+            return;
+
+        switch(uiPointId)
+        {
+            case 4:
+                m_creature->HandleEmote(EMOTE_STATE_USESTANDING);
+                break;
+            case 5:
+                // TODO: Kraz say ...
+                if (GameObject* pKrazsChest = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_KRAZS_CHEST)))
+                    pKrazsChest->SetGoState(GO_STATE_ACTIVE);
+                if (GameObject* pKrazsPackage = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_KRAZS_PACKAGE)))
+                    pKrazsPackage->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
+                m_creature->HandleEmote(EMOTE_ONESHOT_NONE);
+                m_creature->SetSpeedRate(MOVE_RUN, 2.0f);
+                SetRun(true);
+                break;
+        }
+    }
+
+    void Reset() 
+    {
+        m_uiEventStarted = false;
+    }
+
+    void UpdateEscortAI(uint32 uiDiff)
+    {
+        if (!m_pInstance)
+            return;
+
+        if (!m_uiEventStarted && m_pInstance->GetData(TYPE_JANALAI) == DONE)
+        {
+            if (m_pInstance->GetData(TYPE_EVENT_RUN) == IN_PROGRESS)
+            {
+                if (GameObject* pGo = m_creature->GetMap()->GetGameObject(m_pInstance->GetData64(GO_KRAZS_CAGE)))
+                    pGo->SetGoState(GO_STATE_ACTIVE);
+                Start();
+            }
+            m_uiEventStarted = true;
+        }
+    }
+};
+
+CreatureAI* GetAI_npc_kraz_za(Creature* pCreature)
+{
+    return new npc_kraz_zaAI(pCreature);
+}
+
+/*######
+## npc_ashli_za
+######*/
+
+struct MANGOS_DLL_DECL npc_ashli_zaAI : public npc_escortAI
+{
+    npc_ashli_zaAI(Creature* pCreature) : npc_escortAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        Reset();
+    }
+
+    bool m_uiEventStarted;
+
+    ScriptedInstance* m_pInstance;
+
+    void WaypointReached(uint32 uiPointId)
+    {
+        if (!m_pInstance)
+            return;
+
+        /*switch(uiPointId)
+        {
+            case 2:
+                m_creature->HandleEmote(EMOTE_STATE_USESTANDING);
+                break;
+            case 3:
+                // TODO: Ashli say ...
+                if (GameObject* pAshlisBag = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_ASHLIS_BAG)))
+                    pAshlisBag->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
+                m_creature->HandleEmote(EMOTE_ONESHOT_NONE);
+                m_creature->SetSpeedRate(MOVE_RUN, 2.0f);
+                SetRun(true);
+                break;
+        }*/
+    }
+
+    void Reset() 
+    {
+        m_uiEventStarted = false;
+    }
+
+    void UpdateEscortAI(uint32 uiDiff)
+    {
+        if (!m_pInstance)
+            return;
+
+        if (!m_uiEventStarted && m_pInstance->GetData(TYPE_HALAZZI) == DONE)
+        {
+            if (m_pInstance->GetData(TYPE_EVENT_RUN) == IN_PROGRESS)
+            {
+                if (GameObject* pGo = m_creature->GetMap()->GetGameObject(m_pInstance->GetData64(GO_ASHLIS_CAGE)))
+                    pGo->SetGoState(GO_STATE_ACTIVE);
+                Start();
+            }
+            m_uiEventStarted = true;
+        }
+    }
+};
+
+CreatureAI* GetAI_npc_ashli_za(Creature* pCreature)
+{
+    return new npc_ashli_zaAI(pCreature);
+}
+
+/*######
+## npc_harkor_za
+######*/
+
+struct MANGOS_DLL_DECL npc_harkor_zaAI : public npc_escortAI
+{
+    npc_harkor_zaAI(Creature* pCreature) : npc_escortAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        Reset();
+    }
+
+    bool m_uiEventStarted;
+
+    ScriptedInstance* m_pInstance;
+
+    void WaypointReached(uint32 uiPointId)
+    {
+        if (!m_pInstance)
+            return;
+
+        switch(uiPointId)
+        {
+            case 2:
+                m_creature->HandleEmote(EMOTE_STATE_USESTANDING);
+                break;
+            case 3:
+                // TODO: Harkor say ...
+                if (GameObject* pLootBoxDwarf = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_LOOT_BOX_DWARF)))
+                    pLootBoxDwarf->SetGoState(GO_STATE_ACTIVE);
+                if (GameObject* pHarkorsSatchel = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_HARKORS_SATCHEL)))
+                    pHarkorsSatchel->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
+                m_creature->HandleEmote(EMOTE_ONESHOT_NONE);
+                m_creature->SetSpeedRate(MOVE_RUN, 2.0f);
+                SetRun(true);
+                break;
+        }
+    }
+
+    void Reset() 
+    {
+        m_uiEventStarted = false;
+    }
+
+    void UpdateEscortAI(uint32 uiDiff)
+    {
+        if (!m_pInstance)
+            return;
+
+        if (!m_uiEventStarted && m_pInstance->GetData(TYPE_AKILZON) == DONE)
+        {
+            if (m_pInstance->GetData(TYPE_EVENT_RUN) == IN_PROGRESS)
+            {
+                if (GameObject* pGo = m_creature->GetMap()->GetGameObject(m_pInstance->GetData64(GO_HARKORS_CAGE)))
+                    pGo->SetGoState(GO_STATE_ACTIVE);
+                Start();
+            }
+            m_uiEventStarted = true;
+        }
+    }
+};
+
+CreatureAI* GetAI_npc_harkor_za(Creature* pCreature)
+{
+    return new npc_harkor_zaAI(pCreature);
+}
+
+/*######
 ## go_strange_gong
 ######*/
 
@@ -323,6 +522,21 @@ void AddSC_zulaman()
     newscript = new Script;
     newscript->Name = "npc_tanzar_za";
     newscript->GetAI = &GetAI_npc_tanzar_za;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_kraz_za";
+    newscript->GetAI = &GetAI_npc_kraz_za;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_ashli_za";
+    newscript->GetAI = &GetAI_npc_ashli_za;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_harkor_za";
+    newscript->GetAI = &GetAI_npc_harkor_za;
     newscript->RegisterSelf();
 
     newscript = new Script;

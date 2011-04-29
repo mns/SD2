@@ -70,7 +70,7 @@ enum InstanceZA
     NPC_KRAZ                = 24024,                        // at phoenix
     NPC_ASHLI               = 24001,                        // at lynx
     NPC_HARKOR              = 23999,                        // at eagle
-    // unused (handled by DB (SpawnSpecial :P)
+    // Spawn when timed event ending and prisoner not rescued
     NPC_TANZARS_CORPSE      = 24442,
     NPC_KRAZS_CORPSE        = 24444,
     NPC_ASHLIS_CORPSE       = 24441,
@@ -120,7 +120,7 @@ enum RunEventSteps
 #endif
 
 /* A few notes about spells:
-** Ahli Encounter
+** Ashli Encounter
 http://www.wowhead.com/spell=43515 Ashli Fireball
 http://www.wowhead.com/spell=43520 Ashli Fireball 1
 http://www.wowhead.com/spell=43525 Ashli Fireball 2

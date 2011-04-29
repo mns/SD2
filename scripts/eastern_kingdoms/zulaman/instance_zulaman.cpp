@@ -34,6 +34,9 @@ struct MANGOS_DLL_DECL instance_zulaman : public ScriptedInstance
     uint64 m_auiChestGUIDs[MAX_CHESTS];
     uint64 m_auiEventChestNpcGUIDs[MAX_CHESTS];
     uint64 m_auiEventChestNpcCageGUIDs[MAX_CHESTS];
+    uint64 m_auiChestLootBoxDwarfGUID;
+    uint64 m_auiKrazsChestGUID;
+    uint64 m_auiAshlisVaseGUIDs[4];
     std::string strInstData;
 
     uint32 m_uiEventTimer;
@@ -69,7 +72,12 @@ struct MANGOS_DLL_DECL instance_zulaman : public ScriptedInstance
         memset(&m_auiChestPosition, 0, sizeof(m_auiChestPosition));
         memset(&m_auiChestGUIDs, 0, sizeof(m_auiChestGUIDs));
         memset(&m_auiEventChestNpcGUIDs, 0, sizeof(m_auiEventChestNpcGUIDs));
+        memset(&m_auiEventChestNpcCageGUIDs, 0, sizeof(m_auiEventChestNpcCageGUIDs));
+        memset(&m_auiAshlisVaseGUIDs, 0, sizeof(m_auiAshlisVaseGUIDs));
         m_uiEventTimer = MINUTE*IN_MILLISECONDS;
+
+        m_auiChestLootBoxDwarfGUID = 0;
+        m_auiKrazsChestGUID = 0;
 
         m_uiGongCount = 0;
 
@@ -166,6 +174,9 @@ struct MANGOS_DLL_DECL instance_zulaman : public ScriptedInstance
             case GO_KRAZS_CAGE:   m_auiEventChestNpcCageGUIDs[1] = pGo->GetGUID(); break;
             case GO_ASHLIS_CAGE:  m_auiEventChestNpcCageGUIDs[2] = pGo->GetGUID(); break;
             case GO_HARKORS_CAGE: m_auiEventChestNpcCageGUIDs[3] = pGo->GetGUID(); break;
+
+            case GO_LOOT_BOX_DWARF: m_auiChestLootBoxDwarfGUID = pGo->GetGUID(); break;
+            case GO_KRAZS_CHEST:    m_auiKrazsChestGUID        = pGo->GetGUID(); break;
         }
     }
 
@@ -471,6 +482,11 @@ struct MANGOS_DLL_DECL instance_zulaman : public ScriptedInstance
                 return m_auiEventChestNpcCageGUIDs[2];
             case GO_HARKORS_CAGE:
                 return m_auiEventChestNpcCageGUIDs[3];
+
+            case GO_LOOT_BOX_DWARF:
+                return m_auiChestLootBoxDwarfGUID;
+            case GO_KRAZS_CHEST:
+                return m_auiKrazsChestGUID;
         }
         return 0;
     }
