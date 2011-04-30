@@ -85,17 +85,16 @@ struct MANGOS_DLL_DECL boss_akilzonAI : public ScriptedAI
         m_uiBerserkTimer = MINUTE*8*IN_MILLISECONDS;
         m_bIsBerserk = false;
 
-        m_pInstance->SetData(TYPE_AKILZON, NOT_STARTED);
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_AKILZON, NOT_STARTED);
     }
 
     void Aggro(Unit* pWho)
     {
         DoScriptText(SAY_AGGRO, m_creature);
 
-        if (!m_pInstance)
-            return;
-
-        m_pInstance->SetData(TYPE_AKILZON, IN_PROGRESS);
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_AKILZON, IN_PROGRESS);
     }
 
     void KilledUnit(Unit* pVictim)
