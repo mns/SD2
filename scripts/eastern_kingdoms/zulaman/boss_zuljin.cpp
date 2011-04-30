@@ -193,12 +193,18 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
         m_uiFilameBreathTimer = m_uiFilameWhirlTimer+5000;
         m_uiSummonPillarTimer = 15000;
 
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_ZULJIN, IN_PROGRESS);
     }
 
     void Aggro(Unit* pWho)
     {
         DoScriptText(SAY_AGGRO, m_creature);
+
         InitializeGuards(pWho);
+
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_ZULJIN, IN_PROGRESS);
     }
 
     void KilledUnit(Unit* pVictim)

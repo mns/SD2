@@ -250,9 +250,6 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
 
     void JustReachedHome()
     {
-        if (m_pInstance)
-            m_pInstance->SetData(TYPE_MALACRASS, FAIL);
-
         for(uint8 i = 0; i < MAX_ACTIVE_ADDS; ++i)
         {
             if (Creature* pAdd = m_creature->GetMap()->GetCreature(m_auiAddGUIDs[i]))
