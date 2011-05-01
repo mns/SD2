@@ -333,7 +333,7 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
                 if (!DoMeleeAttackIfReady())
                     break;
 
-                if (m_creature->getVictim()->GetHealth() == TargetHealthTemp)
+                if (m_creature->getVictim() && m_creature->getVictim()->GetHealth() == TargetHealthTemp)
                     DoCast(m_creature->getVictim(), SPELL_OVERPOWER, false);
             }
             break;
