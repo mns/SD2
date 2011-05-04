@@ -83,8 +83,8 @@ enum
 
     WEAPON_ID                       = 33975,
 
-    NPC_AMANISHI_LOOKOUT            = 24175,
-    MAX_GUARDS                      = 10
+    NPC_AMANISHI_SAVAGE             = 23889,
+    MAX_GUARDS                      = 8
 };
 
 //coords for going for changing form
@@ -93,11 +93,11 @@ const float CENTER_Y = 703.713684f;
 const float CENTER_Z = 45.111477f;
 
 //Guards starting positions in left hand of Boss
-const float GUARD_POS_X       = 102.0f;
-const float GUARD_POS_Y       = 695.0f;
-const float GUARD_POS_Z       = 45.1115f;
-const float GUARD_ORIENT      = 1.580600f;
-const float GUARD_SPACE       = 4.0f;
+const float GUARD_POS_X_AVERAGE       = 119.5f;
+const float GUARD_POS_Y               = 688.175f;
+const float GUARD_POS_Z               = 45.1115f;
+const float GUARD_ORIENT              = 1.580600f;
+const float GUARD_SPACE               = 1.5f;
 
 enum Phases
 {
@@ -195,13 +195,16 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_ZULJIN, IN_PROGRESS);
+
+        InitializeGuards();
     }
 
     void Aggro(Unit* pWho)
     {
         DoScriptText(SAY_AGGRO, m_creature);
 
-        InitializeGuards(pWho);
+        InitializeGuards();
+        AddTreatGuards(pWho);
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_ZULJIN, IN_PROGRESS);
@@ -513,34 +516,38 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
         }
     }
 
-    void InitializeGuards(Unit* pWho)
+    void InitializeGuards()
     {
         //not if m_creature are dead, so avoid
         if (!m_creature->isAlive())
             return;
-
+        int8 LeftOrRight = 1;
         //summon guards
+        for(uint8 i = 0; i < MAX_GUARDS; ++i)
+        {
+            LeftOrRight *= -1;
+            Creature* pGuard = NULL;
+            if (m_auiGuardGUIDs[i])
+            {
+                if (m_creature->GetMap()->GetCreature(m_auiGuardGUIDs[i]))
+                    continue;
+                if (pGuard = m_creature->SummonCreature(NPC_AMANISHI_SAVAGE, GUARD_POS_X_AVERAGE+(GUARD_SPACE*(i+5)*LeftOrRight), GUARD_POS_Y, GUARD_POS_Z, GUARD_ORIENT, TEMPSUMMON_CORPSE_DESPAWN, 0))
+                    m_auiGuardGUIDs[i] = pGuard->GetGUID();
+            }
+        }
+    }
+
+    void AddTreatGuards(Unit* pWho)
+    {
+        if (!pWho)
+            return;
         for(uint8 i = 0; i < MAX_GUARDS; ++i)
         {
             Creature* pGuard = NULL;
             if (m_auiGuardGUIDs[i])
-            {
                 if (pGuard = m_creature->GetMap()->GetCreature(m_auiGuardGUIDs[i]))
-                {
                     if (pGuard->isAlive())
-                    {
-                        if (pWho)
-                            pGuard->AddThreat(pWho);
-                        continue;
-                    }
-                }
-                if (pGuard = m_creature->SummonCreature(NPC_AMANISHI_LOOKOUT, GUARD_POS_X+(GUARD_SPACE*i), GUARD_POS_Y, GUARD_POS_Z, GUARD_ORIENT, TEMPSUMMON_CORPSE_DESPAWN, 5000))
-                {
-                    m_auiGuardGUIDs[i] = pGuard->GetGUID();
-                    if (pWho)
                         pGuard->AddThreat(pWho);
-                }
-            }
         }
     }
 
