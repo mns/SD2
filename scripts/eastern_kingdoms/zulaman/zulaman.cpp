@@ -430,9 +430,14 @@ struct MANGOS_DLL_DECL npc_harkor_zaAI : public npc_escortAI
         switch(uiPointId)
         {
             case 2:
-                m_creature->HandleEmote(EMOTE_STATE_USESTANDING);
+                if (GameObject* pDwarfHammer = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_DWARF_HAMMER)))
+                    pDwarfHammer->Delete();
+                SetEquipmentSlots(false, EQUIP_ID_HARKORS_WEAPON, EQUIP_NO_CHANGE, EQUIP_NO_CHANGE);
                 break;
             case 3:
+                m_creature->HandleEmote(EMOTE_ONESHOT_ATTACK2HTIGHT);
+                break;
+            case 4:
                 // TODO: Harkor say ...
                 if (GameObject* pLootBoxDwarf = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_LOOT_BOX_DWARF)))
                     pLootBoxDwarf->SetGoState(GO_STATE_ACTIVE);

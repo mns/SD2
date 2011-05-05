@@ -98,6 +98,10 @@ enum InstanceZA
     GO_HARKORS_CAGE         = 187378,
     GO_KRAZS_CAGE           = 187379,
     GO_ASHLIS_CAGE          = 187380,
+
+    GO_DWARF_HAMMER         = 186623,
+
+    EQUIP_ID_HARKORS_WEAPON = 25140,
 };
 
 enum BossToChestIndex

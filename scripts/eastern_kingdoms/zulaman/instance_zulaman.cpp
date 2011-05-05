@@ -37,6 +37,7 @@ struct MANGOS_DLL_DECL instance_zulaman : public ScriptedInstance
     uint64 m_auiChestLootBoxDwarfGUID;
     uint64 m_auiKrazsChestGUID;
     uint64 m_auiAshlisVaseGUIDs[4];
+    uint64 m_auiHarkorsWeaponGUID;
     std::string strInstData;
 
     uint32 m_uiEventTimer;
@@ -78,6 +79,7 @@ struct MANGOS_DLL_DECL instance_zulaman : public ScriptedInstance
 
         m_auiChestLootBoxDwarfGUID = 0;
         m_auiKrazsChestGUID = 0;
+        m_auiHarkorsWeaponGUID = 0;
 
         m_uiGongCount = 0;
 
@@ -177,6 +179,8 @@ struct MANGOS_DLL_DECL instance_zulaman : public ScriptedInstance
 
             case GO_LOOT_BOX_DWARF: m_auiChestLootBoxDwarfGUID = pGo->GetGUID(); break;
             case GO_KRAZS_CHEST:    m_auiKrazsChestGUID        = pGo->GetGUID(); break;
+
+            case GO_DWARF_HAMMER: m_auiHarkorsWeaponGUID = pGo->GetGUID(); break;
         }
     }
 
@@ -485,8 +489,12 @@ struct MANGOS_DLL_DECL instance_zulaman : public ScriptedInstance
 
             case GO_LOOT_BOX_DWARF:
                 return m_auiChestLootBoxDwarfGUID;
+
             case GO_KRAZS_CHEST:
                 return m_auiKrazsChestGUID;
+
+            case GO_DWARF_HAMMER:
+                return m_auiHarkorsWeaponGUID;
         }
         return 0;
     }
