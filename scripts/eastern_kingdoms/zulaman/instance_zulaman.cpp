@@ -62,7 +62,7 @@ struct MANGOS_DLL_DECL instance_zulaman : public ScriptedInstance
     uint64 m_uiWoodenDoorGUID;
     uint64 m_uiFireDoorGUID;
 
-    std::list<uint64> m_lEggsGUIDList;
+    GUIDList m_lEggsGUIDList;
     uint32 m_uiEggsRemainingCount_Left;
     uint32 m_uiEggsRemainingCount_Right;
 
@@ -283,7 +283,7 @@ struct MANGOS_DLL_DECL instance_zulaman : public ScriptedInstance
 
                     if (!m_lEggsGUIDList.empty())
                     {
-                        for(std::list<uint64>::iterator itr = m_lEggsGUIDList.begin(); itr != m_lEggsGUIDList.end(); ++itr)
+                        for(GUIDList::const_iterator itr = m_lEggsGUIDList.begin(); itr != m_lEggsGUIDList.end(); ++itr)
                         {
                             if (Creature* pEgg = instance->GetCreature(*itr))
                             {
