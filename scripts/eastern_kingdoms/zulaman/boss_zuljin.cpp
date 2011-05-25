@@ -146,10 +146,10 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
 
-    uint64 m_auiSpiritGUIDs[4];
-    uint64 m_auiGuardGUIDs[MAX_GUARDS];
-    std::list<uint64> m_uiFeatherVortexGUIDs;
-    std::list<uint64> m_uiColumnOfFireGUIDs;
+    ObjectGuid m_auiSpiritGUIDs[4];
+    ObjectGuid m_auiGuardGUIDs[MAX_GUARDS];
+    GUIDList m_uiFeatherVortexGUIDs;
+    GUIDList m_uiColumnOfFireGUIDs;
 
     uint8  m_uiPhase;
     bool   m_uiTransforming;
@@ -509,7 +509,7 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
             }
             if (pSpirit = m_creature->SummonCreature(SpiritInfo[i].entry, SpiritInfo[i].x, SpiritInfo[i].y, SpiritInfo[i].z, SpiritInfo[i].orient, TEMPSUMMON_DEAD_DESPAWN, 0))
             {
-                m_auiSpiritGUIDs[i] = pSpirit->GetGUID();
+                m_auiSpiritGUIDs[i] = pSpirit->GetObjectGuid();
                 pSpirit->CastSpell(pSpirit, SPELL_SPIRIT_AURA, true);
                 pSpirit->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             }
@@ -527,13 +527,13 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
         {
             LeftOrRight *= -1;
             Creature* pGuard = NULL;
-            if (m_auiGuardGUIDs[i])
+            if (!m_auiGuardGUIDs[i].IsEmpty())
             {
                 if (m_creature->GetMap()->GetCreature(m_auiGuardGUIDs[i]))
                     continue;
-                if (pGuard = m_creature->SummonCreature(NPC_AMANISHI_SAVAGE, GUARD_POS_X_AVERAGE+(GUARD_SPACE*(i+5)*LeftOrRight), GUARD_POS_Y, GUARD_POS_Z, GUARD_ORIENT, TEMPSUMMON_CORPSE_DESPAWN, 0))
-                    m_auiGuardGUIDs[i] = pGuard->GetGUID();
             }
+            if (pGuard = m_creature->SummonCreature(NPC_AMANISHI_SAVAGE, GUARD_POS_X_AVERAGE+(GUARD_SPACE*(i+5)*LeftOrRight), GUARD_POS_Y, GUARD_POS_Z, GUARD_ORIENT, TEMPSUMMON_CORPSE_DESPAWN, 0))
+                m_auiGuardGUIDs[i] = pGuard->GetObjectGuid();
         }
     }
 
@@ -544,7 +544,7 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
         for(uint8 i = 0; i < MAX_GUARDS; ++i)
         {
             Creature* pGuard = NULL;
-            if (m_auiGuardGUIDs[i])
+            if (!m_auiGuardGUIDs[i].IsEmpty())
                 if (pGuard = m_creature->GetMap()->GetCreature(m_auiGuardGUIDs[i]))
                     if (pGuard->isAlive())
                         pGuard->AddThreat(pWho);
@@ -553,7 +553,7 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
 
     void DespawnFeatherVortexs()
     {
-        for(std::list<uint64>::iterator itr = m_uiFeatherVortexGUIDs.begin(); itr != m_uiFeatherVortexGUIDs.end(); ++itr)
+        for(GUIDList::iterator itr = m_uiFeatherVortexGUIDs.begin(); itr != m_uiFeatherVortexGUIDs.end(); ++itr)
         {
             if (Creature* pFeatherVortex = m_creature->GetMap()->GetCreature((*itr)))
                 pFeatherVortex->ForcedDespawn();
@@ -563,7 +563,7 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
 
     void DespawnColumnOfFires()
     {
-        for(std::list<uint64>::iterator itr = m_uiColumnOfFireGUIDs.begin(); itr != m_uiColumnOfFireGUIDs.end(); ++itr)
+        for(GUIDList::iterator itr = m_uiColumnOfFireGUIDs.begin(); itr != m_uiColumnOfFireGUIDs.end(); ++itr)
         {
             if (Creature* pColumnOfFire = m_creature->GetMap()->GetCreature((*itr)))
                 pColumnOfFire->ForcedDespawn();
