@@ -84,9 +84,6 @@ struct MANGOS_DLL_DECL boss_akilzonAI : public ScriptedAI
         m_uiSummonEagleTimer = 65000;
         m_uiBerserkTimer = MINUTE*8*IN_MILLISECONDS;
         m_bIsBerserk = false;
-
-        if (m_pInstance)
-            m_pInstance->SetData(TYPE_AKILZON, NOT_STARTED);
     }
 
     void Aggro(Unit* pWho)
@@ -110,6 +107,12 @@ struct MANGOS_DLL_DECL boss_akilzonAI : public ScriptedAI
             return;
 
         m_pInstance->SetData(TYPE_AKILZON, DONE);
+    }
+
+    void JustReachedHome()
+    {
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_AKILZON, FAIL);
     }
 
     void JustSummoned(Creature* pSummoned)

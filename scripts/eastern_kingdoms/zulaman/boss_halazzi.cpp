@@ -115,7 +115,7 @@ struct MANGOS_DLL_DECL boss_halazziAI : public ScriptedAI
     void JustReachedHome()
     {
         if (m_pInstance)
-            m_pInstance->SetData(TYPE_HALAZZI, NOT_STARTED);
+            m_pInstance->SetData(TYPE_HALAZZI, FAIL);
     }
 
     void Aggro(Unit* pWho)

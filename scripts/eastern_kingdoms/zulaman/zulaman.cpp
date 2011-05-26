@@ -362,20 +362,19 @@ struct MANGOS_DLL_DECL npc_ashli_zaAI : public npc_escortAI
         if (!m_pInstance)
             return;
 
-        /*switch(uiPointId)
+        switch(uiPointId)
         {
             case 2:
-                m_creature->HandleEmote(EMOTE_STATE_USESTANDING);
                 break;
             case 3:
                 // TODO: Ashli say ...
                 if (GameObject* pAshlisBag = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_ASHLIS_BAG)))
                     pAshlisBag->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
-                m_creature->HandleEmote(EMOTE_ONESHOT_NONE);
+                //m_creature->HandleEmote(EMOTE_ONESHOT_NONE);
                 m_creature->SetSpeedRate(MOVE_RUN, 2.0f);
                 SetRun(true);
                 break;
-        }*/
+        }
     }
 
     void Reset() 

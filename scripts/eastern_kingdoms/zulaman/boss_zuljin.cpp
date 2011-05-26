@@ -210,6 +210,12 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
             m_pInstance->SetData(TYPE_ZULJIN, IN_PROGRESS);
     }
 
+    void JustReachedHome()
+    {
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_ZULJIN, FAIL);
+    }
+
     void KilledUnit(Unit* pVictim)
     {
         DoScriptText(urand(0, 1) ? SAY_KILL1 : SAY_KILL2, m_creature);
