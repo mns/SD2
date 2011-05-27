@@ -318,8 +318,6 @@ void instance_zulaman::SetData(uint32 uiType, uint32 uiData)
     if (uiData == DONE && GetKilledPreBosses() == 4 && (uiType == TYPE_AKILZON || uiType == TYPE_NALORAKK || uiType == TYPE_JANALAI || uiType == TYPE_HALAZZI))
     {
         DoUseDoorOrButton(m_uiMalacrassEntranceGUID);
-        if (m_auiEncounter[0] == IN_PROGRESS)
-            SetData(TYPE_EVENT_RUN, DONE);
     }
 
     if (uiData == DONE || uiType == TYPE_RUN_EVENT_TIME || uiType == TYPE_EVENT_RUN)

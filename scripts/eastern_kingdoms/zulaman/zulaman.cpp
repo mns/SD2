@@ -398,6 +398,7 @@ struct MANGOS_DLL_DECL npc_ashli_zaAI : public npc_escortAI
                 if (GameObject* pGo = m_creature->GetMap()->GetGameObject(m_pInstance->GetData64(GO_ASHLIS_CAGE)))
                     pGo->SetGoState(GO_STATE_ACTIVE);
                 Start();
+                m_pInstance->SetData(TYPE_EVENT_RUN, DONE); // Done ZA Timed Event
             }
             m_uiEventStarted = true;
         }
