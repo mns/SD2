@@ -102,6 +102,8 @@ enum InstanceZA
     GO_DWARF_HAMMER         = 186623,
 
     EQUIP_ID_HARKORS_WEAPON = 25140,
+
+    SPELL_ASHLIS_FIREBALL   = 43515
 };
 
 enum BossToChestIndex
