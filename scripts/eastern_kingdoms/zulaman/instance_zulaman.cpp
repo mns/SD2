@@ -483,6 +483,7 @@ void instance_zulaman::Update(uint32 uiDiff)
             if (m_auiEncounter[7] == 5)                 // TODO, verify 5min for warning texts
                 DoTimeRunSay(RUN_FAIL_SOON);
 
+            --m_auiEncounter[7];
             if (m_auiEncounter[7] == 0)
             {
                 debug_log("SD2: Instance Zulaman: event time reach end, event failed.");
@@ -490,7 +491,6 @@ void instance_zulaman::Update(uint32 uiDiff)
                 return;
             }
 
-            --m_auiEncounter[7];
             SetData(TYPE_RUN_EVENT_TIME, m_auiEncounter[7]);
             debug_log("SD2: Instance Zulaman: minute decrease to %u.", m_auiEncounter[7]);
 
