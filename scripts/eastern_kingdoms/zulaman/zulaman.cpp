@@ -238,7 +238,7 @@ struct MANGOS_DLL_DECL npc_tanzar_zaAI : public npc_escortAI
             case 3:
                 // TODO: Tanzar say ...
                 if (GameObject* pTanzarsTrunk = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_TANZARS_TRUNK)))
-                    pTanzarsTrunk->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
+                    pTanzarsTrunk->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_LOCKED);
                 m_creature->HandleEmote(EMOTE_ONESHOT_NONE);
                 m_creature->SetSpeedRate(MOVE_RUN, 2.0f);
                 SetRun(true);
