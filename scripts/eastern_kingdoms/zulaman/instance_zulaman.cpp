@@ -50,7 +50,6 @@ instance_zulaman::instance_zulaman(Map* pMap) : ScriptedInstance(pMap),
     m_uiEggsRemainingCount_Right(20),
 
     m_auiChestLootBoxDwarfGUID(0),
-    m_auiKrazsChestGUID(0),
     m_auiHarkorsWeaponGUID(0)
 {
     Initialize();
@@ -150,7 +149,6 @@ void instance_zulaman::OnObjectCreate(GameObject* pGo)
         case GO_HARKORS_CAGE: m_auiEventChestNpcCageGUIDs[3] = pGo->GetGUID(); break;
 
         case GO_LOOT_BOX_DWARF: m_auiChestLootBoxDwarfGUID = pGo->GetGUID(); break;
-        case GO_KRAZS_CHEST:    m_auiKrazsChestGUID        = pGo->GetGUID(); break;
 
         case GO_DWARF_HAMMER: m_auiHarkorsWeaponGUID = pGo->GetGUID(); break;
     }
@@ -413,8 +411,6 @@ uint64 instance_zulaman::GetData64(uint32 uiData)
         case GO_HARKORS_CAGE:     return m_auiEventChestNpcCageGUIDs[3];
 
         case GO_LOOT_BOX_DWARF:   return m_auiChestLootBoxDwarfGUID;
-
-        case GO_KRAZS_CHEST:      return m_auiKrazsChestGUID;
 
         case GO_DWARF_HAMMER:     return m_auiHarkorsWeaponGUID;
         default:

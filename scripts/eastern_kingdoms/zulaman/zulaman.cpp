@@ -302,8 +302,6 @@ struct MANGOS_DLL_DECL npc_kraz_zaAI : public npc_escortAI
                 break;
             case 5:
                 // TODO: Kraz say ...
-                if (GameObject* pKrazsChest = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_KRAZS_CHEST)))
-                    pKrazsChest->SetGoState(GO_STATE_ACTIVE);
                 if (GameObject* pKrazsPackage = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_KRAZS_PACKAGE)))
                     pKrazsPackage->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
                 m_creature->HandleEmote(EMOTE_ONESHOT_NONE);

@@ -91,7 +91,6 @@ enum InstanceZA
     GO_HARKORS_SATCHEL      = 187021,
 
     GO_LOOT_BOX_DWARF       = 186622,
-    GO_KRAZS_CHEST          = 186658,
     GO_ASHLIS_VASE          = 186671,
 
     GO_TANZARS_CAGE         = 187377,
@@ -191,7 +190,6 @@ class MANGOS_DLL_DECL instance_zulaman : public ScriptedInstance
         uint64 m_auiEventChestNpcGUIDs[MAX_CHESTS];
         uint64 m_auiEventChestNpcCageGUIDs[MAX_CHESTS];
         uint64 m_auiChestLootBoxDwarfGUID;
-        uint64 m_auiKrazsChestGUID;
         uint64 m_auiAshlisVaseGUIDs[4];
         uint64 m_auiHarkorsWeaponGUID;
 
