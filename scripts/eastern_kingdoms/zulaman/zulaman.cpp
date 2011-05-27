@@ -444,7 +444,7 @@ struct MANGOS_DLL_DECL npc_harkor_zaAI : public npc_escortAI
             case 4:
                 // TODO: Harkor say ...
                 if (GameObject* pLootBoxDwarf = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_LOOT_BOX_DWARF)))
-                    pLootBoxDwarf->SetGoState(GO_STATE_ACTIVE);
+                    pLootBoxDwarf->SetGoState(GO_STATE_ACTIVE_ALTERNATIVE);
                 if (GameObject* pHarkorsSatchel = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_HARKORS_SATCHEL)))
                     pHarkorsSatchel->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
                 m_creature->HandleEmote(EMOTE_ONESHOT_NONE);
