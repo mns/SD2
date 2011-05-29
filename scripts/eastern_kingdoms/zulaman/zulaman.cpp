@@ -144,7 +144,7 @@ struct MANGOS_DLL_DECL npc_harrison_jones_zaAI : public npc_escortAI
                 DoScriptText(SAY_AT_GONG, m_creature);
 
                 if (GameObject* pStrangeGong = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_STRANGE_GONG)))
-                    pStrangeGong->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
+                    pStrangeGong->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NO_INTERACT);
 
                 //Start bang gong for 2min
                 m_creature->CastSpell(m_creature, SPELL_BANGING_THE_GONG, false);
@@ -303,7 +303,7 @@ struct MANGOS_DLL_DECL npc_kraz_zaAI : public npc_escortAI
             case 5:
                 // TODO: Kraz say ...
                 if (GameObject* pKrazsPackage = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_KRAZS_PACKAGE)))
-                    pKrazsPackage->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
+                    pKrazsPackage->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NO_INTERACT);
                 m_creature->HandleEmote(EMOTE_ONESHOT_NONE);
                 m_creature->SetSpeedRate(MOVE_RUN, 2.0f);
                 SetRun(true);
@@ -372,7 +372,7 @@ struct MANGOS_DLL_DECL npc_ashli_zaAI : public npc_escortAI
                 // TODO: Ashli say ...
                 m_creature->CastSpell(m_creature,SPELL_ASHLIS_FIREBALL,false);
                 if (GameObject* pAshlisBag = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_ASHLIS_BAG)))
-                    pAshlisBag->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
+                    pAshlisBag->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NO_INTERACT);
                 m_creature->SetSpeedRate(MOVE_RUN, 2.0f);
                 SetRun(true);
                 break;
@@ -444,7 +444,7 @@ struct MANGOS_DLL_DECL npc_harkor_zaAI : public npc_escortAI
                 if (GameObject* pLootBoxDwarf = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_LOOT_BOX_DWARF)))
                     pLootBoxDwarf->SetGoState(GO_STATE_ACTIVE_ALTERNATIVE);
                 if (GameObject* pHarkorsSatchel = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_HARKORS_SATCHEL)))
-                    pHarkorsSatchel->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
+                    pHarkorsSatchel->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NO_INTERACT);
                 m_creature->HandleEmote(EMOTE_ONESHOT_NONE);
                 m_creature->SetSpeedRate(MOVE_RUN, 2.0f);
                 SetRun(true);
@@ -504,7 +504,7 @@ bool GOUse_go_strange_gong(Player* pPlayer, GameObject* pGo)
         else
             error_log("SD2: Instance Zulaman: go_strange_gong failed");
 
-        pGo->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
+        pGo->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NO_INTERACT);
     }
 
     return false;
