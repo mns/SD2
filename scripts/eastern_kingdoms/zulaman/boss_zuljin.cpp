@@ -336,6 +336,9 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
                     m_uiCreepingParalysisTimer = 20000;
                 }else m_uiCreepingParalysisTimer -= diff;
 
+                if (m_uiOverpowerTimer > 0)
+                    m_uiOverpowerTimer -= diff;
+
                 if (!m_creature->getVictim())
                     break;
 
@@ -344,11 +347,8 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
                 if (!DoMeleeAttackIfReady())
                     break;
 
-                if (m_uiOverpowerTimer > diff)
-                {
-                    m_uiOverpowerTimer -= diff;
+                if (m_uiOverpowerTimer > 0)
                     break;
-                }
 
                 if (m_creature->getVictim() && m_creature->getVictim()->GetHealth() == TargetHealthTemp)
                 {
