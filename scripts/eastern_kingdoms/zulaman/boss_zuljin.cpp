@@ -158,6 +158,7 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
     uint8  m_uiTransformParts;
     uint32 m_uiGrievousThrowTimer;
     uint32 m_uiCreepingParalysisTimer;
+    uint32 m_uiOverpowerTimer;
     uint32 m_uiClawRageTimer;
     uint32 m_uiClawRageIntervalTimer;
     uint8  m_uiClawRageCounter;
@@ -184,6 +185,7 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
         m_uiWhirlwindTimer = urand(10000,20000);
         m_uiGrievousThrowTimer = 5000;
         m_uiCreepingParalysisTimer = 5000;
+        m_uiOverpowerTimer = 0;
         m_uiClawRageTimer = urand(10000, 15000);
         m_uiLynxRushTimer = 40000; //max timer
         m_uiLynxRushVictimGUID = 0;
@@ -342,8 +344,17 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
                 if (!DoMeleeAttackIfReady())
                     break;
 
+                if (m_uiOverpowerTimer > diff)
+                {
+                    m_uiOverpowerTimer -= diff;
+                    break;
+                }
+
                 if (m_creature->getVictim() && m_creature->getVictim()->GetHealth() == TargetHealthTemp)
+                {
                     DoCast(m_creature->getVictim(), SPELL_OVERPOWER, false);
+                    m_uiOverpowerTimer = 5000; // 5 sec cooldown
+                }
             }
             break;
             case PHASE_LYNX:
