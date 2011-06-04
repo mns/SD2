@@ -215,7 +215,6 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
     boss_malacrassAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        memset(&m_auiAddGUIDs, 0, sizeof(m_auiAddGUIDs));
         m_lAddsEntryList.clear();
         Reset();
     }
@@ -223,7 +222,7 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
     ScriptedInstance* m_pInstance;
 
     std::list<uint32> m_lAddsEntryList;
-    uint64 m_auiAddGUIDs[MAX_ACTIVE_ADDS];
+    ObjectGuid m_aAddGuid[MAX_ACTIVE_ADDS];
 
     uint32 m_uiDrainPowerTimer;
     uint32 m_uiSpiritBoltsTimer;
@@ -252,7 +251,7 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
     {
         for(uint8 i = 0; i < MAX_ACTIVE_ADDS; ++i)
         {
-            if (Creature* pAdd = m_creature->GetMap()->GetCreature(m_auiAddGUIDs[i]))
+            if (Creature* pAdd = m_creature->GetMap()->GetCreature(m_aAddGuid[i]))
                 pAdd->AI()->EnterEvadeMode();
         }
     }
@@ -276,7 +275,7 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
             for(std::list<uint32>::iterator itr = m_lAddsEntryList.begin(); itr != m_lAddsEntryList.end(); ++itr)
             {
                 if (Creature* pAdd = m_creature->SummonCreature((*itr), m_afAddPosX[j], ADD_POS_Y, ADD_POS_Z, ADD_ORIENT, TEMPSUMMON_CORPSE_DESPAWN, 0))
-                    m_auiAddGUIDs[j] = pAdd->GetGUID();
+                    m_aAddGuid[j] = pAdd->GetObjectGuid();
 
                 ++j;
             }
@@ -285,13 +284,13 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
         {
             for(std::list<uint32>::iterator itr = m_lAddsEntryList.begin(); itr != m_lAddsEntryList.end(); ++itr)
             {
-                Creature* pAdd = m_creature->GetMap()->GetCreature(m_auiAddGUIDs[j]);
+                Creature* pAdd = m_creature->GetMap()->GetCreature(m_aAddGuid[j]);
 
                 //object already removed, not exist
                 if (!pAdd)
                 {
                     if (pAdd = m_creature->SummonCreature((*itr), m_afAddPosX[j], ADD_POS_Y, ADD_POS_Z, ADD_ORIENT, TEMPSUMMON_CORPSE_DESPAWN, 0))
-                        m_auiAddGUIDs[j] = pAdd->GetGUID();
+                        m_aAddGuid[j] = pAdd->GetObjectGuid();
                 }
                 ++j;
             }
@@ -313,7 +312,7 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
     {
         for(uint8 i = 0; i < MAX_ACTIVE_ADDS; ++i)
         {
-            if (Creature* pAdd = m_creature->GetMap()->GetCreature(m_auiAddGUIDs[i]))
+            if (Creature* pAdd = m_creature->GetMap()->GetCreature(m_aAddGuid[i]))
             {
                 if (!pAdd->getVictim())
                     pAdd->AI()->AttackStart(pWho);
@@ -344,14 +343,16 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
     {
         for(uint8 i = 0; i < MAX_ACTIVE_ADDS; ++i)
         {
-            if (Creature* pAdd = m_creature->GetMap()->GetCreature(m_auiAddGUIDs[i]))
+            if (Creature* pAdd = m_creature->GetMap()->GetCreature(m_aAddGuid[i]))
             {
                 pAdd->AI()->EnterEvadeMode();
                 pAdd->SetDeathState(JUST_DIED);
             }
         }
 
-        memset(&m_auiAddGUIDs, 0, sizeof(m_auiAddGUIDs));
+        for (uint8 i = 0; i < MAX_ACTIVE_ADDS; ++i)
+            m_aAddGuid[i].Clear();
+
         m_lAddsEntryList.clear();
     }
 
