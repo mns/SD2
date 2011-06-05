@@ -143,7 +143,7 @@ struct MANGOS_DLL_DECL npc_harrison_jones_zaAI : public npc_escortAI
             case 1:
                 DoScriptText(SAY_AT_GONG, m_creature);
 
-                if (GameObject* pStrangeGong = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_STRANGE_GONG)))
+                if (GameObject* pStrangeGong = m_pInstance->GetSingleGameObjectFromStorage(GO_STRANGE_GONG))
                     pStrangeGong->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NO_INTERACT);
 
                 //Start bang gong for 2min
@@ -237,7 +237,7 @@ struct MANGOS_DLL_DECL npc_tanzar_zaAI : public npc_escortAI
                 break;
             case 3:
                 // TODO: Tanzar say ...
-                if (GameObject* pTanzarsTrunk = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_TANZARS_TRUNK)))
+                if (GameObject* pTanzarsTrunk = m_pInstance->GetSingleGameObjectFromStorage(GO_TANZARS_TRUNK))
                     pTanzarsTrunk->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_LOCKED);
                 m_creature->HandleEmote(EMOTE_ONESHOT_NONE);
                 m_creature->SetSpeedRate(MOVE_RUN, 2.0f);
@@ -260,7 +260,7 @@ struct MANGOS_DLL_DECL npc_tanzar_zaAI : public npc_escortAI
         {
             if (m_pInstance->GetData(TYPE_EVENT_RUN) == IN_PROGRESS)
             {
-                if (GameObject* pGo = m_creature->GetMap()->GetGameObject(m_pInstance->GetData64(GO_TANZARS_CAGE)))
+                if (GameObject* pGo = m_pInstance->GetSingleGameObjectFromStorage(GO_TANZARS_CAGE))
                     pGo->SetGoState(GO_STATE_ACTIVE);
                 Start();
             }
@@ -302,7 +302,7 @@ struct MANGOS_DLL_DECL npc_kraz_zaAI : public npc_escortAI
                 break;
             case 5:
                 // TODO: Kraz say ...
-                if (GameObject* pKrazsPackage = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_KRAZS_PACKAGE)))
+                if (GameObject* pKrazsPackage = m_pInstance->GetSingleGameObjectFromStorage(GO_KRAZS_PACKAGE))
                     pKrazsPackage->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NO_INTERACT);
                 m_creature->HandleEmote(EMOTE_ONESHOT_NONE);
                 m_creature->SetSpeedRate(MOVE_RUN, 2.0f);
@@ -325,7 +325,7 @@ struct MANGOS_DLL_DECL npc_kraz_zaAI : public npc_escortAI
         {
             if (m_pInstance->GetData(TYPE_EVENT_RUN) == IN_PROGRESS)
             {
-                if (GameObject* pGo = m_creature->GetMap()->GetGameObject(m_pInstance->GetData64(GO_KRAZS_CAGE)))
+                if (GameObject* pGo = m_pInstance->GetSingleGameObjectFromStorage(GO_KRAZS_CAGE))
                     pGo->SetGoState(GO_STATE_ACTIVE);
                 Start();
             }
@@ -371,7 +371,7 @@ struct MANGOS_DLL_DECL npc_ashli_zaAI : public npc_escortAI
             case 7:
                 // TODO: Ashli say ...
                 m_creature->CastSpell(m_creature,SPELL_ASHLIS_FIREBALL,false);
-                if (GameObject* pAshlisBag = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_ASHLIS_BAG)))
+                if (GameObject* pAshlisBag = m_pInstance->GetSingleGameObjectFromStorage(GO_ASHLIS_BAG))
                     pAshlisBag->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NO_INTERACT);
                 m_creature->SetSpeedRate(MOVE_RUN, 2.0f);
                 SetRun(true);
@@ -393,7 +393,7 @@ struct MANGOS_DLL_DECL npc_ashli_zaAI : public npc_escortAI
         {
             if (m_pInstance->GetData(TYPE_EVENT_RUN) == IN_PROGRESS)
             {
-                if (GameObject* pGo = m_creature->GetMap()->GetGameObject(m_pInstance->GetData64(GO_ASHLIS_CAGE)))
+                if (GameObject* pGo = m_pInstance->GetSingleGameObjectFromStorage(GO_ASHLIS_CAGE))
                     pGo->SetGoState(GO_STATE_ACTIVE);
                 Start();
                 m_pInstance->SetData(TYPE_EVENT_RUN, DONE); // Done ZA Timed Event
@@ -432,7 +432,7 @@ struct MANGOS_DLL_DECL npc_harkor_zaAI : public npc_escortAI
         switch(uiPointId)
         {
             case 2:
-                if (GameObject* pDwarfHammer = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_DWARF_HAMMER)))
+                if (GameObject* pDwarfHammer = m_pInstance->GetSingleGameObjectFromStorage(GO_DWARF_HAMMER))
                     pDwarfHammer->Delete();
                 SetEquipmentSlots(false, EQUIP_ID_HARKORS_WEAPON, EQUIP_NO_CHANGE, EQUIP_NO_CHANGE);
                 break;
@@ -441,9 +441,9 @@ struct MANGOS_DLL_DECL npc_harkor_zaAI : public npc_escortAI
                 break;
             case 4:
                 // TODO: Harkor say ...
-                if (GameObject* pLootBoxDwarf = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_LOOT_BOX_DWARF)))
+                if (GameObject* pLootBoxDwarf = m_pInstance->GetSingleGameObjectFromStorage(GO_LOOT_BOX_DWARF))
                     pLootBoxDwarf->SetGoState(GO_STATE_ACTIVE_ALTERNATIVE);
-                if (GameObject* pHarkorsSatchel = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_HARKORS_SATCHEL)))
+                if (GameObject* pHarkorsSatchel = m_pInstance->GetSingleGameObjectFromStorage(GO_HARKORS_SATCHEL))
                     pHarkorsSatchel->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NO_INTERACT);
                 m_creature->HandleEmote(EMOTE_ONESHOT_NONE);
                 m_creature->SetSpeedRate(MOVE_RUN, 2.0f);
@@ -466,7 +466,7 @@ struct MANGOS_DLL_DECL npc_harkor_zaAI : public npc_escortAI
         {
             if (m_pInstance->GetData(TYPE_EVENT_RUN) == IN_PROGRESS)
             {
-                if (GameObject* pGo = m_creature->GetMap()->GetGameObject(m_pInstance->GetData64(GO_HARKORS_CAGE)))
+                if (GameObject* pGo = m_pInstance->GetSingleGameObjectFromStorage(GO_HARKORS_CAGE))
                     pGo->SetGoState(GO_STATE_ACTIVE);
                 Start();
             }
@@ -496,7 +496,7 @@ bool GOUse_go_strange_gong(Player* pPlayer, GameObject* pGo)
 
     if (pInstance->GetData(TYPE_EVENT_RUN) == SPECIAL)
     {
-        if (Creature* pCreature = pGo->GetMap()->GetCreature(pInstance->GetData64(NPC_HARRISON)))
+        if (Creature* pCreature = pInstance->GetSingleCreatureFromStorage(NPC_HARRISON))
         {
             if (npc_harrison_jones_zaAI* pHarrisonAI = dynamic_cast<npc_harrison_jones_zaAI*>(pCreature->AI()))
                 pHarrisonAI->SetHoldState(false);

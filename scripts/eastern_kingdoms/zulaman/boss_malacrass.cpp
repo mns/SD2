@@ -557,7 +557,7 @@ struct MANGOS_DLL_DECL boss_malacrass_addAI : public ScriptedAI
         if (!m_pInstance)
             return;
 
-        if (Creature* pMalacrass = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_MALACRASS)))
+        if (Creature* pMalacrass = m_pInstance->GetSingleCreatureFromStorage(NPC_MALACRASS))
             if (!pMalacrass->getVictim())
                 pMalacrass->AI()->AttackStart(pWho);
     }
@@ -571,7 +571,7 @@ struct MANGOS_DLL_DECL boss_malacrass_addAI : public ScriptedAI
         if (!m_pInstance)
             return;
 
-        if (Creature* pMalacrass = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_MALACRASS)))
+        if (Creature* pMalacrass = m_pInstance->GetSingleCreatureFromStorage(NPC_MALACRASS))
             pMalacrass->AI()->KilledUnit(pVictim);
     }
 
@@ -580,7 +580,7 @@ struct MANGOS_DLL_DECL boss_malacrass_addAI : public ScriptedAI
         if (!m_pInstance)
             return;
 
-        if (Creature* pMalacrass = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(TYPE_MALACRASS)))
+        if (Creature* pMalacrass = m_pInstance->GetSingleCreatureFromStorage(NPC_MALACRASS))
         {
             switch(urand(0, 2))
             {
