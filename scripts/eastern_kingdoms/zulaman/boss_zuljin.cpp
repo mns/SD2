@@ -163,12 +163,12 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
     uint32 m_uiClawRageIntervalTimer;
     uint8  m_uiClawRageCounter;
     bool   m_uiClawRageFinished;
-    uint64 m_uiClawRageVictimGUID;
+    ObjectGuid m_uiClawRageVictimGUID;
     uint32 m_uiLynxRushTimer;
     bool   m_uiLynxRushFinished;
     uint32 m_uiLynxRushIntervalTimer;
     uint8  m_uiLynxRushCounter;
-    uint64 m_uiLynxRushVictimGUID;
+    ObjectGuid m_uiLynxRushVictimGUID;
     uint32 m_uiFilameWhirlTimer;
     uint32 m_uiFilameBreathTimer;
     uint32 m_uiSummonPillarTimer;
@@ -188,7 +188,7 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
         m_uiOverpowerTimer = 0;
         m_uiClawRageTimer = urand(10000, 15000);
         m_uiLynxRushTimer = 40000; //max timer
-        m_uiLynxRushVictimGUID = 0;
+        m_uiLynxRushVictimGUID.Clear();
         m_uiClawRageFinished = true;
         m_uiLynxRushFinished = true;
         m_uiFilameWhirlTimer = urand(15000, 20000);
@@ -241,10 +241,10 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
     void JustSummoned(Creature* pSummoned)
     {
         if (pSummoned->GetEntry() == CREATURE_FEATHER_VORTEX)
-            m_uiFeatherVortexGUIDs.push_back(pSummoned->GetGUID());
+            m_uiFeatherVortexGUIDs.push_back(pSummoned->GetObjectGuid());
 
         if (pSummoned->GetEntry() == CREATURE_COLUMN_OF_FIRE)
-            m_uiColumnOfFireGUIDs.push_back(pSummoned->GetGUID());
+            m_uiColumnOfFireGUIDs.push_back(pSummoned->GetObjectGuid());
     }
 
     void UpdateAI(const uint32 diff)
@@ -364,7 +364,7 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
                     if (!pTarget)
                         pTarget = m_creature->getVictim(); // for solo fight !
                     if (!pTarget) {EnterEvadeMode();return;}
-                    m_uiClawRageVictimGUID = pTarget->GetGUID();
+                    m_uiClawRageVictimGUID = pTarget->GetObjectGuid();
                     m_creature->getThreatManager().addThreat(pTarget, 500000.0f);  // for nice graphical orientation and less scripting
                     if (pTarget != m_creature->getVictim())
                     {
@@ -389,7 +389,7 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
 
                     if (m_uiClawRageCounter > 11)
                     {
-                        if (m_creature->getVictim()->GetGUID() == m_uiClawRageVictimGUID) //Do not subtract threat if random target is dead.
+                        if (m_creature->getVictim()->GetObjectGuid() == m_uiClawRageVictimGUID) //Do not subtract threat if random target is dead.
                             m_creature->getThreatManager().addThreat(m_creature->getVictim(), -500000.0f);
                         if (m_creature->HasAura(SPELL_CLAW_RAGE_HASTE))
                             m_creature->RemoveAurasDueToSpell(SPELL_CLAW_RAGE_HASTE); // This aura prevent melee attacking !
@@ -419,13 +419,13 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
                                 Unit* PriorTarget = m_creature->GetMap()->GetPlayer(m_uiLynxRushVictimGUID);
                                 if (PriorTarget && PriorTarget->isAlive())
                                     m_creature->getThreatManager().addThreat(PriorTarget, -500000.0f); // Undo high threat
-                                m_uiLynxRushVictimGUID = 0;
+                                m_uiLynxRushVictimGUID.Clear();
                             }
 
                             Unit* pVictim = m_creature->getVictim();
                             if (pTarget != pVictim)
                             {
-                                m_uiLynxRushVictimGUID = pTarget->GetGUID();
+                                m_uiLynxRushVictimGUID = pTarget->GetObjectGuid();
                                 m_creature->getThreatManager().addThreat(pTarget, 500000.0f);  // for nice graphical orientation and less scripting
                                 m_creature->AI()->AttackStart(pTarget);
                             }
@@ -440,7 +440,7 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
                                     Unit* PriorTarget = m_creature->GetMap()->GetPlayer(m_uiLynxRushVictimGUID);
                                     if (PriorTarget && PriorTarget->isAlive())
                                         m_creature->getThreatManager().addThreat(PriorTarget, -500000.0f); // Undo high threat
-                                    m_uiLynxRushVictimGUID = 0;
+                                    m_uiLynxRushVictimGUID.Clear();
                                 }
                                 m_uiLynxRushFinished = true;
                             }
