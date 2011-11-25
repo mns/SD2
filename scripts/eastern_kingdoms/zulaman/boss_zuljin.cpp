@@ -47,26 +47,26 @@ enum
     SPELL_OVERPOWER                 = 43456,                //use after melee attack dodged
 
     // Eagle Form
-    SPELL_ENERGY_STORM              = 43983,                //enemy area aura, trigger 42577
+    SPELL_ENERGY_STORM              = 43983,                //enemy area aura, trigger 42577 on vortexes which cast 43137 on targets
     SPELL_ZAP_INFORM                = 42577,
     SPELL_ZAP_DAMAGE                = 43137,                //1250 damage
     SPELL_SUMMON_CYCLONE            = 43112,                //summon four feather vortex
-    CREATURE_FEATHER_VORTEX         = 24136,
+    NPC_FEATHER_VORTEX              = 24136,                //ToDo: script via ACID
     SPELL_CYCLONE_VISUAL            = 43119,                //trigger 43147 visual
     SPELL_CYCLONE_PASSIVE           = 43120,                //trigger 43121 (4y aoe) every second
 
     // Lynx Form
-    SPELL_CLAW_RAGE_HASTE           = 42583,
+    SPELL_CLAW_RAGE_HASTE           = 42583,                // Charges a random target and applies dummy effect 43149 on it
     SPELL_CLAW_RAGE_TRIGGER         = 43149,                // TODO: Need core fix for direct use (this so cast 43150 too self!)
     SPELL_CLAW_RAGE_DAMAGE          = 43150,
-    SPELL_LYNX_RUSH_HASTE           = 43152,
+    SPELL_LYNX_RUSH_HASTE           = 43152,                // Charges 9 targets in a row - Dummy effect should apply 43153
     SPELL_LYNX_RUSH_DAMAGE          = 43153,
 
     // Dragonhawk Form
     SPELL_FLAME_WHIRL               = 43213,                //trigger two spells
     SPELL_FLAME_BREATH              = 43215,
     SPELL_SUMMON_PILLAR             = 43216,                //summon 24187
-    CREATURE_COLUMN_OF_FIRE         = 24187,
+    NPC_COLUMN_OF_FIRE              = 24187,
     SPELL_PILLAR_TRIGGER            = 43218,                //trigger 43217
 
     // Cosmetic
@@ -79,7 +79,7 @@ enum
     SPELL_SHAPE_OF_THE_LYNX         = 42607,
     SPELL_SHAPE_OF_THE_DRAGONHAWK   = 42608,
 
-    SPELL_BERSERK                   = 45078,
+    SPELL_BERSERK                   = 45078,                // Berserk timer or existance is unk
 
     WEAPON_ID                       = 33975,
 
@@ -240,10 +240,10 @@ struct MANGOS_DLL_DECL boss_zuljinAI : public ScriptedAI
 
     void JustSummoned(Creature* pSummoned)
     {
-        if (pSummoned->GetEntry() == CREATURE_FEATHER_VORTEX)
+        if (pSummoned->GetEntry() == NPC_FEATHER_VORTEX)
             m_uiFeatherVortexGUIDs.push_back(pSummoned->GetObjectGuid());
 
-        if (pSummoned->GetEntry() == CREATURE_COLUMN_OF_FIRE)
+        if (pSummoned->GetEntry() == NPC_COLUMN_OF_FIRE)
             m_uiColumnOfFireGUIDs.push_back(pSummoned->GetObjectGuid());
     }
 
@@ -690,19 +690,20 @@ CreatureAI* GetAI_mob_zuljin_column_of_fire(Creature* pCreature)
 
 void AddSC_boss_zuljin()
 {
-    Script *newscript;
-    newscript = new Script;
-    newscript->Name = "boss_zuljin";
-    newscript->GetAI = &GetAI_boss_zuljin;
-    newscript->RegisterSelf();
+    Script* pNewScript;
 
-    newscript = new Script;
-    newscript->Name = "mob_zuljin_vortex";
-    newscript->GetAI = &GetAI_mob_zuljin_vortex;
-    newscript->RegisterSelf();
+    pNewScript = new Script;
+    pNewScript->Name = "boss_zuljin";
+    pNewScript->GetAI = &GetAI_boss_zuljin;
+    pNewScript->RegisterSelf();
 
-    newscript = new Script;
-    newscript->Name = "mob_zuljin_column_of_fire";
-    newscript->GetAI = &GetAI_mob_zuljin_column_of_fire;
-    newscript->RegisterSelf();
+    pNewScript = new Script;
+    pNewScript->Name = "mob_zuljin_vortex";
+    pNewScript->GetAI = &GetAI_mob_zuljin_vortex;
+    pNewScript->RegisterSelf();
+
+    pNewScript = new Script;
+    pNewScript->Name = "mob_zuljin_column_of_fire";
+    pNewScript->GetAI = &GetAI_mob_zuljin_column_of_fire;
+    pNewScript->RegisterSelf();
 }

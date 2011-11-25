@@ -45,8 +45,8 @@ enum
     //for various powers he uses after using soul drain
     //Death Knight
     SPELL_DK_DEATH_AND_DECAY    = 61603,
-    SPELL_DK_PLAGUE_STRIKE      = 61606,
-    SPELL_DK_MARK_OF_BLOOD      = 61600,
+    SPELL_DK_PLAGUE_STRIKE      = 61600,
+    SPELL_DK_MARK_OF_BLOOD      = 61606,
 
     //Druid
     SPELL_DR_THORNS             = 43420,
@@ -221,15 +221,16 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
 
+    uint32 m_uiSpiritBoltsTimer;
+    uint32 m_uiDrainPowerTimer;
+    Phases m_uiPhase;
+    uint32 m_uiDelayTimer;
+    uint8  m_uiPlayerClass;
+    uint8  m_uiRandomSpell;
+
     std::list<uint32> m_lAddsEntryList;
     ObjectGuid m_aAddGuid[MAX_ACTIVE_ADDS];
 
-    uint32 m_uiDrainPowerTimer;
-    uint32 m_uiSpiritBoltsTimer;
-    Phases m_uiPhase;
-    uint32 m_uiDelayTimer;
-    uint8  m_uiSoulDrainsClass;
-    uint8  m_uiRandomSpell;
 
     void Reset()
     {
@@ -396,16 +397,17 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
             {
                 DoScriptText(SAY_SOUL_SIPHON, m_creature);
                 Unit* pTarget = NULL;
-                pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
+                pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0, SPELL_SIPHON_SOUL, SELECT_FLAG_PLAYER);
                 if (!pTarget || pTarget->GetTypeId() != TYPEID_PLAYER) {EnterEvadeMode();return;}
-                m_uiSoulDrainsClass = pTarget->getClass();
+                m_uiPlayerClass = pTarget->getClass();
+                if (m_uiPlayerClass == 3) m_uiPlayerClass = 8; // TODO : Drop me when fixed hunter traps .
                 m_creature->CastSpell(pTarget, SPELL_SIPHON_SOUL, true);
                 m_uiPhase = PHASE_SOUL_DRAINS;
             }
 
             case PHASE_SOUL_DRAINS:
             {
-                switch(m_uiSoulDrainsClass)
+                switch(m_uiPlayerClass)
                 {
                     case 8:    // Mage
                     {
@@ -423,14 +425,14 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
                     }
                 }
                 Unit* pTarget = NULL;
-                if (SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].cooldownTemp > time(NULL))
+                if (SoulDrainsStructure[m_uiPlayerClass][m_uiRandomSpell].cooldownTemp > time(NULL))
                     break;
-                switch(SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].spell)
+                switch(SoulDrainsStructure[m_uiPlayerClass][m_uiRandomSpell].spell)
                 {
                     case SPELL_PA_HOLY_LIGHT:
                     case SPELL_PR_HEAL:
                     case SPELL_SH_HEALING_WAVE:
-                        pTarget = DoSelectLowestHpFriendly(MaxRangeForSpell(SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].spell), 50000);
+                        pTarget = DoSelectLowestHpFriendly(MaxRangeForSpell(SoulDrainsStructure[m_uiPlayerClass][m_uiRandomSpell].spell), 50000);
                     break;
                     case SPELL_DR_LIFEBLOOM:
                         if (m_creature->GetHealth() < m_creature->GetMaxHealth() - 50000)
@@ -438,7 +440,7 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
                     break;
                     case SPELL_DR_THORNS:
                     {
-                        std::list<Creature*> lTempList = DoFindFriendlyMissingBuff(MaxRangeForSpell(SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].spell), SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].spell);
+                        std::list<Creature*> lTempList = DoFindFriendlyMissingBuff(MaxRangeForSpell(SoulDrainsStructure[m_uiPlayerClass][m_uiRandomSpell].spell), SoulDrainsStructure[m_uiPlayerClass][m_uiRandomSpell].spell);
                         if (!lTempList.empty())
                             pTarget = *(lTempList.begin());
                     }
@@ -464,7 +466,7 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
                         if (m_creature->getVictim() && m_creature->GetDistance(m_creature->getVictim()) < 5)
                         {
                             //attempt find go summoned from spell (casted by m_creature)
-                            GameObject* pGo = m_creature->GetGameObject(SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].spell); // TODO : Not work ! maybe core Bug
+                            GameObject* pGo = m_creature->GetGameObject(SoulDrainsStructure[m_uiPlayerClass][m_uiRandomSpell].spell); // TODO : Not work ! maybe core Bug
 
                             //if we have a pGo, we need to wait (only one trap at a time)
                             if (!pGo)
@@ -495,9 +497,9 @@ struct MANGOS_DLL_DECL boss_malacrassAI : public ScriptedAI
                         pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
                     break;
                 }
-                if (pTarget && DoCastSpellIfCan(pTarget, SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].spell) == CAST_OK)
+                if (pTarget && DoCastSpellIfCan(pTarget, SoulDrainsStructure[m_uiPlayerClass][m_uiRandomSpell].spell) == CAST_OK)
                 {
-                    SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].cooldownTemp = SoulDrainsStructure[m_uiSoulDrainsClass][m_uiRandomSpell].cooldown + time(NULL); // Cooldown
+                    SoulDrainsStructure[m_uiPlayerClass][m_uiRandomSpell].cooldownTemp = SoulDrainsStructure[m_uiPlayerClass][m_uiRandomSpell].cooldown + time(NULL); // Cooldown
                     m_uiDelayTimer = 1500; // 1.5sec GCD
                 }
                 else
@@ -1058,50 +1060,50 @@ CreatureAI* GetAI_mob_koragg(Creature* pCreature)
 
 void AddSC_boss_malacrass()
 {
-    Script* newscript;
+    Script* pNewScript;
 
-    newscript = new Script;
-    newscript->Name = "boss_malacrass";
-    newscript->GetAI = &GetAI_boss_malacrass;
-    newscript->RegisterSelf();
+    pNewScript = new Script;
+    pNewScript->Name = "boss_malacrass";
+    pNewScript->GetAI = &GetAI_boss_malacrass;
+    pNewScript->RegisterSelf();
 
-    newscript = new Script;
-    newscript->Name = "mob_thurg";
-    newscript->GetAI = &GetAI_mob_thurg;
-    newscript->RegisterSelf();
+    pNewScript = new Script;
+    pNewScript->Name = "mob_thurg";
+    pNewScript->GetAI = &GetAI_mob_thurg;
+    pNewScript->RegisterSelf();
 
-    newscript = new Script;
-    newscript->Name = "mob_gazakroth";
-    newscript->GetAI = &GetAI_mob_gazakroth;
-    newscript->RegisterSelf();
+    pNewScript = new Script;
+    pNewScript->Name = "mob_gazakroth";
+    pNewScript->GetAI = &GetAI_mob_gazakroth;
+    pNewScript->RegisterSelf();
 
-    newscript = new Script;
-    newscript->Name = "mob_lord_raadan";
-    newscript->GetAI = &GetAI_mob_lord_raadan;
-    newscript->RegisterSelf();
+    pNewScript = new Script;
+    pNewScript->Name = "mob_lord_raadan";
+    pNewScript->GetAI = &GetAI_mob_lord_raadan;
+    pNewScript->RegisterSelf();
 
-    newscript = new Script;
-    newscript->Name = "mob_darkheart";
-    newscript->GetAI = &GetAI_mob_darkheart;
-    newscript->RegisterSelf();
+    pNewScript = new Script;
+    pNewScript->Name = "mob_darkheart";
+    pNewScript->GetAI = &GetAI_mob_darkheart;
+    pNewScript->RegisterSelf();
 
-    newscript = new Script;
-    newscript->Name = "mob_slither";
-    newscript->GetAI = &GetAI_mob_slither;
-    newscript->RegisterSelf();
+    pNewScript = new Script;
+    pNewScript->Name = "mob_slither";
+    pNewScript->GetAI = &GetAI_mob_slither;
+    pNewScript->RegisterSelf();
 
-    newscript = new Script;
-    newscript->Name = "mob_fenstalker";
-    newscript->GetAI = &GetAI_mob_fenstalker;
-    newscript->RegisterSelf();
+    pNewScript = new Script;
+    pNewScript->Name = "mob_fenstalker";
+    pNewScript->GetAI = &GetAI_mob_fenstalker;
+    pNewScript->RegisterSelf();
 
-    newscript = new Script;
-    newscript->Name = "mob_koragg";
-    newscript->GetAI = &GetAI_mob_koragg;
-    newscript->RegisterSelf();
+    pNewScript = new Script;
+    pNewScript->Name = "mob_koragg";
+    pNewScript->GetAI = &GetAI_mob_koragg;
+    pNewScript->RegisterSelf();
 
-    newscript = new Script;
-    newscript->Name = "mob_alyson_antille";
-    newscript->GetAI = &GetAI_mob_alyson_antille;
-    newscript->RegisterSelf();
+    pNewScript = new Script;
+    pNewScript->Name = "mob_alyson_antille";
+    pNewScript->GetAI = &GetAI_mob_alyson_antille;
+    pNewScript->RegisterSelf();
 }
