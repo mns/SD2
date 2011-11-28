@@ -71,7 +71,7 @@ void instance_zulaman::OnCreatureCreate(Creature* pCreature)
         case NPC_HARKOR:      m_aEventNpcInfo[INDEX_AKILZON].npGuid =  pCreature->GetObjectGuid(); break;
 
         case NPC_EGG:
-            if (m_auiEncounter[3] != DONE)
+            if (m_auiEncounter[TYPE_JANALAI] != DONE)
                 m_lEggsGUIDList.push_back(pCreature->GetObjectGuid());
             break;
     }
@@ -84,7 +84,7 @@ void instance_zulaman::OnObjectCreate(GameObject* pGo)
         case GO_STRANGE_GONG:
             break;
         case GO_MASSIVE_GATE:
-            if (m_auiEncounter[0] == DONE || m_auiEncounter[0] == FAIL)
+            if (m_auiEncounter[TYPE_EVENT_RUN] == DONE || m_auiEncounter[TYPE_EVENT_RUN] == FAIL)
                 pGo->SetGoState(GO_STATE_ACTIVE);
             break;
         case GO_WIND_DOOR:
@@ -92,7 +92,7 @@ void instance_zulaman::OnObjectCreate(GameObject* pGo)
         case GO_LYNX_TEMPLE_ENTRANCE:
             break;
         case GO_LYNX_TEMPLE_EXIT:
-            if (m_auiEncounter[4] == DONE)
+            if (m_auiEncounter[TYPE_HALAZZI] == DONE)
                 pGo->SetGoState(GO_STATE_ACTIVE);
             break;
         case GO_HEXLORD_ENTRANCE:
@@ -100,7 +100,7 @@ void instance_zulaman::OnObjectCreate(GameObject* pGo)
                 pGo->SetGoState(GO_STATE_ACTIVE);
             break;
         case GO_WOODEN_DOOR:
-            if (m_auiEncounter[5] == DONE)
+            if (m_auiEncounter[TYPE_MALACRASS] == DONE)
                 pGo->SetGoState(GO_STATE_ACTIVE);
             break;
         case GO_FIRE_DOOR:
@@ -131,22 +131,22 @@ void instance_zulaman::SetData(uint32 uiType, uint32 uiData)
 {
     debug_log("SD2: Instance Zulaman: SetData received for type %u with data %u",uiType,uiData);
 
-    switch(uiType)
+    switch (uiType)
     {
         case TYPE_EVENT_RUN:
             if (uiData == SPECIAL)
             {
                 ++m_uiGongCount;
                 if (m_uiGongCount == 5)
-                    m_auiEncounter[0] = uiData;
+                    m_auiEncounter[TYPE_EVENT_RUN] = uiData;
                 return;
             }
             if (uiData == IN_PROGRESS)
             {
                 DoTimeRunSay(RUN_START);
                 DoUseDoorOrButton(GO_MASSIVE_GATE);
-                if (m_auiEncounter[7])
-                    SetData(TYPE_RUN_EVENT_TIME, m_auiEncounter[7]);
+                if (m_auiEncounter[TYPE_RUN_EVENT_TIME])
+                    SetData(TYPE_RUN_EVENT_TIME, m_auiEncounter[TYPE_RUN_EVENT_TIME]);
                 else
                     SetData(TYPE_RUN_EVENT_TIME, 20);   // 20 Minutes as default time
                 DoUpdateWorldState(WORLD_STATE_ID, 1);
@@ -155,7 +155,7 @@ void instance_zulaman::SetData(uint32 uiType, uint32 uiData)
             {
                 DoTimeRunSay(RUN_FAIL);
                 DoUpdateWorldState(WORLD_STATE_ID, 0);
-                m_auiEncounter[0] = uiData;
+                m_auiEncounter[TYPE_EVENT_RUN] = uiData;
                 // Kill remaining Event NPCs
                 for (uint8 i = 0; i < MAX_CHESTS; ++i)
                 {
@@ -190,32 +190,32 @@ void instance_zulaman::SetData(uint32 uiType, uint32 uiData)
                 DoTimeRunSay(RUN_DONE);
                 DoUpdateWorldState(WORLD_STATE_ID, 0);
             }
-            m_auiEncounter[0] = uiData;
+            m_auiEncounter[uiType] = uiData;
             break;
         case TYPE_AKILZON:
             DoUseDoorOrButton(GO_WIND_DOOR);
             if (uiData == DONE)
             {
-                if (m_auiEncounter[0] == IN_PROGRESS)
+                if (m_auiEncounter[TYPE_EVENT_RUN] == IN_PROGRESS)
                 {
-                    m_auiEncounter[7] += 10;            // Add 10 minutes
-                    SetData(TYPE_RUN_EVENT_TIME, m_auiEncounter[7]);
+                    m_auiEncounter[TYPE_RUN_EVENT_TIME] += 10; // Add 10 minutes
+                    SetData(TYPE_RUN_EVENT_TIME, m_auiEncounter[TYPE_RUN_EVENT_TIME]);
                     DoChestEvent(INDEX_AKILZON);
                 }
             }
-            m_auiEncounter[1] = uiData;
+            m_auiEncounter[uiType] = uiData;
             break;
         case TYPE_NALORAKK:
             if (uiData == DONE)
             {
-                if (m_auiEncounter[0] == IN_PROGRESS)
+                if (m_auiEncounter[TYPE_EVENT_RUN] == IN_PROGRESS)
                 {
-                    m_auiEncounter[7] += 15;            // Add 15 minutes
-                    SetData(TYPE_RUN_EVENT_TIME, m_auiEncounter[7]);
+                    m_auiEncounter[TYPE_RUN_EVENT_TIME] += 15; // Add 15 minutes
+                    SetData(TYPE_RUN_EVENT_TIME, m_auiEncounter[TYPE_RUN_EVENT_TIME]);
                     DoChestEvent(INDEX_NALORAKK);
                 }
             }
-            m_auiEncounter[2] = uiData;
+            m_auiEncounter[uiType] = uiData;
             break;
         case TYPE_JANALAI:
             if (uiData == FAIL)
@@ -235,31 +235,37 @@ void instance_zulaman::SetData(uint32 uiType, uint32 uiData)
             if (uiData == DONE)
             {
                 m_lEggsGUIDList.clear();
-                if (m_auiEncounter[0] == IN_PROGRESS)
+
+                if (m_auiEncounter[TYPE_EVENT_RUN] == IN_PROGRESS)
                     DoChestEvent(INDEX_JANALAI);
             }
-            m_auiEncounter[3] = uiData;
+            m_auiEncounter[uiType] = uiData;
             break;
         case TYPE_HALAZZI:
             DoUseDoorOrButton(GO_LYNX_TEMPLE_ENTRANCE);
             if (uiData == DONE)
             {
                 DoUseDoorOrButton(GO_LYNX_TEMPLE_EXIT);
-                if (m_auiEncounter[0] == IN_PROGRESS)
+                if (m_auiEncounter[TYPE_EVENT_RUN] == IN_PROGRESS)
                     DoChestEvent(INDEX_HALAZZI);
             }
-            m_auiEncounter[4] = uiData;
+            m_auiEncounter[uiType] = uiData;
             break;
         case TYPE_MALACRASS:
             DoUseDoorOrButton(GO_HEXLORD_ENTRANCE);
             if (uiData == DONE)
                 DoUseDoorOrButton(GO_WOODEN_DOOR);
-            m_auiEncounter[5] = uiData;
+            m_auiEncounter[uiType] = uiData;
             break;
         case TYPE_ZULJIN:
             DoUseDoorOrButton(GO_FIRE_DOOR);
-            m_auiEncounter[6] = uiData;
+            m_auiEncounter[uiType] = uiData;
             break;
+        case TYPE_RUN_EVENT_TIME:
+            m_auiEncounter[uiType] = uiData;
+            DoUpdateWorldState(WORLD_STATE_COUNTER, m_auiEncounter[uiType]);
+            break;
+
         case TYPE_J_EGGS_RIGHT:
             --m_uiEggsRemainingCount_Right;
             break;
@@ -273,19 +279,16 @@ void instance_zulaman::SetData(uint32 uiType, uint32 uiData)
             m_auiRandVendor[1] = uiData;
             break;
 
-        case TYPE_RUN_EVENT_TIME:
-            m_auiEncounter[7] = uiData;
-            DoUpdateWorldState(WORLD_STATE_COUNTER, m_auiEncounter[7]);
-            break;
-
         default:
-            error_log("SD2: Instance Zulaman: ERROR SetData = %u for type %u does not exist/not implemented.",uiType,uiData);
+            error_log("SD2: Instance Zulaman: ERROR SetData = %u for type %u does not exist/not implemented.", uiType, uiData);
             return;
     }
 
     if (uiData == DONE && GetKilledPreBosses() == 4 && (uiType == TYPE_AKILZON || uiType == TYPE_NALORAKK || uiType == TYPE_JANALAI || uiType == TYPE_HALAZZI))
     {
         DoUseDoorOrButton(GO_HEXLORD_ENTRANCE);
+        if (m_auiEncounter[TYPE_EVENT_RUN] == IN_PROGRESS)
+            SetData(TYPE_EVENT_RUN, DONE);
     }
 
     if (uiData == DONE || uiType == TYPE_RUN_EVENT_TIME || uiType == TYPE_EVENT_RUN)
@@ -293,9 +296,9 @@ void instance_zulaman::SetData(uint32 uiType, uint32 uiData)
         OUT_SAVE_INST_DATA;
 
         std::ostringstream saveStream;
-        saveStream << m_auiEncounter[0] << " " << m_auiEncounter[1] << " " << m_auiEncounter[2] << " "
-            << m_auiEncounter[3] << " " << m_auiEncounter[4] << " " << m_auiEncounter[5] << " "
-            << m_auiEncounter[6] << " " << m_auiEncounter[7];
+        saveStream << m_auiEncounter[TYPE_EVENT_RUN] << " " << m_auiEncounter[TYPE_AKILZON] << " " << m_auiEncounter[TYPE_NALORAKK] << " "
+            << m_auiEncounter[TYPE_JANALAI] << " " << m_auiEncounter[TYPE_HALAZZI] << " " << m_auiEncounter[TYPE_MALACRASS] << " "
+            << m_auiEncounter[TYPE_ZULJIN] << " " << m_auiEncounter[TYPE_RUN_EVENT_TIME];
 
         m_strInstData = saveStream.str();
 
@@ -315,10 +318,10 @@ void instance_zulaman::Load(const char* chrIn)
     OUT_LOAD_INST_DATA(chrIn);
 
     std::istringstream loadStream(chrIn);
-    loadStream >> m_auiEncounter[0] >> m_auiEncounter[1] >> m_auiEncounter[2] >> m_auiEncounter[3]
-        >> m_auiEncounter[4] >> m_auiEncounter[5] >> m_auiEncounter[6] >> m_auiEncounter[7];
+    loadStream >> m_auiEncounter[TYPE_EVENT_RUN] >> m_auiEncounter[TYPE_AKILZON] >> m_auiEncounter[TYPE_NALORAKK] >> m_auiEncounter[TYPE_JANALAI]
+        >> m_auiEncounter[TYPE_HALAZZI] >> m_auiEncounter[TYPE_ZULJIN] >> m_auiEncounter[TYPE_MALACRASS] >> m_auiEncounter[TYPE_RUN_EVENT_TIME];
 
-    // Skip m_auiEncounter[7], to start the time event properly if needed
+    // Skip m_auiEncounter[TYPE_RUN_EVENT_TIME], to start the time event properly if needed
     for (uint8 i = 0; i < MAX_ENCOUNTER - 1; ++i)
     {
         if (m_auiEncounter[i] == IN_PROGRESS)
@@ -326,7 +329,7 @@ void instance_zulaman::Load(const char* chrIn)
     }
 
     // Restart TYPE_EVENT_RUN if was already started
-    if (m_auiEncounter[7] != 0 && m_auiEncounter[0] != DONE && m_auiEncounter[0] != FAIL)
+    if (m_auiEncounter[TYPE_RUN_EVENT_TIME] != 0 && m_auiEncounter[TYPE_EVENT_RUN] != DONE && m_auiEncounter[TYPE_EVENT_RUN] != FAIL)
         SetData(TYPE_EVENT_RUN, IN_PROGRESS);
 
     OUT_LOAD_INST_DATA_COMPLETE;
@@ -334,20 +337,21 @@ void instance_zulaman::Load(const char* chrIn)
 
 uint32 instance_zulaman::GetData(uint32 uiType)
 {
-    switch(uiType)
+    switch (uiType)
     {
-        case TYPE_EVENT_RUN:     return m_auiEncounter[0];
-        case TYPE_AKILZON:       return m_auiEncounter[1];
-        case TYPE_NALORAKK:      return m_auiEncounter[2];
-        case TYPE_JANALAI:       return m_auiEncounter[3];
-        case TYPE_HALAZZI:       return m_auiEncounter[4];
-        case TYPE_ZULJIN:        return m_auiEncounter[5];
-        case TYPE_MALACRASS:     return m_auiEncounter[6];
-        case TYPE_J_EGGS_LEFT:   return m_uiEggsRemainingCount_Left;
-        case TYPE_J_EGGS_RIGHT:  return m_uiEggsRemainingCount_Right;
+        case TYPE_EVENT_RUN:
+        case TYPE_AKILZON:
+        case TYPE_NALORAKK:
+        case TYPE_JANALAI:
+        case TYPE_HALAZZI:
+        case TYPE_ZULJIN:
+        case TYPE_MALACRASS:
+        case TYPE_RUN_EVENT_TIME:
+            return m_auiEncounter[uiType];
         case TYPE_RAND_VENDOR_1: return m_auiRandVendor[0];
         case TYPE_RAND_VENDOR_2: return m_auiRandVendor[1];
-
+        case TYPE_J_EGGS_LEFT:   return m_uiEggsRemainingCount_Left;
+        case TYPE_J_EGGS_RIGHT:  return m_uiEggsRemainingCount_Right;
         default:
             return 0;
     }
@@ -355,7 +359,7 @@ uint32 instance_zulaman::GetData(uint32 uiType)
 
 uint8 instance_zulaman::GetKilledPreBosses()
 {
-    return (GetData(TYPE_AKILZON) == DONE ? 1 : 0) + (GetData(TYPE_NALORAKK) == DONE ? 1 : 0) + (GetData(TYPE_JANALAI) == DONE ? 1 : 0) + (GetData(TYPE_HALAZZI) == DONE ? 1 : 0);
+    return (m_auiEncounter[TYPE_AKILZON] == DONE ? 1 : 0) + (m_auiEncounter[TYPE_NALORAKK] == DONE ? 1 : 0) + (m_auiEncounter[TYPE_JANALAI] == DONE ? 1 : 0) + (m_auiEncounter[TYPE_HALAZZI] == DONE ? 1 : 0);
 }
 
 void instance_zulaman::DoTimeRunSay(RunEventSteps uiData)
@@ -400,23 +404,24 @@ void instance_zulaman::DoChestEvent(BossToChestIndex uiIndex)
 
 void instance_zulaman::Update(uint32 uiDiff)
 {
-    if (GetData(TYPE_EVENT_RUN) == IN_PROGRESS)
+    if (m_auiEncounter[TYPE_EVENT_RUN] == IN_PROGRESS)
     {
         if (m_uiEventTimer <= uiDiff)
         {
-            if (m_auiEncounter[7] == 5)                 // TODO, verify 5min for warning texts
+            if (m_auiEncounter[TYPE_RUN_EVENT_TIME] == 5)   // TODO, verify 5min for warning texts
                 DoTimeRunSay(RUN_FAIL_SOON);
 
-            --m_auiEncounter[7];
-            if (m_auiEncounter[7] == 0)
+            --m_auiEncounter[TYPE_RUN_EVENT_TIME];
+            if (m_auiEncounter[TYPE_RUN_EVENT_TIME] == 0)
             {
                 debug_log("SD2: Instance Zulaman: event time reach end, event failed.");
                 SetData(TYPE_EVENT_RUN, FAIL);
                 return;
             }
 
-            SetData(TYPE_RUN_EVENT_TIME, m_auiEncounter[7]);
-            debug_log("SD2: Instance Zulaman: minute decrease to %u.", m_auiEncounter[7]);
+            --m_auiEncounter[TYPE_RUN_EVENT_TIME];
+            SetData(TYPE_RUN_EVENT_TIME, m_auiEncounter[TYPE_RUN_EVENT_TIME]);
+            debug_log("SD2: Instance Zulaman: minute decrease to %u.", m_auiEncounter[TYPE_RUN_EVENT_TIME]);
 
             m_uiEventTimer = MINUTE*IN_MILLISECONDS;
         }
