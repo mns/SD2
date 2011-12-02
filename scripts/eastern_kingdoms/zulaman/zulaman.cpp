@@ -246,7 +246,7 @@ struct MANGOS_DLL_DECL npc_tanzar_zaAI : public npc_escortAI
         }
     }
 
-    void Reset() 
+    void Reset()
     {
         m_uiEventStarted = false;
     }
@@ -311,7 +311,7 @@ struct MANGOS_DLL_DECL npc_kraz_zaAI : public npc_escortAI
         }
     }
 
-    void Reset() 
+    void Reset()
     {
         m_uiEventStarted = false;
     }
@@ -379,7 +379,7 @@ struct MANGOS_DLL_DECL npc_ashli_zaAI : public npc_escortAI
         }
     }
 
-    void Reset() 
+    void Reset()
     {
         m_uiEventStarted = false;
     }
@@ -452,7 +452,7 @@ struct MANGOS_DLL_DECL npc_harkor_zaAI : public npc_escortAI
         }
     }
 
-    void Reset() 
+    void Reset()
     {
         m_uiEventStarted = false;
     }

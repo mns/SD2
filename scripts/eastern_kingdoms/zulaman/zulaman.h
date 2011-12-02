@@ -5,15 +5,6 @@
 #ifndef DEF_ZULAMAN_H
 #define DEF_ZULAMAN_H
 
-/* Database Condition IDs for the Chest-loot: (1-16)
-** 1,2,3,4 to check, if the first chest should contain loot 1,2,3 or 4  tanzar  (bear)
-** 5,6,7,8 to check, if the second chest should contain loot 1,2,3 or 4 kraz    (phoenix)
-** 9,10,11,12 for the third chest                                       ashli   (lynx)
-** 13,14,15,16 for the forth chest                                      harkor  (eagle)
-
-** NPC_<name> (of EventChest NPCs) isRescued, Condition ID by its entry
-*/
-
 enum InstanceZA
 {
     MAX_ENCOUNTER           = 8,
@@ -51,8 +42,6 @@ enum InstanceZA
     TYPE_J_EGGS_RIGHT       = 10,
     TYPE_J_EGGS_LEFT        = 11,
 
-    // Data for Chest loot, places 1-16
-
     NPC_AKILZON             = 23574,
     // NPC_NALORAKK         = 23576,
     // NPC_JANALAI          = 23578,
@@ -75,6 +64,11 @@ enum InstanceZA
     NPC_ASHLIS_CORPSE       = 24441,
     NPC_HARKORS_CORPSE      = 24443,
 
+    NPC_BEAR_SPIRIT         = 23878,                        // They should all have aura 42466
+    NPC_EAGLE_SPIRIT        = 23880,
+    NPC_LYNX_SPIRIT         = 23877,
+    NPC_DRAGONHAWK_SPIRIT   = 23879,
+
     GO_STRANGE_GONG         = 187359,
     GO_MASSIVE_GATE         = 186728,
     GO_WIND_DOOR            = 186858,
@@ -84,6 +78,7 @@ enum InstanceZA
     GO_WOODEN_DOOR          = 186306,
     GO_FIRE_DOOR            = 186859,
 
+    // Time Run Event GOs
     GO_TANZARS_TRUNK        = 186648,
     GO_KRAZS_PACKAGE        = 186667,
     GO_ASHLIS_BAG           = 186672,
@@ -167,17 +162,3 @@ class MANGOS_DLL_DECL instance_zulaman : public ScriptedInstance
 };
 
 #endif
-
-/* A few notes about spells:
-** Ashli Encounter
-http://www.wowhead.com/spell=43515 Ashli Fireball
-http://www.wowhead.com/spell=43520 Ashli Fireball 1
-http://www.wowhead.com/spell=43525 Ashli Fireball 2
-http://www.wowhead.com/spell=46440 Ashli Fireball Test
-43552 - Jar explosion visual, needed for Ashli Event, looks good
-
-
-** Summon Gos
-43756 Summon Amani Charm Chest (a few related)
-http://www.wowhead.com/spell=43774 Summon Money Bag
-*/
