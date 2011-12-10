@@ -122,6 +122,10 @@ enum
 };
 
 #define GOSSIP_ITEM_BEGIN   "Thanks for the concern, but we intend to explore Zul'Aman."
+#define GOSSIP_ITEM_HAKOR   "Event Starts." // TODO : What is correct gossip text ?
+#define GOSSIP_ITEM_TANZAR  "Event Starts." // TODO : What is correct gossip text ?
+#define GOSSIP_ITEM_KRAZ    "Event Starts." // TODO : What is correct gossip text ?
+#define GOSSIP_ITEM_ASHLI   "Event Starts." // TODO : What is correct gossip text ?
 
 struct MANGOS_DLL_DECL npc_harrison_jones_zaAI : public npc_escortAI
 {
@@ -221,7 +225,7 @@ struct MANGOS_DLL_DECL npc_tanzar_zaAI : public npc_escortAI
         Reset();
     }
 
-    bool m_uiEventStarted;
+    bool m_bEventStarted;
 
     ScriptedInstance* m_pInstance;
 
@@ -248,26 +252,47 @@ struct MANGOS_DLL_DECL npc_tanzar_zaAI : public npc_escortAI
 
     void Reset()
     {
-        m_uiEventStarted = false;
+        m_bEventStarted = false;
     }
 
-    void UpdateEscortAI(uint32 uiDiff)
+    void StartEvent()
     {
-        if (!m_pInstance)
-            return;
-
-        if (!m_uiEventStarted && m_pInstance->GetData(TYPE_NALORAKK) == DONE)
+        if (!m_bEventStarted)
         {
-            if (m_pInstance->GetData(TYPE_EVENT_RUN) == IN_PROGRESS)
+            if (GameObject* pGo = m_pInstance->GetSingleGameObjectFromStorage(GO_TANZARS_CAGE))
             {
-                if (GameObject* pGo = m_pInstance->GetSingleGameObjectFromStorage(GO_TANZARS_CAGE))
-                    pGo->SetGoState(GO_STATE_ACTIVE);
-                Start();
+                m_creature->HandleEmote(EMOTE_ONESHOT_KICK);
+                pGo->SetGoState(GO_STATE_ACTIVE);
             }
-            m_uiEventStarted = true;
+            Start();
+            m_bEventStarted = true;
         }
     }
 };
+
+bool GossipHello_npc_tanzar_za(Player* pPlayer, Creature* pCreature)
+{
+    ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+
+    if (pInstance && (pInstance->GetData(TYPE_EVENT_RUN) == IN_PROGRESS || pInstance->GetData(TYPE_EVENT_RUN) == DONE) && pInstance->GetData(TYPE_NALORAKK) == DONE || pPlayer->isGameMaster())
+    {
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_TANZAR, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+    }
+    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetObjectGuid());
+    return true;
+}
+
+bool GossipSelect_npc_tanzar_za(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
+{
+    if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
+    {
+        if (npc_tanzar_zaAI* pTanzarAI = dynamic_cast<npc_tanzar_zaAI*>(pCreature->AI()))
+            pTanzarAI->StartEvent();
+
+        pPlayer->CLOSE_GOSSIP_MENU();
+    }
+    return true;
+}
 
 CreatureAI* GetAI_npc_tanzar_za(Creature* pCreature)
 {
@@ -286,7 +311,7 @@ struct MANGOS_DLL_DECL npc_kraz_zaAI : public npc_escortAI
         Reset();
     }
 
-    bool m_uiEventStarted;
+    bool m_bEventStarted;
 
     ScriptedInstance* m_pInstance;
 
@@ -313,26 +338,47 @@ struct MANGOS_DLL_DECL npc_kraz_zaAI : public npc_escortAI
 
     void Reset()
     {
-        m_uiEventStarted = false;
+        m_bEventStarted = false;
     }
 
-    void UpdateEscortAI(uint32 uiDiff)
+    void StartEvent()
     {
-        if (!m_pInstance)
-            return;
-
-        if (!m_uiEventStarted && m_pInstance->GetData(TYPE_JANALAI) == DONE)
+        if (!m_bEventStarted)
         {
-            if (m_pInstance->GetData(TYPE_EVENT_RUN) == IN_PROGRESS)
+            if (GameObject* pGo = m_pInstance->GetSingleGameObjectFromStorage(GO_KRAZS_CAGE))
             {
-                if (GameObject* pGo = m_pInstance->GetSingleGameObjectFromStorage(GO_KRAZS_CAGE))
-                    pGo->SetGoState(GO_STATE_ACTIVE);
-                Start();
+                m_creature->HandleEmote(EMOTE_ONESHOT_KICK);
+                pGo->SetGoState(GO_STATE_ACTIVE);
             }
-            m_uiEventStarted = true;
+            Start();
+            m_bEventStarted = true;
         }
     }
 };
+
+bool GossipHello_npc_kraz_za(Player* pPlayer, Creature* pCreature)
+{
+    ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+
+    if (pInstance && (pInstance->GetData(TYPE_EVENT_RUN) == IN_PROGRESS || pInstance->GetData(TYPE_EVENT_RUN) == DONE) && pInstance->GetData(TYPE_JANALAI) == DONE || pPlayer->isGameMaster())
+    {
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_KRAZ, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+    }
+    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetObjectGuid());
+    return true;
+}
+
+bool GossipSelect_npc_kraz_za(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
+{
+    if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
+    {
+        if (npc_kraz_zaAI* pKrazAI = dynamic_cast<npc_kraz_zaAI*>(pCreature->AI()))
+            pKrazAI->StartEvent();
+
+        pPlayer->CLOSE_GOSSIP_MENU();
+    }
+    return true;
+}
 
 CreatureAI* GetAI_npc_kraz_za(Creature* pCreature)
 {
@@ -351,7 +397,7 @@ struct MANGOS_DLL_DECL npc_ashli_zaAI : public npc_escortAI
         Reset();
     }
 
-    bool m_uiEventStarted;
+    bool m_bEventStarted;
 
     ScriptedInstance* m_pInstance;
 
@@ -381,27 +427,47 @@ struct MANGOS_DLL_DECL npc_ashli_zaAI : public npc_escortAI
 
     void Reset()
     {
-        m_uiEventStarted = false;
+        m_bEventStarted = false;
     }
 
-    void UpdateEscortAI(uint32 uiDiff)
+    void StartEvent()
     {
-        if (!m_pInstance)
-            return;
-
-        if (!m_uiEventStarted && m_pInstance->GetData(TYPE_HALAZZI) == DONE)
+        if (!m_bEventStarted)
         {
-            if (m_pInstance->GetData(TYPE_EVENT_RUN) == IN_PROGRESS)
+            if (GameObject* pGo = m_pInstance->GetSingleGameObjectFromStorage(GO_ASHLIS_CAGE))
             {
-                if (GameObject* pGo = m_pInstance->GetSingleGameObjectFromStorage(GO_ASHLIS_CAGE))
-                    pGo->SetGoState(GO_STATE_ACTIVE);
-                Start();
-                m_pInstance->SetData(TYPE_EVENT_RUN, DONE); // Done ZA Timed Event
+                m_creature->HandleEmote(EMOTE_ONESHOT_KICK);
+                pGo->SetGoState(GO_STATE_ACTIVE);
             }
-            m_uiEventStarted = true;
+            Start();
+            m_bEventStarted = true;
         }
     }
 };
+
+bool GossipHello_npc_ashli_za(Player* pPlayer, Creature* pCreature)
+{
+    ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+
+    if (pInstance && pInstance->GetData(TYPE_EVENT_RUN) == DONE || pPlayer->isGameMaster())
+    {
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_ASHLI, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+    }
+    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetObjectGuid());
+    return true;
+}
+
+bool GossipSelect_npc_ashli_za(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
+{
+    if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
+    {
+        if (npc_ashli_zaAI* pAshliAI = dynamic_cast<npc_ashli_zaAI*>(pCreature->AI()))
+            pAshliAI->StartEvent();
+
+        pPlayer->CLOSE_GOSSIP_MENU();
+    }
+    return true;
+}
 
 CreatureAI* GetAI_npc_ashli_za(Creature* pCreature)
 {
@@ -412,6 +478,12 @@ CreatureAI* GetAI_npc_ashli_za(Creature* pCreature)
 ## npc_harkor_za
 ######*/
 
+enum
+{
+    SAY_HARKOR_FREED          = -1568086,
+    SAY_HARKOR_THANK          = -1568087
+};
+
 struct MANGOS_DLL_DECL npc_harkor_zaAI : public npc_escortAI
 {
     npc_harkor_zaAI(Creature* pCreature) : npc_escortAI(pCreature)
@@ -420,9 +492,14 @@ struct MANGOS_DLL_DECL npc_harkor_zaAI : public npc_escortAI
         Reset();
     }
 
-    bool m_uiEventStarted;
+    bool m_bEventStarted;
 
     ScriptedInstance* m_pInstance;
+
+    void Reset()
+    {
+        m_bEventStarted = false;
+    }
 
     void WaypointReached(uint32 uiPointId)
     {
@@ -431,20 +508,46 @@ struct MANGOS_DLL_DECL npc_harkor_zaAI : public npc_escortAI
 
         switch(uiPointId)
         {
-            case 2:
+            case 0:
+                DoScriptText(SAY_HARKOR_FREED, m_creature);
+                break;
+            case 1:
+                DoScriptText(SAY_HARKOR_THANK, m_creature);
+                break;
+            case 3:
+                m_creature->HandleEmote(EMOTE_ONESHOT_KNEEL);
+                break;
+            case 4:
                 if (GameObject* pDwarfHammer = m_pInstance->GetSingleGameObjectFromStorage(GO_DWARF_HAMMER))
                     pDwarfHammer->Delete();
                 SetEquipmentSlots(false, EQUIP_ID_HARKORS_WEAPON, EQUIP_NO_CHANGE, EQUIP_NO_CHANGE);
                 break;
-            case 3:
-                m_creature->HandleEmote(EMOTE_ONESHOT_ATTACK2HTIGHT);
+            case 5:
+                m_creature->SetOrientation(0.9948376f);
+            case 6:
+                m_creature->CastSpell(m_creature, 43255, false); // TODO : Use spell name
                 break;
-            case 4:
-                // TODO: Harkor say ...
+            case 7:
+                m_creature->CastSpell(m_creature, 43255, true); // TODO : Use spell name
+                m_creature->HandleEmote(EMOTE_ONESHOT_ATTACK2HTIGHT);
+                m_creature->PlayDirectSound(677); // Coin Sound
                 if (GameObject* pLootBoxDwarf = m_pInstance->GetSingleGameObjectFromStorage(GO_LOOT_BOX_DWARF))
                     pLootBoxDwarf->SetGoState(GO_STATE_ACTIVE_ALTERNATIVE);
                 if (GameObject* pHarkorsSatchel = m_pInstance->GetSingleGameObjectFromStorage(GO_HARKORS_SATCHEL))
                     pHarkorsSatchel->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NO_INTERACT);
+                //  Create 186633(3 times), 186634 TODO : Need core support
+                /*Map* map = m_creature->GetMap();
+                for (uint8 i = 0; i < 3; ++i)
+                {
+                    GameObject* pObj = new GameObject;
+                    if (pObj->Create(map->GenerateLocalLowGuid(HIGHGUID_GAMEOBJECT), 186633, map, m_creature->GetPositionX()+(rand()%2) ,m_creature->GetPositionY()+(rand()%2) ,m_creature->GetPositionZ(), m_creature->GetOrientation()))
+                    {
+                        pObj->SetRespawnTime(604800);
+                        map->Add(pObj);
+                    }
+                    else
+                        delete pObj;
+                }*/
                 m_creature->HandleEmote(EMOTE_ONESHOT_NONE);
                 m_creature->SetSpeedRate(MOVE_RUN, 2.0f);
                 SetRun(true);
@@ -452,28 +555,44 @@ struct MANGOS_DLL_DECL npc_harkor_zaAI : public npc_escortAI
         }
     }
 
-    void Reset()
+    void StartEvent()
     {
-        m_uiEventStarted = false;
-    }
-
-    void UpdateEscortAI(uint32 uiDiff)
-    {
-        if (!m_pInstance)
-            return;
-
-        if (!m_uiEventStarted && m_pInstance->GetData(TYPE_AKILZON) == DONE)
+        if (!m_bEventStarted)
         {
-            if (m_pInstance->GetData(TYPE_EVENT_RUN) == IN_PROGRESS)
+            if (GameObject* pGo = m_pInstance->GetSingleGameObjectFromStorage(GO_HARKORS_CAGE))
             {
-                if (GameObject* pGo = m_pInstance->GetSingleGameObjectFromStorage(GO_HARKORS_CAGE))
-                    pGo->SetGoState(GO_STATE_ACTIVE);
-                Start();
+                m_creature->HandleEmote(EMOTE_ONESHOT_KICK);
+                pGo->SetGoState(GO_STATE_ACTIVE);
             }
-            m_uiEventStarted = true;
+            Start();
+            m_bEventStarted = true;
         }
     }
 };
+
+bool GossipHello_npc_harkor_za(Player* pPlayer, Creature* pCreature)
+{
+    ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+
+    if (pInstance && (pInstance->GetData(TYPE_EVENT_RUN) == IN_PROGRESS || pInstance->GetData(TYPE_EVENT_RUN) == DONE) && pInstance->GetData(TYPE_AKILZON) == DONE || pPlayer->isGameMaster())
+    {
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_HAKOR, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+    }
+    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetObjectGuid());
+    return true;
+}
+
+bool GossipSelect_npc_harkor_za(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
+{
+    if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
+    {
+        if (npc_harkor_zaAI* pHarkorAI = dynamic_cast<npc_harkor_zaAI*>(pCreature->AI()))
+            pHarkorAI->StartEvent();
+
+        pPlayer->CLOSE_GOSSIP_MENU();
+    }
+    return true;
+}
 
 CreatureAI* GetAI_npc_harkor_za(Creature* pCreature)
 {
@@ -529,21 +648,29 @@ void AddSC_zulaman()
     pNewScript = new Script;
     pNewScript->Name = "npc_tanzar_za";
     pNewScript->GetAI = &GetAI_npc_tanzar_za;
+    pNewScript->pGossipHello =  &GossipHello_npc_tanzar_za;
+    pNewScript->pGossipSelect = &GossipSelect_npc_tanzar_za;
     pNewScript->RegisterSelf();
 
     pNewScript = new Script;
     pNewScript->Name = "npc_kraz_za";
     pNewScript->GetAI = &GetAI_npc_kraz_za;
+    pNewScript->pGossipHello =  &GossipHello_npc_kraz_za;
+    pNewScript->pGossipSelect = &GossipSelect_npc_kraz_za;
     pNewScript->RegisterSelf();
 
     pNewScript = new Script;
     pNewScript->Name = "npc_ashli_za";
     pNewScript->GetAI = &GetAI_npc_ashli_za;
+    pNewScript->pGossipHello =  &GossipHello_npc_ashli_za;
+    pNewScript->pGossipSelect = &GossipSelect_npc_ashli_za;
     pNewScript->RegisterSelf();
 
     pNewScript = new Script;
     pNewScript->Name = "npc_harkor_za";
     pNewScript->GetAI = &GetAI_npc_harkor_za;
+    pNewScript->pGossipHello =  &GossipHello_npc_harkor_za;
+    pNewScript->pGossipSelect = &GossipSelect_npc_harkor_za;
     pNewScript->RegisterSelf();
 
     pNewScript = new Script;

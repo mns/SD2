@@ -2466,7 +2466,10 @@ INSERT INTO script_texts (entry,content_default,sound,type,language,emote,commen
 
 (-1568079,'Suit yourself. At least five of you must assist me if we\'re to get inside. Follow me.',0,1,0,0,'harrison SAY_START'),
 (-1568080,'According to my calculations, if enough of us bang the gong at once the seal on these doors will break and we can enter.',0,1,0,0,'harrison SAY_AT_GONG'),
-(-1568081,'I\'ve researched this site extensively and I won\'t allow any dim-witted treasure hunters to swoop in and steal what belongs to in a museum. I\'ll lead this charge.',0,1,0,0,'harrison SAY_OPEN_ENTRANCE');
+(-1568081,'I\'ve researched this site extensively and I won\'t allow any dim-witted treasure hunters to swoop in and steal what belongs to in a museum. I\'ll lead this charge.',0,1,0,0,'harrison SAY_OPEN_ENTRANCE'),
+
+(-1568086,'Finally freed',2725,0,0,4,'SAY_HARKOR_FREED'),
+(-1568087,'Want to thank you for rescuing me',0,0,0,0,'SAY_HARKOR_THANK');
 
 -- -1 574 000 UTGARDE KEEP
 INSERT INTO script_texts (entry,content_default,sound,type,language,emote,comment) VALUES
@@ -5733,16 +5736,19 @@ INSERT INTO script_waypoint VALUES
 
 DELETE FROM script_waypoint WHERE entry = 23999;
 INSERT INTO script_waypoint VALUES
-(23999, 0, 298.92, 1464.74, 81.561, 0, ''),
-(23999, 1, 306.20, 1464.13, 81.56, 1000, ''),
-(23999, 2, 306.02, 1465.10, 81.58, 1000, ''),
-(23999, 3, 306.02, 1465.10, 81.58, 1000, 'EMOTE_ONESHOT_ATTACK2HTIGHT'),
-(23999, 4, 306.02, 1465.10, 81.58, 1000, 'unlock object - EMOTE_ONESHOT_NONE - speed run'),
-(23999, 5, 306.61, 1457.25, 81.52, 0, ''),
-(23999, 6, 320.06, 1445.15, 74.35, 0, ''),
-(23999, 7, 351.09, 1421.8, 74.28, 0, ''),
-(23999, 8, 336.07, 1391.52, 74.33, 0, ''),
-(23999, 9, 315.26, 1384.89, 57.40, 0, '');
+(23999, 0, 298.7605, 1464.95, 81.5753, 3000, 'SAY_HARKOR_FREED'),
+(23999, 1, 298.7605, 1464.95, 81.5753, 3000, 'SAY_HARKOR_THANK'),
+(23999, 2, 302.2797, 1462.846, 81.57086, 0, ''),
+(23999, 3, 306.3771, 1463.949, 81.58128, 2000, 'EMOTE_ONESHOT_KNEEL'),
+(23999, 4, 306.3771, 1463.949, 81.58128, 2000, 'GO despwn 186623 , SetEquipmentSlots'),
+(23999, 5, 304.3857, 1465.72, 81.58634, 1000, ''),
+(23999, 6, 304.3857, 1465.72, 81.58634, 2000, ''),
+(23999, 7, 304.3857, 1465.72, 81.58634, 1000, ''),
+(23999, 8, 306.61, 1457.25, 81.52, 0, ''),
+(23999, 9, 320.06, 1445.15, 74.35, 0, ''),
+(23999, 10, 351.09, 1421.8, 74.28, 0, ''),
+(23999, 11, 336.07, 1391.52, 74.33, 0, ''),
+(23999, 12, 315.26, 1384.89, 57.40, 0, '');
 
 DELETE FROM script_waypoint WHERE entry = 24024;
 INSERT INTO script_waypoint VALUES
