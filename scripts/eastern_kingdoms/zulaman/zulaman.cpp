@@ -523,7 +523,7 @@ struct MANGOS_DLL_DECL npc_harkor_zaAI : public npc_escortAI
                 SetEquipmentSlots(false, EQUIP_ID_HARKORS_WEAPON, EQUIP_NO_CHANGE, EQUIP_NO_CHANGE);
                 break;
             case 5:
-                m_creature->SetOrientation(0.9948376f);
+                m_creature->SetFacingTo(0.9948376f);
             case 6:
                 m_creature->CastSpell(m_creature, 43255, false); // TODO : Use spell name
                 break;
