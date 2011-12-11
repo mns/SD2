@@ -159,6 +159,9 @@ struct MANGOS_DLL_DECL npc_harrison_jones_zaAI : public npc_escortAI
                 break;
             case 4:
                 m_pInstance->SetData(TYPE_EVENT_RUN, IN_PROGRESS);
+                m_pInstance->SetData(TYPE_NALORAKK, NOT_STARTED);
+                m_pInstance->SetData(TYPE_AKILZON, NOT_STARTED);
+                m_pInstance->SetData(TYPE_JANALAI, NOT_STARTED);
                 //TODO: Spawn group of Amani'shi Savage and make them run to entrance
                 break;
         }
