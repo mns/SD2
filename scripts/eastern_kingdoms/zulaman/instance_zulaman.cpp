@@ -28,10 +28,7 @@ instance_zulaman::instance_zulaman(Map* pMap) : ScriptedInstance(pMap),
     m_uiEventTimer(MINUTE*IN_MILLISECONDS),
     m_uiGongCount(0),
     m_uiBearEventPhase(0),
-    m_bIsBearPhaseInProgress(false),
-
-    m_uiEggsRemainingCount_Left(20),
-    m_uiEggsRemainingCount_Right(20)
+    m_bIsBearPhaseInProgress(false)
 {
     Initialize();
 }
@@ -61,13 +58,22 @@ void instance_zulaman::OnCreatureCreate(Creature* pCreature)
         case NPC_AKILZON:
         case NPC_HALAZZI:
         case NPC_NALORAKK:
+        case NPC_JANALAI:
         case NPC_MALACRASS:
         case NPC_HARRISON:
-        case NPC_SPIRIT_LYNX:
         case NPC_BEAR_SPIRIT:
         case NPC_EAGLE_SPIRIT:
         case NPC_LYNX_SPIRIT:
         case NPC_DRAGONHAWK_SPIRIT:
+        // Insert Malacrass companions here for better handling
+        case NPC_ALYSON:
+        case NPC_THURG:
+        case NPC_SLITHER:
+        case NPC_RADAAN:
+        case NPC_GAZAKROTH:
+        case NPC_FENSTALKER:
+        case NPC_DARKHEART:
+        case NPC_KORAGG:
             m_mNpcEntryGuidStore[pCreature->GetEntry()] = pCreature->GetObjectGuid();
             break;
 
@@ -75,11 +81,6 @@ void instance_zulaman::OnCreatureCreate(Creature* pCreature)
         case NPC_KRAZ:        m_aEventNpcInfo[INDEX_JANALAI].npGuid =  pCreature->GetObjectGuid(); break;
         case NPC_ASHLI:       m_aEventNpcInfo[INDEX_HALAZZI].npGuid =  pCreature->GetObjectGuid(); break;
         case NPC_HARKOR:      m_aEventNpcInfo[INDEX_AKILZON].npGuid =  pCreature->GetObjectGuid(); break;
-
-        case NPC_EGG:
-            if (m_auiEncounter[TYPE_JANALAI] != DONE)
-                m_lEggsGUIDList.push_back(pCreature->GetObjectGuid());
-            break;
 
         case NPC_MEDICINE_MAN:
         case NPC_TRIBES_MAN:
@@ -135,7 +136,7 @@ void instance_zulaman::OnCreatureEvade(Creature* pCreature)
         case NPC_TRIBES_MAN:
         case NPC_WARBRINGER:
         case NPC_AXETHROWER:
-            for (GUIDSet::const_iterator itr = m_aNalorakkEvent[m_uiBearEventPhase].sBearTrashGuidSet.begin(); itr != m_aNalorakkEvent[m_uiBearEventPhase].sBearTrashGuidSet.end(); ++itr)
+            for (GuidSet::const_iterator itr = m_aNalorakkEvent[m_uiBearEventPhase].sBearTrashGuidSet.begin(); itr != m_aNalorakkEvent[m_uiBearEventPhase].sBearTrashGuidSet.end(); ++itr)
             {
                 Creature* pTemp = instance->GetCreature(*itr);
                 if (pTemp && !pTemp->isAlive())
@@ -254,24 +255,8 @@ void instance_zulaman::SetData(uint32 uiType, uint32 uiData)
             m_auiEncounter[uiType] = uiData;
             break;
         case TYPE_JANALAI:
-            if (uiData == FAIL)
-            {
-                m_uiEggsRemainingCount_Left = 20;
-                m_uiEggsRemainingCount_Right = 20;
-
-                for(GUIDList::const_iterator itr = m_lEggsGUIDList.begin(); itr != m_lEggsGUIDList.end(); ++itr)
-                {
-                    if (Creature* pEgg = instance->GetCreature(*itr))
-                    {
-                        if (!pEgg->isAlive())
-                            pEgg->Respawn();
-                    }
-                }
-            }
             if (uiData == DONE)
             {
-                m_lEggsGUIDList.clear();
-
                 if (m_auiEncounter[TYPE_EVENT_RUN] == IN_PROGRESS)
                     DoChestEvent(INDEX_JANALAI);
             }
@@ -302,12 +287,6 @@ void instance_zulaman::SetData(uint32 uiType, uint32 uiData)
             DoUpdateWorldState(WORLD_STATE_COUNTER, m_auiEncounter[uiType]);
             break;
 
-        case TYPE_J_EGGS_RIGHT:
-            --m_uiEggsRemainingCount_Right;
-            break;
-        case TYPE_J_EGGS_LEFT:
-            --m_uiEggsRemainingCount_Left;
-            break;
         case TYPE_RAND_VENDOR_1:
             m_auiRandVendor[0] = uiData;
             break;
@@ -386,8 +365,6 @@ uint32 instance_zulaman::GetData(uint32 uiType)
             return m_auiEncounter[uiType];
         case TYPE_RAND_VENDOR_1: return m_auiRandVendor[0];
         case TYPE_RAND_VENDOR_2: return m_auiRandVendor[1];
-        case TYPE_J_EGGS_LEFT:   return m_uiEggsRemainingCount_Left;
-        case TYPE_J_EGGS_RIGHT:  return m_uiEggsRemainingCount_Right;
         default:
             return 0;
     }
@@ -395,7 +372,7 @@ uint32 instance_zulaman::GetData(uint32 uiType)
 
 void instance_zulaman::SendNextBearWave(Unit* pTarget)
 {
-    for (GUIDSet::const_iterator itr = m_aNalorakkEvent[m_uiBearEventPhase].sBearTrashGuidSet.begin(); itr != m_aNalorakkEvent[m_uiBearEventPhase].sBearTrashGuidSet.end(); ++itr)
+    for (GuidSet::const_iterator itr = m_aNalorakkEvent[m_uiBearEventPhase].sBearTrashGuidSet.begin(); itr != m_aNalorakkEvent[m_uiBearEventPhase].sBearTrashGuidSet.end(); ++itr)
     {
         Creature* pTemp = instance->GetCreature(*itr);
         if (pTemp && pTemp->isAlive())

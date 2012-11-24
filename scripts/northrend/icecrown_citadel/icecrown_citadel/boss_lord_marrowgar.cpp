@@ -96,14 +96,14 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public base_icc_bossAI
 {
     boss_lord_marrowgarAI(Creature* pCreature) : base_icc_bossAI(pCreature)
     {
-        m_pInstance = (instance_icecrown_spire*)pCreature->GetInstanceData();
+        m_pInstance = (instance_icecrown_citadel*)pCreature->GetInstanceData();
         m_bSaidIntro = false;
         m_uiMaxCharges = m_bIsHeroic ? MAX_CHARGES_HEROIC : MAX_CHARGES_NORMAL;
 
         Reset();
     }
 
-    instance_icecrown_spire* m_pInstance;
+    instance_icecrown_citadel* m_pInstance;
     bool m_bSaidIntro;
 
     uint8 m_uiPhase;
@@ -202,7 +202,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public base_icc_bossAI
         {
             float summon_x, summon_y, summon_z, ang;
             ang = m_creature->GetAngle(pTarget);
-            m_creature->GetNearPoint(m_creature, summon_x, summon_y, summon_z, m_creature->GetObjectBoundingRadius(), 10.0f, ang);
+            m_creature->GetNearPoint(m_creature, summon_x, summon_y, summon_z, m_creature->GetObjectBoundingRadius(), 5.0f, ang);
 
             m_creature->SummonCreature(NPC_COLDFLAME, summon_x, summon_y, summon_z, ang, TEMPSUMMON_TIMED_DESPAWN, 12000);
         }
@@ -368,13 +368,13 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public ScriptedAI
 {
     mob_bone_spikeAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
-        m_pInstance = ((instance_icecrown_spire*)pCreature->GetInstanceData());
+        m_pInstance = ((instance_icecrown_citadel*)pCreature->GetInstanceData());
         m_victimGuid.Clear();
         m_bEmerged = false;
         SetCombatMovement(false);
     }
 
-    instance_icecrown_spire* m_pInstance;
+    instance_icecrown_citadel* m_pInstance;
     bool m_bEmerged;
     ObjectGuid m_victimGuid;
     uint32 m_uiEmpaledTime;

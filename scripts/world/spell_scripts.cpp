@@ -22,25 +22,26 @@ SDCategory: Spell
 EndScriptData */
 
 /* ContentData
-spell 34665
-spell 19512
 spell 8913
+spell 19512
 spell 21014
 spell 29528
 spell 29866
-spell 46770
-spell 46023
-spell 47575
-spell 50706
+spell 34665
+spell 39246
+spell 43340
+spell 44935
 spell 45109
 spell 45111
-spell 39246
-spell 52090
+spell 46023
+spell 46770
+spell 47575
+spell 48218
+spell 50706
 spell 51331
 spell 51332
 spell 51366
-spell 43340
-spell 48218
+spell 52090
 EndContentData */
 
 #include "precompiled.h"
@@ -145,6 +146,7 @@ enum
 
     // quest 6124/6129
     SPELL_APPLY_SALVE                   = 19512,
+    SPELL_SICKLY_AURA                   = 19502,
 
     NPC_SICKLY_DEER                     = 12298,
     NPC_SICKLY_GAZELLE                  = 12296,
@@ -311,6 +313,12 @@ enum
     NPC_FRANCLORN_FORGEWRIGHT           = 8888,
     NPC_GAERIYAN                        = 9299,
     NPC_GANJO                           = 26924,
+
+    // quest 11521
+    SPELL_EXPOSE_RAZORTHORN_ROOT        = 44935,
+    SPELL_SUMMON_RAZORTHORN_ROOT        = 44941,
+    NPC_RAZORTHORN_RAVAGER              = 24922,
+    GO_RAZORTHORN_DIRT_MOUND            = 187073,
 };
 
 bool EffectAuraDummy_spell_aura_dummy_npc(const Aura* pAura, bool bApply)
@@ -472,11 +480,15 @@ bool EffectDummyCreature_spell_dummy_npc(Unit* pCaster, uint32 uiSpellId, SpellE
                 if (pCaster->GetTypeId() != TYPEID_PLAYER)
                     return true;
 
-                if (pCreatureTarget->GetEntry() == NPC_SICKLY_DEER && ((Player*)pCaster)->GetTeam() == ALLIANCE)
-                    pCreatureTarget->UpdateEntry(NPC_CURED_DEER);
+                if (pCreatureTarget->GetEntry() != NPC_SICKLY_DEER && pCreatureTarget->GetEntry() != NPC_SICKLY_GAZELLE)
+                    return true;
 
-                if (pCreatureTarget->GetEntry() == NPC_SICKLY_GAZELLE && ((Player*)pCaster)->GetTeam() == HORDE)
-                    pCreatureTarget->UpdateEntry(NPC_CURED_GAZELLE);
+                // Update entry, remove aura, set the kill credit and despawn
+                uint32 uiUpdateEntry = pCreatureTarget->GetEntry() == NPC_SICKLY_DEER ? NPC_CURED_DEER : NPC_CURED_GAZELLE;
+                pCreatureTarget->RemoveAurasDueToSpell(SPELL_SICKLY_AURA);
+                pCreatureTarget->UpdateEntry(uiUpdateEntry);
+                ((Player*)pCaster)->KilledMonsterCredit(uiUpdateEntry);
+                pCreatureTarget->ForcedDespawn(20000);
 
                 return true;
             }
@@ -531,6 +543,7 @@ bool EffectDummyCreature_spell_dummy_npc(Unit* pCaster, uint32 uiSpellId, SpellE
                     return true;
 
                 pCreatureTarget->UpdateEntry(NPC_OWLKIN_INOC);
+                ((Player*)pCaster)->KilledMonsterCredit(NPC_OWLKIN_INOC);
 
                 //set despawn timer, since we want to remove creature after a short time
                 pCreatureTarget->ForcedDespawn(15000);
@@ -694,7 +707,7 @@ bool EffectDummyCreature_spell_dummy_npc(Unit* pCaster, uint32 uiSpellId, SpellE
                     {
                         pCaster->CastSpell(pCreatureTarget, pSpell->Id, true);
 
-                        if (Pet* pPet = pCaster->FindGuardianWithEntry(pSpell->EffectMiscValue[uiEffIndex]))
+                        if (Pet* pPet = pCaster->FindGuardianWithEntry(pSpell->GetEffectMiscValue(SpellEffectIndex(uiEffIndex))))
                             pPet->CastSpell(pCaster, SPELL_REPROGRAM_KILL_CREDIT, true);
 
                         pCreatureTarget->ForcedDespawn();
@@ -905,6 +918,24 @@ bool EffectDummyCreature_spell_dummy_npc(Unit* pCaster, uint32 uiSpellId, SpellE
                     return true;
 
                 ((Player*)pCaster)->KilledMonsterCredit(pCreatureTarget->GetEntry());
+            }
+            return true;
+        }
+        case SPELL_EXPOSE_RAZORTHORN_ROOT:
+        {
+            if (uiEffIndex == EFFECT_INDEX_0)
+            {
+                if (pCreatureTarget->GetEntry() != NPC_RAZORTHORN_RAVAGER)
+                    return true;
+
+                if (GameObject* pMound = GetClosestGameObjectWithEntry(pCreatureTarget, GO_RAZORTHORN_DIRT_MOUND, 20.0f))
+                {
+                    if (pMound->GetRespawnTime() != 0)
+                        return true;
+
+                    pCreatureTarget->CastSpell(pCreatureTarget, SPELL_SUMMON_RAZORTHORN_ROOT, true);
+                    pMound->SetLootState(GO_JUST_DEACTIVATED);
+                }
             }
             return true;
         }

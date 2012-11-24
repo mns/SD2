@@ -226,11 +226,11 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public boss_lady_deathwhisper_
 {
     boss_lady_deathwhisperAI(Creature* pCreature) : boss_lady_deathwhisper_eventAI(pCreature)
     {
-        m_pInstance = ((instance_icecrown_spire*)pCreature->GetInstanceData());
+        m_pInstance = ((instance_icecrown_citadel*)pCreature->GetInstanceData());
         Reset();
     }
 
-    instance_icecrown_spire* m_pInstance;
+    instance_icecrown_citadel* m_pInstance;
 
     bool m_bIsPhaseOne;
     uint32 m_uiManaBarrierCheckTimer;
@@ -364,7 +364,7 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public boss_lady_deathwhisper_
             if (Creature *pShade = m_creature->SummonCreature(NPC_VENGEFUL_SHADE, x, y, z, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 7000))
             {
                 pShade->SetSpeedRate(MOVE_RUN, 0.5f);
-                pShade->AddThreat(pTarget, 100000.0f);
+                pShade->AddThreat(pTarget, 10000000.0f, true);
                 pShade->AI()->AttackStart(pTarget);
             }
         }

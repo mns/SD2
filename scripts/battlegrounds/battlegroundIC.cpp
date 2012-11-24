@@ -23,8 +23,7 @@ SDCategory: Battleground_IoC
 EndScriptData */
 
 #include "precompiled.h"
-#include "BattleGroundIC.h"
-#include "Vehicle.h"
+#include "BattleGround/BattleGroundIC.h"
 
 /*######
 ## go_ic_teleport
@@ -135,7 +134,7 @@ struct MANGOS_DLL_DECL npc_ic_vehicleAI : public ScriptedAI
     {
         if (BattleGround *bg = pPlayer->GetBattleGround())
         {
-            if (VehicleKit *vehicle = pCreature->GetVehicleKit())
+            if (VehicleKitPtr vehicle = pCreature->GetVehicleKit())
             {
                 if (!pCreature->GetCharmerGuid().IsEmpty())
                     pPlayer->EnterVehicle(vehicle);
@@ -164,13 +163,16 @@ struct MANGOS_DLL_DECL npc_ic_vehicleAI : public ScriptedAI
                 if (!pMap || !pMap->IsBattleGround())
                     return;
 
-                Map::PlayerList const &PlayerList = pMap->GetPlayers();
-                Map::PlayerList::const_iterator itr = PlayerList.begin();
-                Player *player = itr->getSource();
-                if (player)
+                Map::PlayerList const& playerList = pMap->GetPlayers();
+                if (!playerList.isEmpty())
                 {
-                    bg = player->GetBattleGround();
-                    done = true;
+                    Map::PlayerList::const_iterator itr = playerList.begin();
+                    Player* player = itr->getSource();
+                    if (player)
+                    {
+                        bg = player->GetBattleGround();
+                        done = true;
+                    }
                 }
             }
 
@@ -232,7 +234,7 @@ struct MANGOS_DLL_DECL npc_ic_cannonAI : public ScriptedAI
             if (bg->GetStatus() == STATUS_WAIT_JOIN)
                 return;
 
-            if (VehicleKit *vehicle = pCreature->GetVehicleKit())
+            if (VehicleKitPtr vehicle = pCreature->GetVehicleKit())
             {
                 if (!pCreature->GetCharmerGuid().IsEmpty())
                     pPlayer->EnterVehicle(vehicle);
@@ -264,13 +266,16 @@ struct MANGOS_DLL_DECL npc_ic_cannonAI : public ScriptedAI
                 if (!pMap || !pMap->IsBattleGround())
                     return;
 
-                Map::PlayerList const &PlayerList = pMap->GetPlayers();
-                Map::PlayerList::const_iterator itr = PlayerList.begin();
-                Player *player = itr->getSource();
-                if (player)
+                Map::PlayerList const& playerList = pMap->GetPlayers();
+                if (!playerList.isEmpty())
                 {
-                    bg = player->GetBattleGround();
-                    done = true;
+                    Map::PlayerList::const_iterator itr = playerList.begin();
+                    Player* player = itr->getSource();
+                    if (player)
+                    {
+                        bg = player->GetBattleGround();
+                        done = true;
+                    }
                 }
             }
 

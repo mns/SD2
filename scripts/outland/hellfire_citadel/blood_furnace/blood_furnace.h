@@ -41,6 +41,9 @@ enum
     SAY_BROGGOK_INTRO               = -1542015,
 };
 
+// Random Magtheridon taunt
+static const int32 aRandomTaunt[]= {-1544000, -1544001, -1544002, -1544003, -1544004, -1544005};
+
 struct BroggokEventInfo
 {
     BroggokEventInfo() : m_bIsCellOpened(false), m_uiKilledOrcCount(0) {}
@@ -48,7 +51,7 @@ struct BroggokEventInfo
     ObjectGuid m_cellGuid;
     bool m_bIsCellOpened;
     uint8 m_uiKilledOrcCount;
-    GUIDSet m_sSortedOrcGuids;
+    GuidSet m_sSortedOrcGuids;
 };
 
 class MANGOS_DLL_DECL instance_blood_furnace : public ScriptedInstance
@@ -74,7 +77,7 @@ class MANGOS_DLL_DECL instance_blood_furnace : public ScriptedInstance
 
         void GetMovementDistanceForIndex(uint32 uiIndex, float& dx, float& dy);
 
-        void GetKelidanAddList(GUIDList& lList) { lList = m_lChannelersGuids; m_lChannelersGuids.clear(); }
+        void GetKelidanAddList(GuidList& lList) { lList = m_lChannelersGuids; m_lChannelersGuids.clear(); }
 
     private:
         void DoSortBroggokOrcs();
@@ -87,9 +90,10 @@ class MANGOS_DLL_DECL instance_blood_furnace : public ScriptedInstance
 
         uint32 m_uiBroggokEventTimer;                       // Timer for opening the event cages; only on heroic mode = 30 secs
         uint32 m_uiBroggokEventPhase;
+        uint32 m_uiRandYellTimer;                           // Random yell for Magtheridon
 
-        GUIDList m_luiNascentOrcGuids;
-        GUIDList m_lChannelersGuids;
+        GuidList m_luiNascentOrcGuids;
+        GuidList m_lChannelersGuids;
 };
 
 #endif

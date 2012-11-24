@@ -141,8 +141,13 @@ enum SaurfangEvent
     SPELL_VEHICLE_HARDCODED     = 46598, // Deathbringer enters Overlord
 };
 
+enum SaurfangWaypoint
+{
+    POINT_ID_EVADE      = 1
+};
+
 // positions
-float fPositions[12][4] =
+static const float fPositions[12][4] =
 {
     {-468.05f, 2211.69f, 541.11f, 3.16f}, // Deathbringer teleport point
     {-491.30f, 2211.35f, 541.11f, 3.16f}, // Deathbringer dest point
@@ -155,7 +160,7 @@ float fPositions[12][4] =
     {-536.87f, 2215.94f, 539.30f, 6.28f}, // guard npc1 first move
     {-535.17f, 2214.17f, 539.30f, 6.28f}, // guard npc2 first move
     {-535.17f, 2207.71f, 539.30f, 6.28f}, // guard npc3 first move
-    {-536.87f, 2205.68f, 539.30f, 6.28f} // guard npc4 first move
+    {-536.87f, 2205.68f, 539.30f, 6.28f}  // guard npc4 first move
 };
 
 // passive guards AI
@@ -184,7 +189,7 @@ struct MANGOS_DLL_DECL npc_highlord_saurfang_iccAI : public base_icc_bossAI
     uint32 m_uiEventStep;
     bool m_bIsEventStarted;
 
-    GUIDList m_lGuards;
+    GuidList m_lGuards;
 
     void Reset(){}
 
@@ -263,7 +268,7 @@ struct MANGOS_DLL_DECL npc_highlord_saurfang_iccAI : public base_icc_bossAI
 
                     // move guards
                     int8 n = 8;
-                    for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
+                    for (GuidList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
                     {
                         if (Creature *pTmp = m_creature->GetMap()->GetCreature(*i))
                             pTmp->GetMotionMaster()->MovePoint(0, fPositions[n][0], fPositions[n][1], fPositions[n][2]);
@@ -323,7 +328,7 @@ struct MANGOS_DLL_DECL npc_highlord_saurfang_iccAI : public base_icc_bossAI
                     m_creature->GetMotionMaster()->MovePoint(0, x, y, z);
 
                     // move guards
-                    for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
+                    for (GuidList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
                     {
                         if (Creature *pTmp = m_creature->GetMap()->GetCreature(*i))
                         {
@@ -351,7 +356,7 @@ struct MANGOS_DLL_DECL npc_highlord_saurfang_iccAI : public base_icc_bossAI
                     m_creature->GetMotionMaster()->MovePoint(0, x, y, z + frand(5.0f, 7.0f));
 
                     // move guards
-                    for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
+                    for (GuidList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
                     {
                         if (Creature *pTmp = m_creature->GetMap()->GetCreature(*i))
                         {
@@ -397,7 +402,7 @@ struct MANGOS_DLL_DECL npc_highlord_saurfang_iccAI : public base_icc_bossAI
                     m_creature->GetMotionMaster()->MovePoint(0, x, y, z);
 
                     // move guards
-                    for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
+                    for (GuidList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
                     {
                         if (Creature *pTmp = m_creature->GetMap()->GetCreature(*i))
                         {
@@ -416,7 +421,7 @@ struct MANGOS_DLL_DECL npc_highlord_saurfang_iccAI : public base_icc_bossAI
                     m_creature->SetSpeedRate(MOVE_WALK, 1.0f);
                     m_creature->RemoveAurasDueToSpell(SPELL_GRIP_OF_AGONY);
 
-                    for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
+                    for (GuidList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
                     {
                         if (Creature *pGuard = m_creature->GetMap()->GetCreature(*i))
                         {
@@ -494,7 +499,7 @@ struct MANGOS_DLL_DECL npc_highlord_saurfang_iccAI : public base_icc_bossAI
                     if (!m_creature->IsWithinDist2d(fPositions[2][0], fPositions[2][1], 3.0f))
                         return;
 
-                    for (GUIDList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
+                    for (GuidList::iterator i = m_lGuards.begin(); i != m_lGuards.end(); ++i)
                     {
                         if (Creature *pGuard = m_creature->GetMap()->GetCreature(*i))
                             pGuard->ForcedDespawn();
@@ -515,26 +520,24 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public base_icc_bossAI
 {
     boss_deathbringer_saurfangAI(Creature* pCreature) : base_icc_bossAI(pCreature)
     {
-        m_pInstance = ((instance_icecrown_spire*)pCreature->GetInstanceData());
+        m_pInstance = ((instance_icecrown_citadel*)pCreature->GetInstanceData());
         m_powerBloodPower = m_creature->getPowerType(); // don't call this function multiple times in script
-        m_bTeleported = false;
         m_bIsIntroStarted = false;
         m_guidEventNpcGuid.Clear();
         Reset();
     }
 
-    instance_icecrown_spire* m_pInstance;
+    instance_icecrown_citadel* m_pInstance;
     uint32 m_uiRuneOfBloodTimer;
     uint32 m_uiBoilingBloodTimer;
     uint32 m_uiBloodNovaTimer;
     uint32 m_uiBloodBeastsTimer;
     uint32 m_uiScentOfBloodTimer;
     uint32 m_uiBerserkTimer;
-    uint32 m_uiMarkOfFallenCount;
+    int32 m_iMarkOfFallenCount;
 
     bool m_bIsFrenzied;
 
-    bool m_bTeleported;
     bool m_bIsIntroStarted;
     bool m_bIsAlliance;
 
@@ -554,19 +557,13 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public base_icc_bossAI
         m_bIsFrenzied = false;
 
         m_creature->SetPower(m_powerBloodPower, 0);
-        m_uiMarkOfFallenCount = 0;
+        m_iMarkOfFallenCount = 0;
     }
 
     void MoveInLineOfSight(Unit *pWho)
     {
-        if (!m_bTeleported && pWho->GetTypeId() == TYPEID_PLAYER && !((Player*)pWho)->isGameMaster())
-        {
-            // teleport behind door
-            m_creature->NearTeleportTo(fPositions[0][0], fPositions[0][1], fPositions[0][2], fPositions[0][3]);
-            m_bTeleported = true;
-        }
-
-        if (m_bTeleported && !m_bIsIntroStarted && pWho->GetTypeId() == TYPEID_PLAYER && !((Player*)pWho)->isGameMaster() && m_creature->GetDistance2d(pWho) < 50.0f)
+        if (!m_bIsIntroStarted && pWho->GetTypeId() == TYPEID_PLAYER && !((Player*)pWho)->isGameMaster() &&
+            m_creature->GetDistance2d(pWho) < 50.0f)
         {
             m_bIsAlliance = false; //((Player*)pWho)->GetTeam() == ALLIANCE;
             DoSummonEventNpc();
@@ -591,7 +588,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public base_icc_bossAI
         {
             m_pInstance->SetData(TYPE_SAURFANG, IN_PROGRESS);
             m_pInstance->SetSpecialAchievementCriteria(ACHIEVE_IVE_GONE_AND_MADE_A_MESS, true);
-            m_uiMarkOfFallenCount = 0;
+            m_iMarkOfFallenCount = 0;
         }
 
         DoScriptText(SAY_AGGRO, m_creature);
@@ -603,27 +600,50 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public base_icc_bossAI
         DoCastSpellIfCan(m_creature, SPELL_MARK_OF_FALLEN_CHAMPION, CAST_TRIGGERED);
     }
 
-    void JustReachedHome()
+    void EnterEvadeMode()
     {
-        if (m_pInstance)
-        {
-            m_pInstance->SetData(TYPE_SAURFANG, FAIL);
-            m_pInstance->SetSpecialAchievementCriteria(ACHIEVE_IVE_GONE_AND_MADE_A_MESS, false);
-        }
+        m_creature->RemoveAllAuras();
+        m_creature->DeleteThreatList();
+        m_creature->CombatStop(true);
 
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
+        // Boss needs to evade to the point in front of the door
+        if (m_creature->isAlive())
+            m_creature->GetMotionMaster()->MovePoint(POINT_ID_EVADE, fPositions[1][0], fPositions[1][1], fPositions[1][2]);
+
+        m_creature->SetLootRecipient(NULL);
+
+        Reset();
     }
 
-    // used for unlocking bugged encounter
+    void MovementInform(uint32 uiMoveType, uint32 uiPointId)
+    {
+        if (uiMoveType != POINT_MOTION_TYPE)
+            return;
+
+        // "JustReachedHome()"
+        if (uiPointId == POINT_ID_EVADE)
+        {
+            m_creature->SetFacingTo(M_PI_F);
+
+            if (m_pInstance)
+            {
+                m_pInstance->SetData(TYPE_SAURFANG, FAIL);
+                m_pInstance->SetSpecialAchievementCriteria(ACHIEVE_IVE_GONE_AND_MADE_A_MESS, false);
+            }
+
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
+        }
+    }
+
     void JustDied(Unit *pKiller)
     {
         if (m_pInstance)
         {
             m_pInstance->SetData(TYPE_SAURFANG, DONE);
-            if (m_uiMarkOfFallenCount > (m_bIs25Man ? 5: 3))
+            if (m_iMarkOfFallenCount > (m_bIs25Man ? 5: 3))
                 m_pInstance->SetSpecialAchievementCriteria(ACHIEVE_IVE_GONE_AND_MADE_A_MESS, false);
         }
 
@@ -658,7 +678,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public base_icc_bossAI
     Player* SelectRandomPlayerForMark()
     {
         Player *pResult = NULL;
-        GUIDList lPlayers;
+        GuidList lPlayers;
         ThreatList const &threatlist = m_creature->getThreatManager().getThreatList();
 
         if (!threatlist.empty())
@@ -680,7 +700,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public base_icc_bossAI
 
         if (!lPlayers.empty())
         {
-            GUIDList::iterator i = lPlayers.begin();
+            GuidList::iterator i = lPlayers.begin();
             uint32 max = uint32(lPlayers.size() - 1);
 
             if (max > 0)
@@ -719,7 +739,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public base_icc_bossAI
                     m_creature->CastCustomSpell(m_creature, SPELL_BLOOD_POWER, &power, &power, NULL, true);
                     DoScriptText(SAY_FALLENCHAMPION, m_creature);
                     // count mark for achievement
-                    ++m_uiMarkOfFallenCount;
+                    ++m_iMarkOfFallenCount;
                 }
             }
         }

@@ -33,6 +33,9 @@ EndScriptData */
 
 enum
 {
+    SAY_SOCCOTHRATES_AGGRO          = -1552039,
+    SAY_SOCCOTHRATES_DEATH          = -1552043,
+
     YELL_MELLICHAR_INTRO1           = -1552023,
     YELL_MELLICHAR_INTRO2           = -1552024,
     YELL_MELLICHAR_RELEASE1         = -1552025,
@@ -50,14 +53,22 @@ enum
     SPELL_TARGET_ALPHA              = 36856,
     SPELL_TARGET_DELTA              = 36857,
     SPELL_TARGET_GAMMA              = 36858,
+    SPELL_SIMPLE_TELEPORT           = 12980,
+    SPELL_MIND_REND                 = 36859,
 };
 
 static const DialogueEntry aArcatrazDialogue[] =
 {
+    // Soccothares taunts
+    {TYPE_DALLIAH,            0,             5000},
+    {SAY_SOCCOTHRATES_AGGRO,  NPC_SOCCOTHRATES, 0},
+    {TYPE_SOCCOTHRATES,       0,             5000},
+    {SAY_SOCCOTHRATES_DEATH,  NPC_SOCCOTHRATES, 0},
+    // Skyriss event
     {YELL_MELLICHAR_INTRO1,   NPC_MELLICHAR, 22000},
     {YELL_MELLICHAR_INTRO2,   NPC_MELLICHAR, 7000},
     {SPELL_TARGET_ALPHA,      0,             7000},
-    {TYPE_WARDEN_1,           0,             0},
+    {YELL_MELLICHAR_RELEASE1, NPC_MELLICHAR, 0},
     {YELL_MELLICHAR_RELEASE2, NPC_MELLICHAR, 7000},
     {SPELL_TARGET_BETA,       0,             7000},
     {TYPE_WARDEN_2,           0,             0},
@@ -70,13 +81,15 @@ static const DialogueEntry aArcatrazDialogue[] =
     {YELL_MELLICHAR_RELEASE5, NPC_MELLICHAR, 8000},
     {TYPE_WARDEN_5,           0,             5000},
     {SAY_SKYRISS_INTRO,       NPC_SKYRISS,   25000},
-    {YELL_MELLICAR_WELCOME,   NPC_MELLICHAR, 5000},
+    {YELL_MELLICAR_WELCOME,   NPC_MELLICHAR, 3000},
     {SAY_SKYRISS_AGGRO,       NPC_SKYRISS,   0},
     {0, 0, 0},
 };
 
 instance_arcatraz::instance_arcatraz(Map* pMap) : ScriptedInstance(pMap), DialogueHelper(aArcatrazDialogue),
-    m_uiResetDelayTimer(0)
+    m_uiEntranceEventTimer(0),
+    m_uiResetDelayTimer(0),
+    m_uiKilledWardens(0)
 {
     Initialize();
 }
@@ -85,6 +98,16 @@ void instance_arcatraz::Initialize()
 {
     memset(&m_auiEncounter, 0, sizeof(m_auiEncounter));
     InitializeDialogueHelper(this);
+}
+
+void instance_arcatraz::OnPlayerEnter(Player* pPlayer)
+{
+    // Check encounter states
+    if (GetData(TYPE_ENTRANCE) == DONE || GetData(TYPE_ENTRANCE) == IN_PROGRESS)
+        return;
+
+    SetData(TYPE_ENTRANCE, IN_PROGRESS);
+    m_uiEntranceEventTimer = 1000;
 }
 
 void instance_arcatraz::OnObjectCreate(GameObject* pGo)
@@ -126,6 +149,8 @@ void instance_arcatraz::OnCreatureCreate(Creature* pCreature)
         case NPC_PRISON_GAMMA_POD:
         case NPC_PRISON_BOSS_POD:
         case NPC_MELLICHAR:
+        case NPC_DALLIAH:
+        case NPC_SOCCOTHRATES:
             m_mNpcEntryGuidStore[pCreature->GetEntry()] = pCreature->GetObjectGuid();
             break;
         case NPC_BLAZING_TRICKSTER:
@@ -143,30 +168,43 @@ void instance_arcatraz::SetData(uint32 uiType, uint32 uiData)
 {
     switch(uiType)
     {
+        case TYPE_ENTRANCE:
         case TYPE_ZEREKETH:
-            m_auiEncounter[0] = uiData;
+            m_auiEncounter[uiType] = uiData;
             break;
 
         case TYPE_DALLIAH:
+            if (uiData == IN_PROGRESS)
+            {
+                // Soccothares taunts after Dalliah gets aggro
+                if (GetData(TYPE_SOCCOTHRATES) != DONE)
+                    StartNextDialogueText(TYPE_DALLIAH);
+            }
             if (uiData == DONE)
+            {
                 DoUseDoorOrButton(GO_CORE_SECURITY_FIELD_BETA);
-            m_auiEncounter[1] = uiData;
+
+                // Soccothares taunts after Dalliah dies
+                if (GetData(TYPE_SOCCOTHRATES) != DONE)
+                    StartNextDialogueText(TYPE_SOCCOTHRATES);
+            }
+            m_auiEncounter[uiType] = uiData;
             break;
 
         case TYPE_SOCCOTHRATES:
             if (uiData == DONE)
                 DoUseDoorOrButton(GO_CORE_SECURITY_FIELD_ALPHA);
-            m_auiEncounter[2] = uiData;
+            m_auiEncounter[uiType] = uiData;
             break;
 
         case TYPE_HARBINGERSKYRISS:
             if (uiData == FAIL)
             {
-                m_auiEncounter[4] = NOT_STARTED;
-                m_auiEncounter[5] = NOT_STARTED;
-                m_auiEncounter[6] = NOT_STARTED;
-                m_auiEncounter[7] = NOT_STARTED;
-                m_auiEncounter[8] = NOT_STARTED;
+                SetData(TYPE_WARDEN_1, NOT_STARTED);
+                SetData(TYPE_WARDEN_2, NOT_STARTED);
+                SetData(TYPE_WARDEN_3, NOT_STARTED);
+                SetData(TYPE_WARDEN_4, NOT_STARTED);
+                SetData(TYPE_WARDEN_5, NOT_STARTED);
 
                 // Reset event in 1 min
                 if (Creature* pMellichar = GetSingleCreatureFromStorage(NPC_MELLICHAR))
@@ -174,7 +212,7 @@ void instance_arcatraz::SetData(uint32 uiType, uint32 uiData)
                 m_uiResetDelayTimer = 60000;
 
                 // Despawn all the summons manually
-                for (GUIDList::const_iterator itr = m_lSkyrissEventMobsGuidList.begin(); itr != m_lSkyrissEventMobsGuidList.end(); ++itr)
+                for (GuidList::const_iterator itr = m_lSkyrissEventMobsGuidList.begin(); itr != m_lSkyrissEventMobsGuidList.end(); ++itr)
                 {
                     if (Creature* pTemp = instance->GetCreature(*itr))
                         pTemp->ForcedDespawn();
@@ -206,7 +244,7 @@ void instance_arcatraz::SetData(uint32 uiType, uint32 uiData)
                 DoUseDoorOrButton(GO_POD_ALPHA);
             if (uiData == DONE)
                 StartNextDialogueText(YELL_MELLICHAR_RELEASE2);
-            m_auiEncounter[4] = uiData;
+            m_auiEncounter[uiType] = uiData;
             break;
 
         case TYPE_WARDEN_2:
@@ -214,7 +252,7 @@ void instance_arcatraz::SetData(uint32 uiType, uint32 uiData)
                 DoUseDoorOrButton(GO_POD_BETA);
             if (uiData == DONE)
                 StartNextDialogueText(YELL_MELLICHAR_RELEASE3);
-            m_auiEncounter[5] = uiData;
+            m_auiEncounter[uiType] = uiData;
             break;
 
         case TYPE_WARDEN_3:
@@ -222,7 +260,7 @@ void instance_arcatraz::SetData(uint32 uiType, uint32 uiData)
                 DoUseDoorOrButton(GO_POD_DELTA);
             if (uiData == DONE)
                 StartNextDialogueText(YELL_MELLICHAR_RELEASE4);
-            m_auiEncounter[6] = uiData;
+            m_auiEncounter[uiType] = uiData;
             break;
 
         case TYPE_WARDEN_4:
@@ -230,13 +268,13 @@ void instance_arcatraz::SetData(uint32 uiType, uint32 uiData)
                 DoUseDoorOrButton(GO_POD_GAMMA);
             if (uiData == DONE)
                 StartNextDialogueText(YELL_MELLICHAR_RELEASE5);
-            m_auiEncounter[7] = uiData;
+            m_auiEncounter[uiType] = uiData;
             break;
 
         case TYPE_WARDEN_5:
             if (uiData == IN_PROGRESS)
                 DoUseDoorOrButton(GO_POD_OMEGA);
-            m_auiEncounter[8] = uiData;
+            m_auiEncounter[uiType] = uiData;
             break;
     }
 
@@ -247,7 +285,7 @@ void instance_arcatraz::SetData(uint32 uiType, uint32 uiData)
         std::ostringstream saveStream;
 
         saveStream << m_auiEncounter[0] << " " << m_auiEncounter[1] << " " << m_auiEncounter[2] << " "
-            << m_auiEncounter[3];
+            << m_auiEncounter[3] << " " << m_auiEncounter[4];
 
         m_strInstData = saveStream.str();
 
@@ -258,18 +296,10 @@ void instance_arcatraz::SetData(uint32 uiType, uint32 uiData)
 
 uint32 instance_arcatraz::GetData(uint32 uiType)
 {
-    switch(uiType)
-    {
-        case TYPE_HARBINGERSKYRISS: return m_auiEncounter[3];
-        case TYPE_WARDEN_1:         return m_auiEncounter[4];
-        case TYPE_WARDEN_2:         return m_auiEncounter[5];
-        case TYPE_WARDEN_3:         return m_auiEncounter[6];
-        case TYPE_WARDEN_4:         return m_auiEncounter[7];
-        case TYPE_WARDEN_5:         return m_auiEncounter[8];
+    if (uiType < MAX_ENCOUNTER)
+        return m_auiEncounter[uiType];
 
-        default:
-            return 0;
-    }
+    return 0;
 }
 
 void instance_arcatraz::Load(const char* chrIn)
@@ -283,7 +313,8 @@ void instance_arcatraz::Load(const char* chrIn)
     OUT_LOAD_INST_DATA(chrIn);
 
     std::istringstream loadStream(chrIn);
-    loadStream >> m_auiEncounter[0] >> m_auiEncounter[1] >> m_auiEncounter[2] >> m_auiEncounter[3];
+    loadStream >> m_auiEncounter[0] >> m_auiEncounter[1] >> m_auiEncounter[2] >> m_auiEncounter[3]
+        >> m_auiEncounter[4];
 
     for(uint8 i = 0; i < MAX_ENCOUNTER; ++i)
     {
@@ -308,7 +339,7 @@ void instance_arcatraz::JustDidDialogueStep(int32 iEntry)
                 pMellichar->SetFacingToObject(pTarget);
             SetData(TYPE_WARDEN_1, IN_PROGRESS);
             break;
-        case TYPE_WARDEN_1:
+        case YELL_MELLICHAR_RELEASE1:
             pMellichar->SummonCreature(urand(0, 1) ? NPC_BLAZING_TRICKSTER : NPC_PHASE_HUNTER, aSummonPosition[0].m_fX, aSummonPosition[0].m_fY, aSummonPosition[0].m_fZ, aSummonPosition[0].m_fO, TEMPSUMMON_DEAD_DESPAWN, 0);
             break;
         case YELL_MELLICHAR_RELEASE2:
@@ -356,7 +387,12 @@ void instance_arcatraz::JustDidDialogueStep(int32 iEntry)
             SetData(TYPE_WARDEN_5, IN_PROGRESS);
             break;
         case TYPE_WARDEN_5:
-            pMellichar->SummonCreature(NPC_SKYRISS, aSummonPosition[4].m_fX, aSummonPosition[4].m_fY, aSummonPosition[4].m_fZ, aSummonPosition[4].m_fO, TEMPSUMMON_DEAD_DESPAWN, 0);
+            if (Creature* pSkyriss = pMellichar->SummonCreature(NPC_SKYRISS, aSummonPosition[4].m_fX, aSummonPosition[4].m_fY, aSummonPosition[4].m_fZ, aSummonPosition[4].m_fO, TEMPSUMMON_DEAD_DESPAWN, 0))
+                pSkyriss->CastSpell(pSkyriss, SPELL_SIMPLE_TELEPORT, false);
+            break;
+        case YELL_MELLICAR_WELCOME:
+            if (Creature* pSkyriss = GetSingleCreatureFromStorage(NPC_SKYRISS))
+                pSkyriss->CastSpell(pSkyriss, SPELL_MIND_REND, false);
             break;
         case SAY_SKYRISS_AGGRO:
             // Kill Mellichar and start combat
@@ -367,6 +403,21 @@ void instance_arcatraz::JustDidDialogueStep(int32 iEntry)
             }
             DoUseDoorOrButton(GO_SEAL_SPHERE);
             break;
+    }
+}
+
+void instance_arcatraz::OnCreatureDeath(Creature* pCreature)
+{
+    if (pCreature->GetEntry() == NPC_ARCATRAZ_WARDEN || pCreature->GetEntry() == NPC_ARCATRAZ_DEFENDER)
+    {
+        ++m_uiKilledWardens;
+
+        // Stop the intro spawns when the wardens are killed
+        if (m_uiKilledWardens == MAX_WARDENS)
+        {
+            SetData(TYPE_ENTRANCE, DONE);
+            m_uiEntranceEventTimer = 0;
+        }
     }
 }
 
@@ -384,6 +435,28 @@ void instance_arcatraz::Update(uint32 uiDiff)
         }
         else
             m_uiResetDelayTimer -= uiDiff;
+    }
+
+    if (m_uiEntranceEventTimer)
+    {
+        if (m_uiEntranceEventTimer <= uiDiff)
+        {
+            Player* pPlayer = GetPlayerInMap();
+            if (!pPlayer)
+                return;
+
+            uint32 uiEntry = urand(0, 10) ? NPC_PROTEAN_HORROR : NPC_PROTEAN_NIGHTMARE;
+
+            // Summon and move the intro creatures into combat positions
+            if (Creature* pTemp = pPlayer->SummonCreature(uiEntry, aEntranceSpawnLoc[0], aEntranceSpawnLoc[1], aEntranceSpawnLoc[2], aEntranceSpawnLoc[3], TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 30000))
+            {
+                pTemp->SetWalk(false);
+                pTemp->GetMotionMaster()->MovePoint(0, aEntranceMoveLoc[0], aEntranceMoveLoc[1], aEntranceMoveLoc[2]);
+            }
+            m_uiEntranceEventTimer = urand(0, 10) ? urand(1000, 2000) : urand(5000, 7000);
+        }
+        else
+            m_uiEntranceEventTimer -= uiDiff;
     }
 }
 
