@@ -538,6 +538,8 @@ UPDATE creature_template SET ScriptName='npc_eye_of_acherus' WHERE entry=28511;
 UPDATE creature_template SET ScriptName='npc_scarlet_ghoul' WHERE entry=28845;
 UPDATE creature_template SET ScriptName='npc_highlord_darion_mograine' WHERE entry=29173;
 UPDATE creature_template SET ScriptName='npc_fellow_death_knight' WHERE entry IN (29199, 29204, 29200);
+UPDATE creature_template SET ScriptName='npc_lich_king_light_dawn' WHERE entry=29183;
+UPDATE creature_template SET ScriptName='npc_acherus_deathcharger' WHERE entry=28782;
 
 /* ELWYNN FOREST */
 
@@ -583,7 +585,7 @@ UPDATE creature_template SET ScriptName='boss_olm_the_summoner' WHERE entry=1883
 UPDATE creature_template SET ScriptName='boss_krosh_firehand' WHERE entry=18832;
 
 /* GUNDRAK */
-UPDATE creature_template SET ScriptName='boss_colossus' WHERE entry=29307;
+UPDATE creature_template SET ScriptName='boss_drakkari_colossus' WHERE entry=29307;
 UPDATE creature_template SET ScriptName='boss_eck' WHERE entry=29932;
 UPDATE creature_template SET ScriptName='boss_galdarah' WHERE entry=29306;
 UPDATE creature_template SET ScriptName='boss_moorabi' WHERE entry=29305;
