@@ -171,6 +171,28 @@ void instance_ulduar::OnCreatureCreate(Creature* pCreature)
     m_mNpcEntryGuidStore[pCreature->GetEntry()] = pCreature->GetObjectGuid();
 }
 
+void instance_ulduar::OnPlayerEnterArea(Player* pPlayer, uint32 uiNewAreaId, uint32 uiOldAreaId)
+{
+    switch(uiNewAreaId)
+    {
+        case 4273:
+        {
+            // Prevent use vehicle for kill all bosses
+            VehicleKitPtr vehicleKit = pPlayer->GetVehicle();
+            if (vehicleKit)
+            {
+                pPlayer->ExitVehicle();
+                Creature* pCreature = (Creature*)vehicleKit->GetBase();
+                if (pCreature)
+                    pCreature->ForcedDespawn();
+            }
+            break;
+        }
+        default:
+            break;
+    }
+}
+
 void instance_ulduar::OnObjectCreate(GameObject* pGo)
 {
     switch(pGo->GetEntry())
@@ -827,6 +849,7 @@ void instance_ulduar::SetData(uint32 uiType, uint32 uiData)
         OUT_SAVE_INST_DATA_COMPLETE;
     }
 }
+
 void instance_ulduar::SetSpecialAchievementCriteria(uint32 uiType, bool bIsMet)
 {
     if (uiType < MAX_SPECIAL_ACHIEV_CRITS)
@@ -870,7 +893,7 @@ bool instance_ulduar::CheckAchievementCriteriaMeet(uint32 uiCriteriaId, Player c
         {
             if (GetData(TYPE_ASSEMBLY) == DONE)
             {
-                if (pSource->HasAura(SPELL_IRON_BOOT_AURA))
+                if (pSource && pSource->HasAura(SPELL_IRON_BOOT_AURA))
                     return true;
             }
             break;
@@ -939,17 +962,17 @@ bool instance_ulduar::CheckAchievementCriteriaMeet(uint32 uiCriteriaId, Player c
         case ACHIEV_CRIT_ALONE_H:
             return m_abAchievCriteria[TYPE_ACHIEV_ALONE];
     }
+
     return false;
 }
 
-bool instance_ulduar::CheckConditionCriteriaMeet(Player const* source, uint32 map_id, uint32 instance_condition_id)
+bool instance_ulduar::CheckConditionCriteriaMeet(Player const* pPlayer, uint32 uiInstanceConditionId, WorldObject const* pConditionSource, ConditionSource conditionSourceType)
 {
-    if (map_id != instance->GetId())
-        return false;
-
-    if (GetData(instance_condition_id) == DONE)
+    if (GetData(uiInstanceConditionId) == DONE)
         return true;
 
+    script_error_log("instance_ulduar::CheckConditionCriteriaMeet called with unsupported Id %u. Called with param plr %s, src %s, condition source type %u",
+                         uiInstanceConditionId, pPlayer ? pPlayer->GetGuidStr().c_str() : "NULL", pConditionSource ? pConditionSource->GetGuidStr().c_str() : "NULL", conditionSourceType);
     return false;
 }
 
