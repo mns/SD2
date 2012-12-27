@@ -284,6 +284,12 @@ struct MANGOS_DLL_DECL boss_kologarnAI : public ScriptedAI
 
     void Aggro(Unit* pWho)
     {
+        if (!m_pInstance || m_pInstance->GetData(TYPE_ASSEMBLY) != DONE)
+        {
+            EnterEvadeMode();
+            return;
+        }
+
         if (m_pInstance)
             m_pInstance->SetData(TYPE_KOLOGARN, IN_PROGRESS);
         //aggro yell

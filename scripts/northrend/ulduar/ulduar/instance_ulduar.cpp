@@ -173,6 +173,7 @@ void instance_ulduar::OnCreatureCreate(Creature* pCreature)
 
 void instance_ulduar::OnPlayerEnterArea(Player* pPlayer, uint32 uiNewAreaId, uint32 uiOldAreaId)
 {
+    bool bTeleToHome = false;
     switch(uiNewAreaId)
     {
         case 4273:
@@ -188,9 +189,24 @@ void instance_ulduar::OnPlayerEnterArea(Player* pPlayer, uint32 uiNewAreaId, uin
             }
             break;
         }
+        case 4653: // Razorscale
+        case 4654: // Ignis the Furnace Master
+            if (GetData(TYPE_LEVIATHAN) != DONE)
+                bTeleToHome = true;
+            break;
+        case 4655: // XT-002 Deconstructor
+            if (GetData(TYPE_RAZORSCALE) != DONE || GetData(TYPE_IGNIS) != DONE)
+                bTeleToHome = true;
+            break;
+        case 4656: // Freya
+            if (GetData(TYPE_AURIAYA) != DONE)
+                bTeleToHome = true;
+            break;
         default:
             break;
     }
+    if (bTeleToHome)
+        pPlayer->TeleportTo(603, -706.122f, -92.6024f, 430.176f, 4.19f);
 }
 
 void instance_ulduar::OnObjectCreate(GameObject* pGo)

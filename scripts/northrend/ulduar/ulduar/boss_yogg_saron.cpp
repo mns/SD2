@@ -497,6 +497,12 @@ struct MANGOS_DLL_DECL boss_yogg_saronAI : public ScriptedAI
 
     void Aggro(Unit *who) 
     {
+        //if (!m_pInstance || m_pInstance->GetData(TYPE_VEZAX) != DONE)
+        {
+            EnterEvadeMode();
+            return;
+        }
+
         m_creature->SetInCombatWithZone();
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         DoCast(m_creature, SPELL_SANITY_TRIGG, true);

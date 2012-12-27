@@ -265,6 +265,12 @@ struct MANGOS_DLL_DECL boss_hodirAI : public ScriptedAI
 
     void Aggro(Unit *pWho)
     {
+        //if (!m_pInstance || m_pInstance->GetData(TYPE_FREYA) != DONE)
+        {
+            EnterEvadeMode();
+            return;
+        }
+
         if (pWho->GetTypeId() != TYPEID_PLAYER)
             return;
         if(m_pInstance)

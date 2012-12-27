@@ -960,6 +960,12 @@ struct MANGOS_DLL_DECL boss_aerial_command_unitAI : public ScriptedAI
 
     void Aggro(Unit *who) 
     {
+        //if (!m_pInstance || m_pInstance->GetData(TYPE_HODIR) != DONE)
+        {
+            EnterEvadeMode();
+            return;
+        }
+
         if(m_pInstance->GetData(TYPE_MIMIRON_PHASE) == PHASE_AERIAL)
         {
             MakeBossFly();
@@ -1256,6 +1262,12 @@ struct MANGOS_DLL_DECL boss_mimironAI : public ScriptedAI
     // start event
     void Aggro(Unit *who) 
     {
+        //if (!m_pInstance || m_pInstance->GetData(TYPE_HODIR) != DONE)
+        {
+            EnterEvadeMode();
+            return;
+        }
+
         DoScriptText(SAY_AGGRO, m_creature);
         if (m_pInstance)
         {

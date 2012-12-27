@@ -292,6 +292,12 @@ struct MANGOS_DLL_DECL boss_elder_brightleafAI : public ScriptedAI
 
     void Aggro(Unit* pWho)
     {    
+        //if (!m_pInstance || m_pInstance->GetData(TYPE_AURIAYA) != DONE)
+        {
+            EnterEvadeMode();
+            return;
+        }
+
         DoScriptText(SAY_BRIGHTLEAF_AGGRO, m_creature);
     }
 
@@ -372,6 +378,12 @@ struct MANGOS_DLL_DECL boss_elder_ironbranchAI : public ScriptedAI
 
     void Aggro(Unit* pWho)
     {    
+        //if (!m_pInstance || m_pInstance->GetData(TYPE_AURIAYA) != DONE)
+        {
+            EnterEvadeMode();
+            return;
+        }
+
         DoScriptText(SAY_IRONBRANCH_AGGRO, m_creature);
     }
 
@@ -453,6 +465,12 @@ struct MANGOS_DLL_DECL boss_elder_stonebarkAI : public ScriptedAI
 
     void Aggro(Unit* pWho)
     {    
+        //if (!m_pInstance || m_pInstance->GetData(TYPE_AURIAYA) != DONE)
+        {
+            EnterEvadeMode();
+            return;
+        }
+
         DoScriptText(SAY_STONEBARK_AGGRO, m_creature);
     }
 
@@ -600,6 +618,12 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
 
     void Aggro(Unit *who) 
     {
+        //if (!m_pInstance || m_pInstance->GetData(TYPE_AURIAYA) != DONE)
+        {
+            EnterEvadeMode();
+            return;
+        }
+
         DoCast(m_creature, SPELL_ATTUNED_TO_NATURE, true);
         DoCast(m_creature, m_bIsRegularMode ? SPELL_TOUCH_OF_EONAR : SPELL_TOUCH_OF_EONAR_H, true);
         if(m_pInstance) 

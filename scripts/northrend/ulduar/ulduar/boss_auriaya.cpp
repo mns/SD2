@@ -129,6 +129,12 @@ struct MANGOS_DLL_DECL boss_auriayaAI : public ScriptedAI
 
     void Aggro(Unit* pWho)
     {
+        //if (!m_pInstance || m_pInstance->GetData(TYPE_KOLOGARN) != DONE)
+        {
+            EnterEvadeMode();
+            return;
+        }
+
         if (m_pInstance)
             m_pInstance->SetData(TYPE_AURIAYA, IN_PROGRESS);
 
@@ -410,6 +416,12 @@ struct MANGOS_DLL_DECL boss_sanctum_sentryAI : public ScriptedAI
 
     void Aggro(Unit* pWho)
     {
+        //if (!m_pInstance || m_pInstance->GetData(TYPE_KOLOGARN) != DONE)
+        {
+            EnterEvadeMode();
+            return;
+        }
+
         if (m_pInstance)
         {
             if (Creature* pAuriaya = m_pInstance->GetSingleCreatureFromStorage(NPC_AURIAYA))

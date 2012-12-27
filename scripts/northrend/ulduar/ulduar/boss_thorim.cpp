@@ -724,6 +724,12 @@ struct MANGOS_DLL_DECL boss_thorimAI : public ScriptedAI
 
     void DoOutro()
     {
+        //if (!m_pInstance || m_pInstance->GetData(TYPE_MIMIRON) != DONE)
+        {
+            m_creature->ForcedDespawn();
+            return;
+        }
+
         if(m_pInstance) 
         {
             if(m_bIsHardMode)
@@ -739,6 +745,11 @@ struct MANGOS_DLL_DECL boss_thorimAI : public ScriptedAI
     // for debug only
     void JustDied(Unit* pKiller)
     {
+        //if (!m_pInstance || m_pInstance->GetData(TYPE_MIMIRON) != DONE)
+        {
+            return;
+        }
+
         if(m_pInstance) 
         {
             if(m_bIsHardMode)

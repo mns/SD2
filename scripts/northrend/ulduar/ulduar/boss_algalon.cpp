@@ -350,6 +350,12 @@ struct MANGOS_DLL_DECL boss_algalonAI : public ScriptedAI
 
     void Aggro(Unit* pWho)
     {
+        //if (!m_pInstance || m_pInstance->GetData(TYPE_YOGGSARON) != DONE)
+        {
+            EnterEvadeMode();
+            return;
+        }
+
         // set combat phase
         m_uiCombatPhase = 2;
 

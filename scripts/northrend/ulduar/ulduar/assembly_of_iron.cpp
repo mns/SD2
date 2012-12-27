@@ -226,6 +226,12 @@ struct MANGOS_DLL_DECL boss_brundirAI : public ScriptedAI
 
     void Aggro(Unit* pWho)
     {
+        if (!m_pInstance || m_pInstance->GetData(TYPE_XT002) != DONE)
+        {
+            m_uiEnrageTimer = 0;
+            return;
+        }
+
         DoScriptText(SAY_BRUNDIR_AGGR0, m_creature);
         if (!m_pInstance)
             return;
@@ -510,6 +516,12 @@ struct MANGOS_DLL_DECL boss_molgeimAI : public ScriptedAI
 
     void Aggro(Unit* pWho)
     {
+        if (!m_pInstance || m_pInstance->GetData(TYPE_XT002) != DONE)
+        {
+            m_uiEnrageTimer = 0;
+            return;
+        }
+
         DoScriptText(SAY_MOLGEIM_AGGRO, m_creature);
         if (!m_pInstance)
             return;
@@ -713,6 +725,12 @@ struct MANGOS_DLL_DECL boss_steelbreakerAI : public ScriptedAI
 
     void Aggro(Unit* pWho)
     {
+        if (!m_pInstance || m_pInstance->GetData(TYPE_XT002) != DONE)
+        {
+            m_uiEnrageTimer = 0;
+            return;
+        }
+
         DoScriptText(SAY_STEEL_AGGRO, m_creature);
         if (!m_pInstance)
             return;
