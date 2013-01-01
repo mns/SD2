@@ -1630,6 +1630,7 @@ struct MANGOS_DLL_DECL npc_highlord_darion_mograineAI : public npc_escortAI
 
     void SummonedCreatureJustDied(Creature* pSummoned) override
     {
+        return;
         // if battle has ended return
         if (m_pInstance->GetData(TYPE_BATTLE) != IN_PROGRESS)
             return;
