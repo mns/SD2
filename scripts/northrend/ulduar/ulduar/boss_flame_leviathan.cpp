@@ -286,8 +286,8 @@ struct MANGOS_DLL_DECL boss_flame_leviathanAI : public ScriptedAI
     void JustDied(Unit* killer)
     {
         m_creature->RemoveAllAuras();
-        DoExitVehiclePlayers();
-        SetUnselectableVehicles();
+        //DoExitVehiclePlayers();
+        //SetUnselectableVehicles();
 
         std::list<Creature*> lCreatureList;
         GetCreatureListWithEntryInGrid(lCreatureList, m_creature, 33090, 1000.0f);
