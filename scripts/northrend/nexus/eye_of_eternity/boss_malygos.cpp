@@ -163,17 +163,13 @@ enum MalygosPhase
 
 };
 
-struct LocationsXY
+static LOCATION WPs[]=
 {
-    float x, y;
-};
-
-static LocationsXY WPs[]=
-{
-    {810.0f, 1248.0f},
-    {810.0f, 1358.0f},
-    {700.0f, 1358.0f},
-    {700.0f, 1248.0f},
+    // Z coord not used
+    {810.0f, 1248.0f, 0.0f},
+    {810.0f, 1358.0f, 0.0f},
+    {700.0f, 1358.0f, 0.0f},
+    {700.0f, 1248.0f, 0.0f},
 };
 
 #define CENTER_X                754.50f

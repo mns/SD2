@@ -88,18 +88,13 @@ static const DialogueEntry aOutroDialogue[] =
     {0, 0, 0},
 };
 
-struct Location
-{
-    float m_fX, m_fY, m_fZ;
-};
-
-static const Location afAkamaWP[]=
+static const LOCATION afAkamaWP[]=
 {
     {516.885193f, 400.836060f, 112.784f},
     {469.597443f, 402.264404f, 118.537f}
 };
 
-static const Location afBrokenSpawnLoc[]=
+static const LOCATION afBrokenSpawnLoc[]=
 {
     {541.375916f, 401.439575f, 112.784f},       // The place where Akama channels
     {534.130005f, 352.394531f, 112.784f},       // Behind a 'pillar' which is behind the east alcove
@@ -188,7 +183,7 @@ struct MANGOS_DLL_DECL npc_akamaAI : public ScriptedAI, private DialogueHelper
             case NPC_SHADE_OF_AKAMA:
                 m_uiPhase = PHASE_EPILOGUE;
 
-                m_creature->GetMotionMaster()->MovePoint(PHASE_EPILOGUE, afAkamaWP[1].m_fX, afAkamaWP[1].m_fY, afAkamaWP[1].m_fZ);
+                m_creature->GetMotionMaster()->MovePoint(PHASE_EPILOGUE, afAkamaWP[1].x, afAkamaWP[1].y, afAkamaWP[1].z);
                 break;
             case NPC_ASH_SORCERER:
                  // Decrease the sorcerer counter
@@ -347,7 +342,7 @@ struct MANGOS_DLL_DECL npc_akamaAI : public ScriptedAI, private DialogueHelper
 
         m_creature->RemoveAurasDueToSpell(SPELL_STEALTH);
         m_creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-        m_creature->GetMotionMaster()->MovePoint(PHASE_CHANNEL, afAkamaWP[0].m_fX, afAkamaWP[0].m_fY, afAkamaWP[0].m_fZ);
+        m_creature->GetMotionMaster()->MovePoint(PHASE_CHANNEL, afAkamaWP[0].x, afAkamaWP[0].y, afAkamaWP[0].z);
     }
 
     // Wrapper to summon ashtongue mobs
@@ -390,9 +385,9 @@ struct MANGOS_DLL_DECL npc_akamaAI : public ScriptedAI, private DialogueHelper
         {
             for (uint8 j = 0; j < 4; ++j)
             {
-                fX = afBrokenSpawnLoc[i].m_fX;
-                fY = afBrokenSpawnLoc[i].m_fY + (j*7);
-                fZ = afBrokenSpawnLoc[i].m_fZ;
+                fX = afBrokenSpawnLoc[i].x;
+                fY = afBrokenSpawnLoc[i].y + (j*7);
+                fZ = afBrokenSpawnLoc[i].z;
 
                 m_creature->SummonCreature(NPC_ASH_BROKEN, fX, fY, fZ, 0, TEMPSUMMON_TIMED_DESPAWN, 10*MINUTE*IN_MILLISECONDS);
             }
