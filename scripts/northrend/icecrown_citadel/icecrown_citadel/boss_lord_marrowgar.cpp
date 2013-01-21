@@ -143,6 +143,9 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public base_icc_bossAI
     {
         ScriptedAI::MoveInLineOfSight(pWho);
 
+        if (m_creature->GetPositionX() > -340.0f)
+            EnterEvadeMode();
+
         if (m_bSaidIntro)
             return;
 
