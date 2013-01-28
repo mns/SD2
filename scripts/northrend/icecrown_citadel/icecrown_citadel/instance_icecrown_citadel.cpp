@@ -531,10 +531,10 @@ void instance_icecrown_citadel::SetData(uint32 uiType, uint32 uiData)
                     Creature* pBoss = GetSingleCreatureFromStorage(BossEntry[i]);
                     if (pBoss)
                     {
-                        if (uiData == IN_PROGRESS && GetData(TYPE_DEATHWHISPER) != DONE)
+                        // if (uiData == IN_PROGRESS && GetData(TYPE_DEATHWHISPER) != DONE)
                             pBoss->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                        else
-                            pBoss->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                        // else
+                            // pBoss->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     }
                 }
                 break;
