@@ -458,6 +458,91 @@ void instance_icecrown_citadel::SetData(uint32 uiType, uint32 uiData)
         SaveToDB();
         OUT_SAVE_INST_DATA_COMPLETE;
     }
+
+    if (uiData == IN_PROGRESS || uiData == FAIL)
+    {
+        uint32 BossEntry = 0;
+        switch(uiType)
+        {
+            case TYPE_DEATHWHISPER:
+                BossEntry = NPC_LADY_DEATHWHISPER;
+                break;
+            case TYPE_SAURFANG:
+                break;
+            case TYPE_FESTERGUT:
+                BossEntry = NPC_FESTERGUT;
+                break;
+            case TYPE_ROTFACE:
+                BossEntry = NPC_ROTFACE;
+                break;
+            case TYPE_PUTRICIDE:
+                BossEntry = NPC_PROFESSOR_PUTRICIDE;
+                break;
+            case TYPE_BLOOD_COUNCIL:
+                break;
+            case TYPE_LANATHEL:
+                BossEntry = NPC_LANATHEL;
+                break;
+            case TYPE_VALITHRIA:
+                // in own script
+                break;
+            case TYPE_SINDRAGOSA:
+                BossEntry = NPC_SINDRAGOSA;
+                break;
+            case TYPE_LICH_KING:
+                // in own gossip script
+                break;
+            default:
+                return;
+        }
+        if (BossEntry)
+        {
+            Creature* pBoss = GetSingleCreatureFromStorage(BossEntry);
+            if (pBoss)
+            {
+                if (uiData == IN_PROGRESS && GetData(uiType - 1) != DONE)
+                    pBoss->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                else
+                    pBoss->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            }
+        }
+        switch(uiType)
+        {
+            case TYPE_SAURFANG:
+            {
+                Creature* pBoss = GetSingleCreatureFromStorage(NPC_DEATHBRINGER_SAURFANG);
+                if (pBoss)
+                {
+                    if (uiData == IN_PROGRESS && GetData(TYPE_DEATHWHISPER) != DONE)
+                        pBoss->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    else
+                        pBoss->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                }
+                break;
+            }
+            case TYPE_BLOOD_COUNCIL:
+            {
+                uint32 BossEntry[3];
+                BossEntry[0] = NPC_TALDARAM;
+                BossEntry[1] = NPC_VALANAR;
+                BossEntry[2] = NPC_KELESETH;
+                for (uint8 i = 0; i < 3; ++i)
+                {
+                    Creature* pBoss = GetSingleCreatureFromStorage(BossEntry[i]);
+                    if (pBoss)
+                    {
+                        if (uiData == IN_PROGRESS && GetData(TYPE_DEATHWHISPER) != DONE)
+                            pBoss->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                        else
+                            pBoss->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    }
+                }
+                break;
+            }
+            default:
+                return;
+        }
+    }
 }
 
 uint32 instance_icecrown_citadel::GetData(uint32 uiType)

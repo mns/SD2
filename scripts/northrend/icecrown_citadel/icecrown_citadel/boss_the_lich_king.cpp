@@ -677,6 +677,9 @@ bool GossipHello_boss_tirion_icc(Player* pPlayer, Creature* pCreature)
     if (!pInstance)
         return true;
 
+    if (pInstance->GetData(TYPE_SINDRAGOSA) != DONE && !pPlayer->isGameMaster())
+        return false;
+
     if (pInstance->GetData(TYPE_LICH_KING) != NOT_STARTED &&
         pInstance->GetData(TYPE_LICH_KING) != FAIL )
     {

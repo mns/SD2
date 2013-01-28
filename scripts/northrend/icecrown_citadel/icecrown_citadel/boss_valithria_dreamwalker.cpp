@@ -228,6 +228,7 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
             return;
 
         if (pWho->GetTypeId() == TYPEID_PLAYER && !((Player*)pWho)->isGameMaster() &&
+            m_pInstance && m_pInstance->GetData(TYPE_LANATHEL) == DONE &&
             m_creature->GetDistance(pWho) < 50.0f)
         {
             DoScriptText(SAY_AGGRO, m_creature);
