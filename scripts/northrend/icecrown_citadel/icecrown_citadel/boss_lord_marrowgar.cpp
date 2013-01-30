@@ -195,6 +195,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public base_icc_bossAI
             pSummoned->CastSpell(pSummoned, SPELL_COLDFLAME_AURA, true);
             pSummoned->SetSpeedRate(MOVE_WALK, 2.0f); // should be via DB
             pSummoned->GetMotionMaster()->MovePoint(0, x, y, z, false);
+            pSummoned->ForcedDespawn(20000);
         }
     }
 
