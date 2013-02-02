@@ -180,6 +180,7 @@ void FollowerAI::EnterEvadeMode()
             m_creature->GetMotionMaster()->MoveTargetedHome();
     }
 
+    m_creature->SetHealth(m_creature->GetMaxHealth());
     Reset();
 }
 

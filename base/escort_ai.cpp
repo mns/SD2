@@ -234,6 +234,7 @@ void npc_escortAI::EnterEvadeMode()
     else
         m_creature->GetMotionMaster()->MoveTargetedHome();
 
+    m_creature->SetHealth(m_creature->GetMaxHealth());
     Reset();
 }
 

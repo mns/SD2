@@ -612,6 +612,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public base_icc_bossAI
 
         m_creature->SetLootRecipient(NULL);
 
+        m_creature->SetHealth(m_creature->GetMaxHealth());
         Reset();
     }
 

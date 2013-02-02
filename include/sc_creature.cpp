@@ -145,6 +145,7 @@ void ScriptedAI::EnterEvadeMode()
 
     m_creature->SetLootRecipient(NULL);
 
+    m_creature->SetHealth(m_creature->GetMaxHealth());
     Reset();
 }
 
