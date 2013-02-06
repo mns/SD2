@@ -151,6 +151,14 @@ struct MANGOS_DLL_DECL boss_festergutAI : public base_icc_bossAI
         DoScriptText(SAY_SLAY_1 - urand(0, 1), m_creature);
     }
 
+    void MoveInLineOfSight(Unit* pWho)
+    {
+        ScriptedAI::MoveInLineOfSight(pWho);
+
+        if (m_creature->GetPositionY() < 3085.0f)
+            EnterEvadeMode();
+    }
+
     void JustReachedHome()
     {
         if (m_pInstance)

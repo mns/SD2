@@ -144,6 +144,14 @@ struct MANGOS_DLL_DECL boss_rotfaceAI : public base_icc_bossAI
         DoCastSpellIfCan(m_creature, SPELL_OOZE_FLOOD_PERIODIC, CAST_TRIGGERED);
     }
 
+    void MoveInLineOfSight(Unit* pWho)
+    {
+        ScriptedAI::MoveInLineOfSight(pWho);
+
+        if (m_creature->GetPositionY() < 3085.0f)
+            EnterEvadeMode();
+    }
+
     void JustReachedHome()
     {
         if (m_pInstance)
