@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -50,7 +50,7 @@ void instance_magisters_terrace::OnCreatureCreate(Creature* pCreature)
         case NPC_DELRISSA:
         case NPC_KALECGOS_DRAGON:
         case NPC_KAELTHAS:
-        // insert Delrissa adds here, for better handling
+            // insert Delrissa adds here, for better handling
         case NPC_KAGANI:
         case NPC_ELLRYS:
         case NPC_ERAMAS:
@@ -205,7 +205,7 @@ void instance_magisters_terrace::Load(const char* chrIn)
     std::istringstream loadStream(chrIn);
     loadStream >> m_auiEncounter[0] >> m_auiEncounter[1] >> m_auiEncounter[2] >> m_auiEncounter[3];
 
-    for(uint8 i = 0; i < MAX_ENCOUNTER; ++i)
+    for (uint8 i = 0; i < MAX_ENCOUNTER; ++i)
     {
         if (m_auiEncounter[i] == IN_PROGRESS)
             m_auiEncounter[i] = NOT_STARTED;
@@ -214,7 +214,7 @@ void instance_magisters_terrace::Load(const char* chrIn)
     OUT_LOAD_INST_DATA_COMPLETE;
 }
 
-uint32 instance_magisters_terrace::GetData(uint32 uiType)
+uint32 instance_magisters_terrace::GetData(uint32 uiType) const
 {
     if (uiType < MAX_ENCOUNTER)
         return m_auiEncounter[uiType];

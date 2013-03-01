@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -84,8 +84,8 @@ enum
     SAY_PEASANT_APPEAR_2                = -1000820,
     SAY_PEASANT_APPEAR_3                = -1000821,
 
-    //SPELL_DEATHS_DOOR                 = 23127,                    // damage spells cast on the peasants
-    //SPELL_SEETHING_PLAGUE             = 23072,
+    // SPELL_DEATHS_DOOR                 = 23127,           // damage spells cast on the peasants
+    // SPELL_SEETHING_PLAGUE             = 23072,
     SPELL_ENTER_THE_LIGHT_DND           = 23107,
     SPELL_BLESSING_OF_NORDRASSIL        = 23108,
 
@@ -93,7 +93,7 @@ enum
     NPC_PLAGUED_PEASANT                 = 14485,
     NPC_SCOURGE_ARCHER                  = 14489,
     NPC_SCOURGE_FOOTSOLDIER             = 14486,
-    NPC_THE_CLEANER                     = 14503,                    // can be summoned if the priest has more players in the party for help. requires further research
+    NPC_THE_CLEANER                     = 14503,            // can be summoned if the priest has more players in the party for help. requires further research
 
     QUEST_BALANCE_OF_LIGHT_AND_SHADOW   = 7622,
 
@@ -188,7 +188,7 @@ struct MANGOS_DLL_DECL npc_eris_havenfireAI : public ScriptedAI
             if (m_uiSaveCounter >= 50 && m_uiCurrentWave == 5)
                 DoBalanceEventEnd();
             // Phase ended
-            else if (m_uiSaveCounter + m_uiKillCounter == m_uiCurrentWave*MAX_PEASANTS)
+            else if (m_uiSaveCounter + m_uiKillCounter == m_uiCurrentWave * MAX_PEASANTS)
                 DoHandlePhaseEnd();
         }
     }
@@ -208,7 +208,7 @@ struct MANGOS_DLL_DECL npc_eris_havenfireAI : public ScriptedAI
                 DoScriptText(SAY_EVENT_FAIL_1, m_creature);
                 m_uiSadEndTimer = 4000;
             }
-            else if (m_uiSaveCounter + m_uiKillCounter == m_uiCurrentWave*MAX_PEASANTS)
+            else if (m_uiSaveCounter + m_uiKillCounter == m_uiCurrentWave * MAX_PEASANTS)
                 DoHandlePhaseEnd();
         }
     }
@@ -298,7 +298,7 @@ struct MANGOS_DLL_DECL npc_eris_havenfireAI : public ScriptedAI
         {
             if (m_uiEventTimer <= uiDiff)
             {
-                switch(m_uiPhase)
+                switch (m_uiPhase)
                 {
                     case 0:
                         DoSummonWave(NPC_SCOURGE_ARCHER);

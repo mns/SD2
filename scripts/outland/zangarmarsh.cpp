@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -23,7 +23,6 @@ EndScriptData */
 
 /* ContentData
 npc_cooshcoosh
-npc_elder_kuruti
 npc_kayra_longmane
 event_stormcrow
 EndContentData */
@@ -66,9 +65,10 @@ struct MANGOS_DLL_DECL npc_cooshcooshAI : public ScriptedAI
 
         if (m_uiLightningBolt_Timer < uiDiff)
         {
-            DoCastSpellIfCan(m_creature->getVictim(),SPELL_LIGHTNING_BOLT);
+            DoCastSpellIfCan(m_creature->getVictim(), SPELL_LIGHTNING_BOLT);
             m_uiLightningBolt_Timer = 5000;
-        }else m_uiLightningBolt_Timer -= uiDiff;
+        }
+        else m_uiLightningBolt_Timer -= uiDiff;
 
         DoMeleeAttackIfReady();
     }
@@ -106,7 +106,7 @@ struct MANGOS_DLL_DECL npc_kayra_longmaneAI : public npc_escortAI
         if (!pPlayer)
             return;
 
-        switch(i)
+        switch (i)
         {
             case 4:
                 DoScriptText(SAY_AMBUSH1, m_creature, pPlayer);

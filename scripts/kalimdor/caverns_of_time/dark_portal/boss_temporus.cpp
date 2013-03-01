@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -84,7 +84,7 @@ struct MANGOS_DLL_DECL boss_temporusAI : public ScriptedAI
         // Despawn Time Keeper
         if (pWho->GetTypeId() == TYPEID_UNIT && pWho->GetEntry() == NPC_TIME_KEEPER)
         {
-            if (m_creature->IsWithinDistInMap(pWho,20.0f))
+            if (m_creature->IsWithinDistInMap(pWho, 20.0f))
             {
                 if (DoCastSpellIfCan(pWho, SPELL_BANISH_HELPER) == CAST_OK)
                     DoScriptText(SAY_BANISH, m_creature);

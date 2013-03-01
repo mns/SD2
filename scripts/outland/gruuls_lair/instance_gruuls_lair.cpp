@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -29,7 +29,7 @@ EndScriptData */
 2 - Gruul event
 */
 
-instance_gruuls_lair::instance_gruuls_lair(Map *pMap) : ScriptedInstance(pMap),
+instance_gruuls_lair::instance_gruuls_lair(Map* pMap) : ScriptedInstance(pMap),
     m_uiCouncilMembersDied(0)
 {
     Initialize();
@@ -112,7 +112,7 @@ void instance_gruuls_lair::SetData(uint32 uiType, uint32 uiData)
     }
 }
 
-uint32 instance_gruuls_lair::GetData(uint32 uiType)
+uint32 instance_gruuls_lair::GetData(uint32 uiType) const
 {
     if (uiType < MAX_ENCOUNTER)
         return m_auiEncounter[uiType];
@@ -134,7 +134,7 @@ void instance_gruuls_lair::Load(const char* chrIn)
 
     loadStream >> m_auiEncounter[0] >> m_auiEncounter[1];
 
-    for(uint8 i = 0; i < MAX_ENCOUNTER; ++i)
+    for (uint8 i = 0; i < MAX_ENCOUNTER; ++i)
         if (m_auiEncounter[i] == IN_PROGRESS)
             m_auiEncounter[i] = NOT_STARTED;
 

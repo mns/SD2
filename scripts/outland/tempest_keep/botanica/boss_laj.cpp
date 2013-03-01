@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -76,7 +76,7 @@ struct MANGOS_DLL_DECL boss_lajAI : public ScriptedAI
     void DoTransform()
     {
         // Random transform into a different form
-        switch(urand(0, 4))
+        switch (urand(0, 4))
         {
             case 0:
                 m_creature->SetDisplayId(MODEL_ID_DEFAULT);
@@ -123,7 +123,7 @@ struct MANGOS_DLL_DECL boss_lajAI : public ScriptedAI
 
     void DoSummons()
     {
-        switch(urand(0, 3))
+        switch (urand(0, 3))
         {
             case 0:
                 DoCastSpellIfCan(m_creature, SPELL_SUMMON_LASHER_1, CAST_TRIGGERED);

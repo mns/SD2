@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -32,13 +32,12 @@ enum
 
     NPC_SPIRESTONE_WARLORD     = 9216,
     NPC_SMOLDERTHORN_BERSERKER = 9268
-
 };
 
-const float afLocations[2][4]=
+const float afLocations[2][4] =
 {
-    {-39.355381f, -513.456482f, 88.472046f, 4.679872f},
-    {-49.875881f, -511.896942f, 88.195160f, 4.613114f}
+    { -39.355381f, -513.456482f, 88.472046f, 4.679872f},
+    { -49.875881f, -511.896942f, 88.195160f, 4.613114f}
 };
 
 struct MANGOS_DLL_DECL boss_overlordwyrmthalakAI : public ScriptedAI

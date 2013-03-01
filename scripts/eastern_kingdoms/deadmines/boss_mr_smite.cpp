@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -181,7 +181,7 @@ struct MANGOS_DLL_DECL boss_mr_smiteAI : public ScriptedAI
                     m_uiEquipTimer = 0;
             }
 
-            switch(m_uiPhase)
+            switch (m_uiPhase)
             {
                 case PHASE_EQUIP_START:
                     PhaseEquipStart();
@@ -198,7 +198,7 @@ struct MANGOS_DLL_DECL boss_mr_smiteAI : public ScriptedAI
         }
 
         // the normal combat phases
-        switch(m_uiPhase)
+        switch (m_uiPhase)
         {
             case PHASE_1:
             {

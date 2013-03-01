@@ -1,14 +1,15 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software licensed under GPL version 2
  * Please see the included DOCS/LICENSE.TXT for more information */
 
 #include "precompiled.h"
+
 #include "Cell.h"
 #include "CellImpl.h"
 #include "GridNotifiers.h"
 #include "GridNotifiersImpl.h"
 
-//return closest attackable Unit in grid, with range from pSource 
+// return closest attackable Unit in grid, with range from pSource
 Unit* GetClosestAttackableUnit(Unit* pSource, float fMaxSearchRange) 
 { 
     Unit* pTarget = NULL; 
@@ -18,7 +19,7 @@ Unit* GetClosestAttackableUnit(Unit* pSource, float fMaxSearchRange)
     return pTarget; 
 }
 
-//return closest GO in grid, with range from pSource
+// return closest GO in grid, with range from pSource
 GameObject* GetClosestGameObjectWithEntry(WorldObject* pSource, uint32 uiEntry, float fMaxSearchRange)
 {
     GameObject* pGo = NULL;
@@ -31,7 +32,7 @@ GameObject* GetClosestGameObjectWithEntry(WorldObject* pSource, uint32 uiEntry, 
     return pGo;
 }
 
-//return closest creature alive in grid, with range from pSource
+// return closest creature alive in grid, with range from pSource
 Creature* GetClosestCreatureWithEntry(WorldObject* pSource, uint32 uiEntry, float fMaxSearchRange, bool bOnlyAlive/*=true*/, bool bOnlyDead/*=false*/)
 {
     Creature* pCreature = NULL;

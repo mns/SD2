@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -71,7 +71,7 @@ struct MANGOS_DLL_DECL boss_hakkarAI : public ScriptedAI
         m_uiCorruptedBloodTimer    = 25000;
         m_uiCauseInsanityTimer     = 17000;
         m_uiWillOfHakkarTimer      = 17000;
-        m_uiEnrageTimer            = 10*MINUTE*IN_MILLISECONDS;
+        m_uiEnrageTimer            = 10 * MINUTE * IN_MILLISECONDS;
 
         m_uiAspectOfJeklikTimer    = 4000;
         m_uiAspectOfVenoxisTimer   = 7000;
@@ -80,7 +80,7 @@ struct MANGOS_DLL_DECL boss_hakkarAI : public ScriptedAI
         m_uiAspectOfArlokkTimer    = 18000;
     }
 
-    void Aggro(Unit *who)
+    void Aggro(Unit* who)
     {
         DoScriptText(SAY_AGGRO, m_creature);
 
@@ -158,7 +158,7 @@ struct MANGOS_DLL_DECL boss_hakkarAI : public ScriptedAI
         if (m_uiEnrageTimer < uiDiff)
         {
             if (DoCastSpellIfCan(m_creature, SPELL_ENRAGE) == CAST_OK)
-                m_uiEnrageTimer = 10*MINUTE*IN_MILLISECONDS;
+                m_uiEnrageTimer = 10 * MINUTE * IN_MILLISECONDS;
         }
         else
             m_uiEnrageTimer -= uiDiff;

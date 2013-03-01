@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -122,13 +122,13 @@ struct MANGOS_DLL_DECL boss_archaedasAI : public ScriptedAI
         {
             if (m_uiAwakeningTimer <= uiDiff)
             {
-                switch(m_uiSubevent)
+                switch (m_uiSubevent)
                 {
                     case 0:
                         DoCastSpellIfCan(m_creature, SPELL_ARCHAEDAS_AWAKEN_VISUAL);
                         break;
                     case 1:
-                        DoScriptText(SAY_AGGRO,m_creature,NULL);
+                        DoScriptText(SAY_AGGRO, m_creature, NULL);
                         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                         break;
                     case 2:
@@ -168,7 +168,7 @@ struct MANGOS_DLL_DECL boss_archaedasAI : public ScriptedAI
                 m_uiAwakeDwarfTimer -= uiDiff;
         }
 
-        //Awake Earthen Guardians
+        // Awake Earthen Guardians
         if (!m_bGuardiansAwaken && m_creature->GetHealthPercent() <= 66.0f)
         {
             if (Creature* pGuard = m_pInstance->GetClosestDwarfNotInCombat(m_creature, PHASE_ARCHA_2))

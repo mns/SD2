@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software licensed under GPL version 2
  * Please see the included DOCS/LICENSE.TXT for more information */
 
@@ -69,13 +69,13 @@ class MANGOS_DLL_DECL instance_black_temple : public ScriptedInstance
         void OnObjectCreate(GameObject* pGo);
 
         void SetData(uint32 uiType, uint32 uiData);
-        uint32 GetData(uint32 uiType);
+        uint32 GetData(uint32 uiType) const;
 
-        void GetChannelersGuidList(GuidList &lList) { lList = m_lChannelersGuidList; }
-        void GetGeneratorGuidVector(GuidVector &vVector) { vVector = m_vCreatureGeneratorGuidVector; }
-        void GetGlaiveTargetGuidVector(GuidVector &vVector) { vVector = m_vGlaiveTargetGuidVector; }
+        void GetChannelersGuidList(GuidList& lList) { lList = m_lChannelersGuidList; }
+        void GetGeneratorGuidVector(GuidVector& vVector) { vVector = m_vCreatureGeneratorGuidVector; }
+        void GetGlaiveTargetGuidVector(GuidVector& vVector) { vVector = m_vGlaiveTargetGuidVector; }
 
-        const char* Save() { return m_strInstData.c_str(); }
+        const char* Save() const { return m_strInstData.c_str(); }
         void Load(const char* chrIn);
 
     private:

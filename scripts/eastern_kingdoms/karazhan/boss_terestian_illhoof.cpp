@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -86,7 +86,7 @@ struct MANGOS_DLL_DECL boss_terestianAI : public ScriptedAI
         m_uiSacrificeTimer      = 30000;
         m_uiShadowboltTimer     = 5000;
         m_uiSummonTimer         = 10000;
-        m_uiBerserkTimer        = 10*MINUTE*IN_MILLISECONDS;
+        m_uiBerserkTimer        = 10 * MINUTE * IN_MILLISECONDS;
 
         m_bSummonedPortals      = false;
     }
@@ -115,7 +115,7 @@ struct MANGOS_DLL_DECL boss_terestianAI : public ScriptedAI
 
     void JustSummoned(Creature* pSummoned)
     {
-        switch(pSummoned->GetEntry())
+        switch (pSummoned->GetEntry())
         {
             case NPC_PORTAL:
                 if (!m_bSummonedPortals)

@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software licensed under GPL version 2
  * Please see the included DOCS/LICENSE.TXT for more information */
 
@@ -16,7 +16,7 @@ enum
     NPC_NAGA_DISTILLER              = 17954,
     NPC_STEAMRIGGER                 = 17796,
     NPC_KALITHRESH                  = 17798,
-    //NPC_THESPIA                   = 17797,
+    // NPC_THESPIA                   = 17797,
 
     GO_MAIN_CHAMBERS_DOOR           = 183049,
     GO_ACCESS_PANEL_HYDRO           = 184125,
@@ -36,9 +36,9 @@ class MANGOS_DLL_DECL instance_steam_vault : public ScriptedInstance
         void OnCreatureDeath(Creature* pCreature);
 
         void SetData(uint32 uiType, uint32 uiData);
-        uint32 GetData(uint32 uiType);
+        uint32 GetData(uint32 uiType) const;
 
-        const char* Save() { return m_strInstData.c_str(); }
+        const char* Save() const { return m_strInstData.c_str(); }
         void Load(const char* chrIn);
 
     private:

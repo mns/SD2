@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -55,7 +55,7 @@ void instance_blackfathom_deeps::OnCreatureCreate(Creature* pCreature)
 
 void instance_blackfathom_deeps::OnObjectCreate(GameObject* pGo)
 {
-    switch(pGo->GetEntry())
+    switch (pGo->GetEntry())
     {
         case GO_PORTAL_DOOR:
             if (m_auiEncounter[1] == DONE)
@@ -115,7 +115,7 @@ void instance_blackfathom_deeps::DoSpawnMobs(uint8 uiWaveIndex)
 
 void instance_blackfathom_deeps::SetData(uint32 uiType, uint32 uiData)
 {
-    switch(uiType)
+    switch (uiType)
     {
         case TYPE_KELRIS:                                   // EventAI must set instance data (1,3) at his death
             if (m_auiEncounter[0] != DONE && uiData == DONE)
@@ -147,9 +147,9 @@ void instance_blackfathom_deeps::SetData(uint32 uiType, uint32 uiData)
     }
 }
 
-uint32 instance_blackfathom_deeps::GetData(uint32 uiType)
+uint32 instance_blackfathom_deeps::GetData(uint32 uiType) const
 {
-    switch(uiType)
+    switch (uiType)
     {
         case TYPE_KELRIS: return m_auiEncounter[0];
         case TYPE_SHRINE: return m_auiEncounter[1];
@@ -171,7 +171,7 @@ void instance_blackfathom_deeps::Load(const char* chrIn)
     std::istringstream loadStream(chrIn);
     loadStream >> m_auiEncounter[0] >> m_auiEncounter[1];
 
-    for(uint8 i = 0; i < MAX_ENCOUNTER; ++i)
+    for (uint8 i = 0; i < MAX_ENCOUNTER; ++i)
     {
         if (m_auiEncounter[i] == IN_PROGRESS)
             m_auiEncounter[i] = NOT_STARTED;

@@ -1,5 +1,5 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
- * Copyright (C) 2011 - 2012 MangosR2 <http://github.com/mangosR2/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
+ * Copyright (C) 2011 - 2013 MangosR2 <http://github.com/mangosR2/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -50,7 +50,7 @@ struct MANGOS_DLL_DECL npc_mistAI : public FollowerAI
 
     void Reset() { }
 
-    void MoveInLineOfSight(Unit *pWho)
+    void MoveInLineOfSight(Unit* pWho)
     {
         FollowerAI::MoveInLineOfSight(pWho);
 
@@ -74,11 +74,11 @@ struct MANGOS_DLL_DECL npc_mistAI : public FollowerAI
                 pPlayer->GroupEventHappens(QUEST_MIST, m_creature);
         }
 
-        //The follow is over (and for later development, run off to the woods before really end)
+        // The follow is over (and for later development, run off to the woods before really end)
         SetFollowComplete();
     }
 
-    //call not needed here, no known abilities
+    // call not needed here, no known abilities
     /*void UpdateFollowerAI(const uint32 uiDiff)
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())

@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -62,7 +62,7 @@ void instance_ramparts::OnObjectCreate(GameObject* pGo)
 
 void instance_ramparts::SetData(uint32 uiType, uint32 uiData)
 {
-    debug_log("SD2: Instance Ramparts: SetData received for type %u with data %u",uiType,uiData);
+    debug_log("SD2: Instance Ramparts: SetData received for type %u with data %u", uiType, uiData);
 
     switch (uiType)
     {
@@ -96,7 +96,7 @@ void instance_ramparts::SetData(uint32 uiType, uint32 uiData)
     }
 }
 
-uint32 instance_ramparts::GetData(uint32 uiType)
+uint32 instance_ramparts::GetData(uint32 uiType) const
 {
     if (uiType == TYPE_VAZRUDEN)
         return m_auiEncounter[0];
@@ -128,7 +128,7 @@ void instance_ramparts::DoFailVazruden()
             pVazruden->Respawn();
         else
         {
-            if (ScriptedAI* pVazrudenAI = dynamic_cast<ScriptedAI*> (pVazruden->AI()))
+            if (ScriptedAI* pVazrudenAI = dynamic_cast<ScriptedAI*>(pVazruden->AI()))
                 pVazrudenAI->Reset();
         }
     }

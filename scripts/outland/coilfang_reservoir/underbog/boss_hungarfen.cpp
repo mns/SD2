@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -53,7 +53,7 @@ struct MANGOS_DLL_DECL boss_hungarfenAI : public ScriptedAI
     void Reset()
     {
         m_bHasSpores        = false;
-        m_uiMushroomTimer   = 5000;                              // 1 mushroom after 5s, then one per 10s. This should be different in heroic mode
+        m_uiMushroomTimer   = 5000;                         // 1 mushroom after 5s, then one per 10s. This should be different in heroic mode
         m_uiAcidGeyserTimer = 10000;
     }
 

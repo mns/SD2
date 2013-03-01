@@ -1,5 +1,5 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
- * Copyright (C) 2011 - 2012 MangosR2 <http://github.com/mangosR2/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
+ * Copyright (C) 2011 - 2013 MangosR2 <http://github.com/mangosR2/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -126,7 +126,7 @@ struct MANGOS_DLL_DECL boss_brutallusAI : public ScriptedAI, private DialogueHel
         m_uiSlashTimer      = 11000;
         m_uiStompTimer      = 30000;
         m_uiBurnTimer       = 20000;
-        m_uiBerserkTimer    = 6*MINUTE*IN_MILLISECONDS;
+        m_uiBerserkTimer    = 6 * MINUTE * IN_MILLISECONDS;
         m_uiLoveTimer       = urand(10000, 17000);
 
         m_uiMadrigosaSpellTimer = 0;
@@ -153,7 +153,7 @@ struct MANGOS_DLL_DECL boss_brutallusAI : public ScriptedAI, private DialogueHel
         if (pVictim->GetEntry() == NPC_MADRIGOSA)
             return;
 
-        switch(urand(0, 2))
+        switch (urand(0, 2))
         {
             case 0: DoScriptText(YELL_KILL1, m_creature); break;
             case 1: DoScriptText(YELL_KILL2, m_creature); break;
@@ -400,7 +400,7 @@ struct MANGOS_DLL_DECL boss_brutallusAI : public ScriptedAI, private DialogueHel
 
         if (m_uiLoveTimer < uiDiff)
         {
-            switch(urand(0, 2))
+            switch (urand(0, 2))
             {
                 case 0: DoScriptText(YELL_LOVE1, m_creature); break;
                 case 1: DoScriptText(YELL_LOVE2, m_creature); break;
@@ -472,7 +472,7 @@ bool EffectAuraDummy_spell_aura_dummy_npc_brutallus_cloud(const Aura* pAura, boo
             {
                 if (Creature* pMadrigosa = pInstance->GetSingleCreatureFromStorage(NPC_MADRIGOSA))
                 {
-                   // Transform into Felmyst dragon
+                    // Transform into Felmyst dragon
                     pMadrigosa->CastSpell(pMadrigosa, SPELL_FELBLAZE_VISUAL, true);
                     pMadrigosa->CastSpell(pMadrigosa, SPELL_FELBLAZE_PREVIZUAL, true);
                     pMadrigosa->ForcedDespawn(10000);
@@ -487,8 +487,8 @@ bool AreaTrigger_at_madrigosa(Player* pPlayer, AreaTriggerEntry const* pAt)
 {
     if (ScriptedInstance* pInstance = (ScriptedInstance*)pPlayer->GetInstanceData())
     {
-        //this simply set encounter state, and trigger ice barrier become active
-        //bosses can start pre-event based on this new state
+        // this simply set encounter state, and trigger ice barrier become active
+        // bosses can start pre-event based on this new state
         if (pInstance->GetData(TYPE_BRUTALLUS) == NOT_STARTED)
         {
             pInstance->SetData(TYPE_BRUTALLUS, SPECIAL);

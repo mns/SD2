@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -92,13 +92,13 @@ CreatureAI* GetAI_npc_medivh_black_morass(Creature* pCreature)
 
 bool EffectDummyCreature_npc_medivh_black_morass(Unit* pCaster, uint32 uiSpellId, SpellEffectIndex uiEffIndex, Creature* pCreatureTarget)
 {
-    //always check spellid and effectindex
+    // always check spellid and effectindex
     if ((uiSpellId == SPELL_CORRUPT && uiEffIndex == EFFECT_INDEX_0) || (uiSpellId == SPELL_CORRUPT_AEONUS && uiEffIndex == EFFECT_INDEX_0))
     {
         if (instance_dark_portal* pInstance = (instance_dark_portal*)pCreatureTarget->GetInstanceData())
             pInstance->SetData(TYPE_SHIELD, SPECIAL);
 
-        //always return true when we are handling this spell and effect
+        // always return true when we are handling this spell and effect
         return true;
     }
 
@@ -124,11 +124,11 @@ struct RiftWaveData
     uint32 uiPortalMob[4];                      // spawns for portal waves (in order)
 };
 
-static const RiftWaveData aPortalWaves[]=
+static const RiftWaveData aPortalWaves[] =
 {
-    {NPC_ASSASSIN,    NPC_WHELP,        NPC_CHRONOMANCER, 0},
-    {NPC_EXECUTIONER, NPC_CHRONOMANCER, NPC_WHELP,        NPC_ASSASSIN},
-    {NPC_EXECUTIONER, NPC_VANQUISHER,   NPC_CHRONOMANCER, NPC_ASSASSIN}
+    {{NPC_ASSASSIN,    NPC_WHELP,        NPC_CHRONOMANCER, 0}},
+    {{NPC_EXECUTIONER, NPC_CHRONOMANCER, NPC_WHELP,        NPC_ASSASSIN}},
+    {{NPC_EXECUTIONER, NPC_VANQUISHER,   NPC_CHRONOMANCER, NPC_ASSASSIN}}
 };
 
 struct MANGOS_DLL_DECL npc_time_riftAI : public ScriptedAI
@@ -318,13 +318,13 @@ CreatureAI* GetAI_npc_time_rift(Creature* pCreature)
 
 bool EffectDummyCreature_npc_time_rift_channel(Unit* pCaster, uint32 uiSpellId, SpellEffectIndex uiEffIndex, Creature* pCreatureTarget)
 {
-    //always check spellid and effectindex
+    // always check spellid and effectindex
     if (uiSpellId == SPELL_RIFT_PERIODIC && uiEffIndex == EFFECT_INDEX_0)
     {
         if (npc_time_riftAI* pTimeRiftAI = dynamic_cast<npc_time_riftAI*>(pCreatureTarget->AI()))
             pTimeRiftAI->DoSummon();
 
-        //always return true when we are handling this spell and effect
+        // always return true when we are handling this spell and effect
         return true;
     }
 

@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -53,12 +53,12 @@ enum
     SPELL_DESTROY_ALL_SPIRITS   = 44659,                    // purpose unk
 
     // Spells - other
-    //SPELL_ATROPHY             = 40327,                    // Shadowy Constructs use this when they get within melee range of a player
+    // SPELL_ATROPHY             = 40327,                   // Shadowy Constructs use this when they get within melee range of a player
     SPELL_SHADOWY_CONSTRUCT     = 40326,
 
-    //NPC_DOOM_BLOSSOM          = 23123,                    // scripted in eventAI
+    // NPC_DOOM_BLOSSOM          = 23123,                   // scripted in eventAI
     NPC_SHADOWY_CONSTRUCT       = 23111,                    // scripted in eventAI
-    //NPC_VENGEFUL_SPIRIT       = 23109,                    // npc controlled by the dead player
+    // NPC_VENGEFUL_SPIRIT       = 23109,                   // npc controlled by the dead player
 };
 
 struct MANGOS_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
@@ -86,7 +86,7 @@ struct MANGOS_DLL_DECL boss_teron_gorefiendAI : public ScriptedAI
         m_uiSummonDoomBlossomTimer  = urand(5000, 10000);
         m_uiShadowOfDeathTimer      = 10000;
         m_uiCrushingShadowsTimer    = 22000;
-        m_uiBerserkTimer            = 10*MINUTE*IN_MILLISECONDS;
+        m_uiBerserkTimer            = 10 * MINUTE * IN_MILLISECONDS;
     }
 
     void JustReachedHome()

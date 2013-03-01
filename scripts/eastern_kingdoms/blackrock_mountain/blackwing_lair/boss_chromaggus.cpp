@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -173,7 +173,7 @@ struct MANGOS_DLL_DECL boss_chromaggusAI : public ScriptedAI
         {
             uint32 m_uiSpellAfflict = 0;
 
-            switch(urand(0, 4))
+            switch (urand(0, 4))
             {
                 case 0: m_uiSpellAfflict = SPELL_BROODAF_BLUE; break;
                 case 1: m_uiSpellAfflict = SPELL_BROODAF_BLACK; break;
@@ -195,13 +195,13 @@ struct MANGOS_DLL_DECL boss_chromaggusAI : public ScriptedAI
 
                     // Chromatic mutation if target is effected by all afflictions
                     if (pUnit->HasAura(SPELL_BROODAF_BLUE, EFFECT_INDEX_0)
-                        && pUnit->HasAura(SPELL_BROODAF_BLACK, EFFECT_INDEX_0)
-                        && pUnit->HasAura(SPELL_BROODAF_RED, EFFECT_INDEX_0)
-                        && pUnit->HasAura(SPELL_BROODAF_BRONZE, EFFECT_INDEX_0)
-                        && pUnit->HasAura(SPELL_BROODAF_GREEN, EFFECT_INDEX_0))
+                            && pUnit->HasAura(SPELL_BROODAF_BLACK, EFFECT_INDEX_0)
+                            && pUnit->HasAura(SPELL_BROODAF_RED, EFFECT_INDEX_0)
+                            && pUnit->HasAura(SPELL_BROODAF_BRONZE, EFFECT_INDEX_0)
+                            && pUnit->HasAura(SPELL_BROODAF_GREEN, EFFECT_INDEX_0))
                     {
-                        //target->RemoveAllAuras();
-                        //DoCastSpellIfCan(target,SPELL_CHROMATIC_MUT_1);
+                        // target->RemoveAllAuras();
+                        // DoCastSpellIfCan(target,SPELL_CHROMATIC_MUT_1);
 
                         // Chromatic mutation is causing issues
                         // Assuming it is caused by a lack of core support for Charm

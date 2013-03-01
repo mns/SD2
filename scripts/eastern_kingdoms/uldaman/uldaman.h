@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software licensed under GPL version 2
  * Please see the included DOCS/LICENSE.TXT for more information */
 
@@ -48,8 +48,8 @@ class MANGOS_DLL_DECL instance_uldaman : public ScriptedInstance
 
         void SetData(uint32 uiType, uint32 uiData);
         void SetData64(uint32 uiData, uint64 uiGuid);
-        uint32 GetData(uint32 uiType);
-        uint64 GetData64(uint32 uiData);
+        uint32 GetData(uint32 uiType) const;
+        uint64 GetData64(uint32 uiData) const;
 
         void StartEvent(uint32 uiEventId, Player* pPlayer);
 
@@ -57,7 +57,7 @@ class MANGOS_DLL_DECL instance_uldaman : public ScriptedInstance
 
         Creature* GetClosestDwarfNotInCombat(Creature* pSearcher, uint32 uiPhase);
 
-        const char* Save() { return m_strInstData.c_str(); }
+        const char* Save() const { return m_strInstData.c_str(); }
         void Load(const char* chrIn);
 
     protected:

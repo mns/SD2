@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -37,12 +37,12 @@ enum
     SPELL_PORT_TO_COREN             = 52850,
 
     // other summoned spells - currently not used in script
-    //SPELL_CHUCK_MUG               = 50276,
-    //SPELL_BARRELED_AURA           = 50278,            // used by Ursula
-    //SPELL_HAS_BREW                = 47331,            // triggers 47344 - aura which asks for the second brew on item expire
-    //SPELL_SEND_FIRST_MUG          = 47333,            // triggers 47345
-    //SPELL_SEND_SECOND_MUG         = 47339,            // triggers 47340 - spell triggered by 47344
-    //SPELL_BREWMAIDEN_DESPAWN_AURA = 48186,            // purpose unk
+    // SPELL_CHUCK_MUG               = 50276,
+    // SPELL_BARRELED_AURA           = 50278,            // used by Ursula
+    // SPELL_HAS_BREW                = 47331,            // triggers 47344 - aura which asks for the second brew on item expire
+    // SPELL_SEND_FIRST_MUG          = 47333,            // triggers 47345
+    // SPELL_SEND_SECOND_MUG         = 47339,            // triggers 47340 - spell triggered by 47344
+    // SPELL_BREWMAIDEN_DESPAWN_AURA = 48186,            // purpose unk
 
     // npcs
     NPC_DIREBREW_MINION             = 26776,

@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -70,8 +70,8 @@ struct MANGOS_DLL_DECL boss_doomlordkazzakAI : public ScriptedAI
         m_uiVoidBoltTimer           = 30000;
         m_uiMarkOfKazzakTimer       = 25000;
         m_uiEnrageTimer             = 60000;
-        m_uiGreatEnrageTimer        = 3*MINUTE*IN_MILLISECONDS;
-        m_uiTwistedReflectionTimer  = 33000;                   // Timer may be incorrect
+        m_uiGreatEnrageTimer        = 3 * MINUTE * IN_MILLISECONDS;
+        m_uiTwistedReflectionTimer  = 33000;                // Timer may be incorrect
     }
 
     void JustRespawned()
@@ -91,7 +91,7 @@ struct MANGOS_DLL_DECL boss_doomlordkazzakAI : public ScriptedAI
         if (pVictim->GetTypeId() != TYPEID_PLAYER)
             return;
 
-        switch(urand(0, 2))
+        switch (urand(0, 2))
         {
             case 0: DoScriptText(SAY_KILL1, m_creature); break;
             case 1: DoScriptText(SAY_KILL2, m_creature); break;
@@ -199,7 +199,6 @@ struct MANGOS_DLL_DECL boss_doomlordkazzakAI : public ScriptedAI
 
         DoMeleeAttackIfReady();
     }
-
 };
 
 CreatureAI* GetAI_boss_doomlordkazzak(Creature* pCreature)

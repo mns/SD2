@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -44,7 +44,7 @@ void instance_shadow_labyrinth::Initialize()
 
 void instance_shadow_labyrinth::OnObjectCreate(GameObject* pGo)
 {
-    switch(pGo->GetEntry())
+    switch (pGo->GetEntry())
     {
         case GO_REFECTORY_DOOR:
             if (m_auiEncounter[2] == DONE)
@@ -64,7 +64,7 @@ void instance_shadow_labyrinth::OnObjectCreate(GameObject* pGo)
 
 void instance_shadow_labyrinth::OnCreatureCreate(Creature* pCreature)
 {
-    switch(pCreature->GetEntry())
+    switch (pCreature->GetEntry())
     {
         case NPC_VORPIL:
         case NPC_HELLMAW:
@@ -79,7 +79,7 @@ void instance_shadow_labyrinth::OnCreatureCreate(Creature* pCreature)
 
 void instance_shadow_labyrinth::SetData(uint32 uiType, uint32 uiData)
 {
-    switch(uiType)
+    switch (uiType)
     {
         case TYPE_HELLMAW:
             m_auiEncounter[0] = uiData;
@@ -142,7 +142,7 @@ void instance_shadow_labyrinth::SetData(uint32 uiType, uint32 uiData)
 
         std::ostringstream saveStream;
         saveStream << m_auiEncounter[0] << " " << m_auiEncounter[1] << " "
-            << m_auiEncounter[2] << " " << m_auiEncounter[3] << " " << m_auiEncounter[4];
+                   << m_auiEncounter[2] << " " << m_auiEncounter[3] << " " << m_auiEncounter[4];
 
         m_strInstData = saveStream.str();
 
@@ -151,9 +151,9 @@ void instance_shadow_labyrinth::SetData(uint32 uiType, uint32 uiData)
     }
 }
 
-uint32 instance_shadow_labyrinth::GetData(uint32 uiType)
+uint32 instance_shadow_labyrinth::GetData(uint32 uiType) const
 {
-    switch(uiType)
+    switch (uiType)
     {
         case TYPE_HELLMAW:  return m_auiEncounter[0];
         case TYPE_OVERSEER: return m_auiEncounter[1];

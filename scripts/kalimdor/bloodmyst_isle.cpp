@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -51,7 +51,7 @@ struct MANGOS_DLL_DECL mob_webbed_creatureAI : public Scripted_NoMovementAI
     {
         uint32 uiSpawnCreatureEntry = 0;
 
-        switch(urand(0, 2))
+        switch (urand(0, 2))
         {
             case 0:
                 uiSpawnCreatureEntry = NPC_EXPEDITION_RESEARCHER;

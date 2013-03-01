@@ -1,5 +1,5 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
- * Copyright (C) 2011 - 2012 MangosR2 <http://github.com/mangosR2/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
+ * Copyright (C) 2011 - 2013 MangosR2 <http://github.com/mangosR2/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -68,10 +68,11 @@ struct MANGOS_DLL_DECL boss_general_angerforgeAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
+        // Return since we have no target
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        //MightyBlow_Timer
+        // MightyBlow_Timer
         if (m_uiMightyBlowTimer < uiDiff)
         {
             DoCastSpellIfCan(m_creature->getVictim(), SPELL_MIGHTYBLOW);
@@ -80,7 +81,7 @@ struct MANGOS_DLL_DECL boss_general_angerforgeAI : public ScriptedAI
         else
             m_uiMightyBlowTimer -= uiDiff;
 
-        //HamString_Timer
+        // HamString_Timer
         if (m_uiHamStringTimer < uiDiff)
         {
             DoCastSpellIfCan(m_creature->getVictim(), SPELL_HAMSTRING);
@@ -89,7 +90,7 @@ struct MANGOS_DLL_DECL boss_general_angerforgeAI : public ScriptedAI
         else
             m_uiHamStringTimer -= uiDiff;
 
-        //Cleave_Timer
+        // Cleave_Timer
         if (m_uiCleaveTimer < uiDiff)
         {
             DoCastSpellIfCan(m_creature->getVictim(), SPELL_CLEAVE);
@@ -98,7 +99,7 @@ struct MANGOS_DLL_DECL boss_general_angerforgeAI : public ScriptedAI
         else
             m_uiCleaveTimer -= uiDiff;
 
-        //Adds_Timer
+        // Adds_Timer
         if (m_creature->GetHealthPercent() < 21.0f)
         {
             if (m_uiAddsTimer < uiDiff)
@@ -114,7 +115,7 @@ struct MANGOS_DLL_DECL boss_general_angerforgeAI : public ScriptedAI
                 m_uiAddsTimer -= uiDiff;
         }
 
-        //Summon Medics
+        // Summon Medics
         if (!m_bSummonedMedics && m_creature->GetHealthPercent() < 21.0f)
         {
             SummonAdd(NPC_ANVILRAGE_MEDIC);

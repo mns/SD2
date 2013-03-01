@@ -1,5 +1,5 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
- * Copyright (C) 2011 - 2012 MangosR2 <http://github.com/mangosR2/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
+ * Copyright (C) 2011 - 2013 MangosR2 <http://github.com/mangosR2/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -51,11 +51,11 @@ struct MANGOS_DLL_DECL boss_high_interrogator_gerstahnAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        //Return since we have no target
+        // Return since we have no target
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        //ShadowWordPain_Timer
+        // ShadowWordPain_Timer
         if (m_uiShadowWordPainTimer < uiDiff)
         {
             if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
@@ -66,7 +66,7 @@ struct MANGOS_DLL_DECL boss_high_interrogator_gerstahnAI : public ScriptedAI
         else
             m_uiShadowWordPainTimer -= uiDiff;
 
-        //ManaBurn_Timer
+        // ManaBurn_Timer
         if (m_uiManaBurnTimer < uiDiff)
         {
             if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0, SPELL_MANABURN, SELECT_FLAG_POWER_MANA))
@@ -77,7 +77,7 @@ struct MANGOS_DLL_DECL boss_high_interrogator_gerstahnAI : public ScriptedAI
         else
             m_uiManaBurnTimer -= uiDiff;
 
-        //PsychicScream_Timer
+        // PsychicScream_Timer
         if (m_uiPsychicScreamTimer < uiDiff)
         {
             DoCastSpellIfCan(m_creature, SPELL_PSYCHICSCREAM);
@@ -86,7 +86,7 @@ struct MANGOS_DLL_DECL boss_high_interrogator_gerstahnAI : public ScriptedAI
         else
             m_uiPsychicScreamTimer -= uiDiff;
 
-        //ShadowShield_Timer
+        // ShadowShield_Timer
         if (m_uiShadowShieldTimer < uiDiff)
         {
             DoCastSpellIfCan(m_creature, SPELL_SHADOWSHIELD);

@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -200,12 +200,12 @@ struct MANGOS_DLL_DECL npc_millhouse_manastormAI : public ScriptedAI, private Di
         {
             if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_PYROBLAST) == CAST_OK)
             {
-                 m_uiPyroblastTimer = 40000;
-                 DoScriptText(SAY_PYRO, m_creature);
+                m_uiPyroblastTimer = 40000;
+                DoScriptText(SAY_PYRO, m_creature);
             }
         }
         else
-            m_uiPyroblastTimer -=uiDiff;
+            m_uiPyroblastTimer -= uiDiff;
 
         if (m_uiFireballTimer < uiDiff)
         {
@@ -213,7 +213,7 @@ struct MANGOS_DLL_DECL npc_millhouse_manastormAI : public ScriptedAI, private Di
                 m_uiFireballTimer = 4000;
         }
         else
-            m_uiFireballTimer -=uiDiff;
+            m_uiFireballTimer -= uiDiff;
 
         if (m_uiFrostBoltTimer < uiDiff)
         {

@@ -1,5 +1,5 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
- * Copyright (C) 2011 - 2012 MangosR2 <http://github.com/mangosR2/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
+ * Copyright (C) 2011 - 2013 MangosR2 <http://github.com/mangosR2/>
  * This program is free software licensed under GPL version 2
  * Please see the included DOCS/LICENSE.TXT for more information */
 
@@ -59,9 +59,9 @@ struct MANGOS_DLL_DECL guardAI : public ScriptedAI
 
         void Reset();
 
-        void Aggro(Unit *pWho);
+        void Aggro(Unit* pWho);
 
-        void JustDied(Unit *pKiller);
+        void JustDied(Unit* pKiller);
 
         void SummonGuardsHelpers();
 

@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software licensed under GPL version 2
  * Please see the included DOCS/LICENSE.TXT for more information */
 
@@ -19,16 +19,16 @@ enum
 
     // NPC GUIDs
     NPC_MAULGAR                     = 18831,
-    //NPC_BLINDEYE                  = 18836,
-    //NPC_KIGGLER                   = 18835,
-    //NPC_KROSH                     = 18832,
-    //NPC_OLM                       = 18834,
+    // NPC_BLINDEYE                  = 18836,
+    // NPC_KIGGLER                   = 18835,
+    // NPC_KROSH                     = 18832,
+    // NPC_OLM                       = 18834,
 };
 
 class MANGOS_DLL_DECL instance_gruuls_lair : public ScriptedInstance
 {
     public:
-        instance_gruuls_lair(Map *pMap);
+        instance_gruuls_lair(Map* pMap);
 
         void Initialize();
         bool IsEncounterInProgress() const;
@@ -37,9 +37,9 @@ class MANGOS_DLL_DECL instance_gruuls_lair : public ScriptedInstance
         void OnObjectCreate(GameObject* pGo);
 
         void SetData(uint32 uiType, uint32 uiData);
-        uint32 GetData(uint32 uiType);
+        uint32 GetData(uint32 uiType) const;
 
-        const char* Save() { return m_strSaveData.c_str(); }
+        const char* Save() const { return m_strSaveData.c_str(); }
         void Load(const char* chrIn);
 
     private:

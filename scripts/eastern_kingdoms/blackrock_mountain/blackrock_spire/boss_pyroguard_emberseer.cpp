@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -94,7 +94,7 @@ struct MANGOS_DLL_DECL boss_pyroguard_emberseerAI : public ScriptedAI
     {
         ++m_uiGrowingStacks;
 
-        if (m_uiGrowingStacks == MAX_GROWING_STACKS*0.5f)
+        if (m_uiGrowingStacks == MAX_GROWING_STACKS * 0.5f)
             DoScriptText(EMOTE_NEAR, m_creature);
         else if (m_uiGrowingStacks == MAX_GROWING_STACKS)
         {
@@ -125,6 +125,12 @@ struct MANGOS_DLL_DECL boss_pyroguard_emberseerAI : public ScriptedAI
         {
             if (m_uiEncageTimer <= uiDiff)
             {
+                if (!m_pInstance)
+                {
+                    script_error_log("Instance Blackrock Spire: ERROR Failed to load instance data for this instace.");
+                    return;
+                }
+
                 GuidList m_lIncarceratorsGuid;
                 m_pInstance->GetIncarceratorGuidList(m_lIncarceratorsGuid);
 
@@ -185,7 +191,7 @@ CreatureAI* GetAI_boss_pyroguard_emberseer(Creature* pCreature)
 
 bool EffectDummyCreature_pyroguard_emberseer(Unit* pCaster, uint32 uiSpellId, SpellEffectIndex uiEffIndex, Creature* pCreatureTarget)
 {
-    //always check spellid and effectindex
+    // always check spellid and effectindex
     if (uiSpellId == SPELL_GROWING && uiEffIndex == EFFECT_INDEX_0)
     {
         if (boss_pyroguard_emberseerAI* pEmberseerAI = dynamic_cast<boss_pyroguard_emberseerAI*>(pCreatureTarget->AI()))

@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -139,7 +139,7 @@ struct MANGOS_DLL_DECL boss_anzuAI : public ScriptedAI
         float fX, fY, fZ, fAng;
         for (uint8 i = 0; i < 3; ++i)
         {
-            fAng = 2*M_PI_F/3*i;
+            fAng = 2 * M_PI_F / 3 * i;
             m_creature->GetNearPoint(m_creature, fX, fY, fZ, 0, 15.0f, fAng);
             m_creature->SummonCreature(aSpiritsEntries[i], fX, fY, fZ, fAng + M_PI_F, TEMPSUMMON_CORPSE_DESPAWN, 0);
         }

@@ -1,5 +1,5 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
- * Copyright (C) 2011 - 2012 MangosR2 <http://github.com/mangosR2/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
+ * Copyright (C) 2011 - 2013 MangosR2 <http://github.com/mangosR2/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -37,7 +37,7 @@ void instance_scarlet_monastery::Initialize()
 
 void instance_scarlet_monastery::OnCreatureCreate(Creature* pCreature)
 {
-    switch(pCreature->GetEntry())
+    switch (pCreature->GetEntry())
     {
         case NPC_HEAD:
         case NPC_PUMPKIN_FIEND:
@@ -68,22 +68,22 @@ void instance_scarlet_monastery::OnObjectCreate(GameObject* pGo)
 
 void instance_scarlet_monastery::SetData(uint32 uiType, uint32 uiData)
 {
-    switch(uiType)
+    switch (uiType)
     {
         case TYPE_MOGRAINE_AND_WHITE_EVENT:
             if (uiData == IN_PROGRESS)
                 DoUseDoorOrButton(GO_WHITEMANE_DOOR);
             if (uiData == FAIL)
                 DoUseDoorOrButton(GO_WHITEMANE_DOOR);
-                m_auiEncounter[0] = uiData;
-                break;
+            m_auiEncounter[0] = uiData;
+            break;
         case TYPE_HALLOWSEND_EVENT:
-                m_auiEncounter[1] = uiData;
-                break;
+            m_auiEncounter[1] = uiData;
+            break;
     }
 }
 
-uint32 instance_scarlet_monastery::GetData(uint32 uiData)
+uint32 instance_scarlet_monastery::GetData(uint32 uiData) const
 {
     switch(uiData)
     {

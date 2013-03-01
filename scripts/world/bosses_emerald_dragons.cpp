@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2012 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2013 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -422,7 +422,7 @@ struct MANGOS_DLL_DECL boss_taerarAI : public boss_emerald_dragonAI
         if (m_uiShadesTimeoutTimer)
         {
             if (m_uiShadesTimeoutTimer <= uiDiff)
-               DoUnbanishBoss();
+                DoUnbanishBoss();
             else
                 m_uiShadesTimeoutTimer -= uiDiff;
 
@@ -472,7 +472,7 @@ struct MANGOS_DLL_DECL boss_shadeoftaerarAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        //PoisonCloud_Timer
+        // PoisonCloud_Timer
         if (m_uiPoisonCloud_Timer < uiDiff)
         {
             DoCastSpellIfCan(m_creature->getVictim(), SPELL_POSIONCLOUD);
@@ -481,7 +481,7 @@ struct MANGOS_DLL_DECL boss_shadeoftaerarAI : public ScriptedAI
         else
             m_uiPoisonCloud_Timer -= uiDiff;
 
-        //PosionBreath_Timer
+        // PosionBreath_Timer
         if (m_uiPosionBreath_Timer < uiDiff)
         {
             DoCastSpellIfCan(m_creature->getVictim(), SPELL_POSIONBREATH);
@@ -516,7 +516,7 @@ enum
     SPELL_LIGHTNING_WAVE    = 24819,
     SPELL_SUMMON_DRUIDS     = 24795,
 
-    //druid spells
+    // druid spells
     SPELL_MOONFIRE          = 21669
 };
 
@@ -544,7 +544,7 @@ struct MANGOS_DLL_DECL boss_ysondreAI : public boss_emerald_dragonAI
     {
         DoScriptText(SAY_SUMMON_DRUIDS, m_creature);
 
-        for(int i = 0; i < 10; ++i)
+        for (int i = 0; i < 10; ++i)
             DoCastSpellIfCan(m_creature, SPELL_SUMMON_DRUIDS, CAST_TRIGGERED);
 
         return true;
@@ -583,7 +583,7 @@ struct MANGOS_DLL_DECL mob_dementeddruidsAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        //MoonFire_Timer
+        // MoonFire_Timer
         if (m_uiMoonFire_Timer < uiDiff)
         {
             DoCastSpellIfCan(m_creature->getVictim(), SPELL_MOONFIRE);
