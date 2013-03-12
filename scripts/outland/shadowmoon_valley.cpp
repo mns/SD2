@@ -353,12 +353,16 @@ struct MANGOS_DLL_DECL npc_dragonmaw_peonAI : public ScriptedAI
                     // Workaround for broken function GetGameObject
                     if (!pMutton)
                     {
-                        const SpellEntry* pSpell = GetSpellStore()->LookupEntry(SPELL_SERVING_MUTTON);
+                        SpellEntry const* pSpell = GetSpellStore()->LookupEntry(SPELL_SERVING_MUTTON);
 
-                        uint32 uiGameobjectEntry = pSpell->EffectMiscValue[EFFECT_INDEX_0];
+                        SpellEffectEntry const* effectEntry = pSpell->GetSpellEffect(EFFECT_INDEX_0);
+                        if (effectEntry)
+                        {
+                            uint32 uiGameobjectEntry = effectEntry->EffectMiscValue;
 
-                        // this can fail, but very low chance
-                        pMutton = GetClosestGameObjectWithEntry(pPlayer, uiGameobjectEntry, 2 * INTERACTION_DISTANCE);
+                            // this can fail, but very low chance
+                            pMutton = GetClosestGameObjectWithEntry(pPlayer, uiGameobjectEntry, 2 * INTERACTION_DISTANCE);
+                        }
                     }
 
                     if (pMutton)
@@ -1273,7 +1277,7 @@ bool EffectAuraDummy_npc_totem_of_spirits(const Aura* pAura, bool bApply)
         return true;
 
     // Summon the soul of the spirit and cast the visual
-    uint32 uiSoulEntry;
+    uint32 uiSoulEntry = 0;
     switch (pCaster->GetEntry())
     {
         case NPC_EARTH_SPIRIT: uiSoulEntry = NPC_EARTHEN_SOUL; break;

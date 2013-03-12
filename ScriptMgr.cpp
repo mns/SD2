@@ -27,18 +27,8 @@ Config SD2Config;
 +additions for windows compiler
 **********************************************************************/
 #ifdef _WIN32
-template<> bool MaNGOS::Singleton<World>::si_destroyed;
-template<> bool MaNGOS::Singleton<ObjectMgr>::si_destroyed;
-template<> World *MaNGOS::Singleton<World>::si_instance;
-World::World()
-{
-}
-World::~World()
-{
-}
-ObjectMgr::~ObjectMgr()
-{
-}
+World::World(){}
+World::~World(){}
 #endif
 /***********************************************************************/
 
@@ -340,7 +330,7 @@ void DoOrSimulateScriptTextForMap(int32 iTextEntry, uint32 uiCreatureEntry, Map*
 
 void Script::RegisterSelf(bool bReportError)
 {
-    if (uint32 id = GetScriptId(Name.c_str()))
+    if (uint32 id = GetScriptId(Name))
     {
         m_scripts->at(id) = this;
         ++num_sc_scripts;
@@ -348,10 +338,42 @@ void Script::RegisterSelf(bool bReportError)
     else
     {
         if (bReportError)
-            script_error_log("Script registering but ScriptName %s is not assigned in database. Script will not be used.", Name.c_str());
+            script_error_log("Script registering but ScriptName %s is not assigned in database. Script will not be used.", Name);
 
-        m_scriptStorage->insert(std::make_pair(Name.c_str(), this));
+        m_scriptStorage->insert(std::make_pair(Name, this));
     }
+}
+
+//*********************************
+//******** SimpleScript ***********
+
+SimpleScript::SimpleScript(const char* scriptName)
+{
+    m_script = new Script(scriptName);
+}
+
+SimpleScript::~SimpleScript()
+{
+    if (m_script)
+        m_script->RegisterSelf();
+}
+
+//*********************************
+//********** Scripter *************
+
+Script* Scripter::newScript(const char* scriptName)
+{
+    RegisterScript(); // register previously added script (if any)
+    m_curScript = new Script(scriptName);
+    return m_curScript;
+}
+
+void Scripter::RegisterScript(bool reportError/*=true*/)
+{
+    if (!m_curScript)
+        return;
+    m_curScript->RegisterSelf(reportError);
+    m_curScript = NULL;
 }
 
 //********************************

@@ -62,7 +62,7 @@ enum EscortFaction
 
 struct Script
 {
-    Script() :
+    Script(const char* scriptName = NULL) : Name(scriptName),
         pGossipHello(NULL), pGossipHelloGO(NULL), pGossipSelect(NULL), pGossipSelectGO(NULL),
         pGossipSelectWithCode(NULL), pGossipSelectGOWithCode(NULL),
         pDialogStatusNPC(NULL), pDialogStatusGO(NULL),
@@ -73,7 +73,7 @@ struct Script
         GetAI(NULL), GetInstanceData(NULL)
     {}
 
-    std::string Name;
+    const char* Name;
 
     bool (*pGossipHello             )(Player*, Creature*);
     bool (*pGossipHelloGO           )(Player*, GameObject*);
@@ -101,6 +101,49 @@ struct Script
     InstanceData* (*GetInstanceData )(Map*);
 
     void RegisterSelf(bool bReportError = true);
+};
+
+// *********************************************************
+// ******************* SimpleScript ************************
+
+class SimpleScript
+{
+    private:
+        Script* m_script;
+
+    public:
+        SimpleScript() : m_script(NULL) {}
+        SimpleScript(const char* scriptName);
+        ~SimpleScript();
+
+        Script* operator -> ()
+        {
+            if (!m_script)
+                m_script = new Script();
+            return m_script;
+        }
+};
+
+// *********************************************************
+// ********************* Scripter **************************
+
+class Scripter
+{
+    private:
+        Script* m_curScript;
+
+    public:
+        Scripter() : m_curScript(NULL) {}
+        ~Scripter() { RegisterScript(); }
+
+        Script* newScript(const char* scriptName = NULL);
+        void RegisterScript(bool reportError = true);
+
+        Script* operator -> ()
+        {
+            MANGOS_ASSERT(m_curScript != NULL && "Scripter: use NewScript() before!");
+            return m_curScript;
+        }
 };
 
 // *********************************************************
